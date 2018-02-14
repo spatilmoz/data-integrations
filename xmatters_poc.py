@@ -4,6 +4,7 @@ import requests
 import json,sys,os,errno,re,argparse
 from datetime import datetime
 import XMatters
+import Workday
 from secret import config
 
 parser = argparse.ArgumentParser(description="Sync up XMatters with Workday")
@@ -17,30 +18,6 @@ proxies = {"https" : "http://proxy.dmz.scl3.mozilla.com:3128"}
 def print_debug(level, message):
   if debug >= level:
     print "[%s] %s" % (datetime.now(),message)
-
-def get_workday_users():
-  print_debug(3,"\n")
-  print_debug(1,"Gathering all Workday people")
-  try:
-    #r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(config['wd_username'],config['wd_password']),proxies=proxies)
-    r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(config['wd_username'],config['wd_password']))
-    results = json.loads(r.text)
-    return results['Report_Entry']
-  except:
-    print(sys.exc_info()[0])
-    raise
-
-def extract_sites_from_wd(wd_users):
-  print_debug(3,"\n")
-  print_debug(1,"Extracting sites from Workday data")
-  wd_locations = {}
-  for user in wd_users:
-    if user['Location'] in wd_locations:
-      wd_locations[user['Location']] += 1
-    else:
-      wd_locations[user['Location']] = 1
-  print_debug(3, wd_locations)
-  return wd_locations
 
 def user_data_matches(wd_user,xm_user):
   try:
@@ -94,15 +71,16 @@ if __name__ == "__main__":
   print_debug(1, "Starting...")
 
   XMatters.debug = debug
+  Workday.debug  = debug
 
   # get all sites in xmatters
   xm_sites = XMatters.get_all_sites()
 
   # get all users from workday
-  wd_users = get_workday_users()
+  wd_users = Workday.get_workday_users()
 
   # get list of sites from workday users
-  wd_sites = extract_sites_from_wd(wd_users)
+  wd_sites = Workday.extract_sites_from_wd(wd_users)
 
   # add any sites in workday that aren't in xmatters to xmatters
   xm_sites_in_wd = XMatters.add_new_sites(wd_sites,xm_sites)
