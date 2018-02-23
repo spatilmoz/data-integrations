@@ -3,29 +3,54 @@ import json,sys,os,errno,re
 from secret import config
 from datetime import datetime
 
-debug = 3
+class LocalConfig(object):
+  def __init__(self):
+    self.proxies          = {"https" : "http://proxy.dmz.scl3.mozilla.com:3128"}
+    self.debug            = 3
+    self.base_URL         = 'https://mozilla-np.xmatters.com/api/xm/1'
+    self.base_URL_old_api = 'https://mozilla-np.xmatters.com/reapi/2015-04-01/'
+    self.production       = False
+    self.supervisor_id    = 'DEV-SUPERVISOR-ID-HERE'
+    self.access_token     = False
 
-proxies = {"https" : "http://proxy.dmz.scl3.mozilla.com:3128"}
+  def __getattr__(self, attr):
+    return config[attr]
 
-base_URL         = 'https://mozilla-np.xmatters.com/api/xm/1'
-base_URL_old_api = 'https://mozilla-np.xmatters.com/reapi/2015-04-01/'
-
-access_token = False
+_config = LocalConfig()
 
 def print_debug(level, message):
-  if debug >= level:
+  if _config.debug >= level:
     print "[%s] %s" % (datetime.now(),message)
 
+def debug(debug=None):
+  if debug == None:
+    return _config.debug
+  else:
+    _config.debug = debug
+
+def is_production(is_prod=None):
+  if is_prod == None:
+    return _config.production
+  if is_prod:
+    _config.base_URL         = 'https://mozilla.xmatters.com/api/xm/1'
+    _config.base_URL_old_api = 'https://mozilla.xmatters.com/reapi/2015-04-01/'
+    _config.supervisor_id    = 'PROD-SUPERVISOR-ID-HERE'
+    _config.production       = True
+  else:
+    _config.base_URL         = 'https://mozilla-np.xmatters.com/api/xm/1'
+    _config.base_URL_old_api = 'https://mozilla-np.xmatters.com/reapi/2015-04-01/'
+    _config.supervisor_id    = 'DEV-SUPERVISOR-ID-HERE'
+    _config.production       = False
+
 def get_access_token():
-  global access_token
-  if not access_token:
-    access_token = _get_access_token()
-  return access_token
+  if not _config.access_token:
+    _config.access_token = _get_access_token()
+  return _config.access_token
 
 def _get_access_token():
   endpoint_URL = '/oauth2/token' 
   grant_type='password'
-  url = base_URL + endpoint_URL +'?grant_type='+grant_type+'&client_id='+config['xm_client_id']+'&username='+config['xm_username']+'&password='+config['xm_password']
+  url = base_URL + endpoint_URL +'?grant_type='+grant_type+'&client_id='+_config['xm_client_id']+'&username='+_config['xm_username']+'&password='+_config['xm_password']
 
   headers = {'Content-Type': 'application/json'}
 
@@ -50,7 +75,7 @@ def get_all_sites():
   print_debug(3, "\n")
   print_debug(1, "Gathering all XMatters sites")
   all_sites_url = base_URL_old_api + 'sites'
-  response =  requests.get(all_sites_url, auth=(config['xm_username'],config['xm_password']))
+  response =  requests.get(all_sites_url, auth=(_config['xm_username'],_config['xm_password']))
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(5, rjson)
@@ -115,7 +140,7 @@ def add_site(site):
 
   headers = {'Content-Type': 'application/json'}
 
-  response =  requests.post(sites_url, auth=(config['xm_username'],config['xm_password']), headers=headers, data=json.dumps(site_data))
+  response =  requests.post(sites_url, auth=(_config['xm_username'],_config['xm_password']), headers=headers, data=json.dumps(site_data))
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(1, rjson)
@@ -137,7 +162,7 @@ def set_site_inactive(xm_site_id):
 
   headers = {'Content-Type': 'application/json'}
 
-  response =  requests.post(sites_url, auth=(config['xm_username'],config['xm_password']), headers=headers, data=json.dumps(site_data))
+  response =  requests.post(sites_url, auth=(_config['xm_username'],_config['xm_password']), headers=headers, data=json.dumps(site_data))
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(1, rjson)
@@ -220,6 +245,7 @@ def add_user(wd_user,xm_sites):
     'recipientType': 'PERSON',
     'status':        'ACTIVE',
     'roles':         ['Standard User'],
+    'supervisors':   ['INSERT-AN-ID-HERE'],
     'properties': {
       'Cost Center':      wd_user['Cost_Center'],
       'Manager':          wd_user['Manager_Name'],

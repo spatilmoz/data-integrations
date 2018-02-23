@@ -70,8 +70,14 @@ if __name__ == "__main__":
  
   print_debug(1, "Starting...")
 
-  XMatters.debug = debug
-  Workday.debug  = debug
+  XMatters.debug(debug)
+  Workday.debug(debug)
+
+  print XMatters.is_production()
+  XMatters.is_production(True)
+  print XMatters.is_production()
+
+  exit()
 
   # get all sites in xmatters
   xm_sites = XMatters.get_all_sites()
