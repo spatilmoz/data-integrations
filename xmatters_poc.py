@@ -22,22 +22,22 @@ def print_debug(level, message):
 def user_data_matches(wd_user,xm_user):
   try:
     if wd_user['First_Name'] != xm_user['firstName']:
-      print_debug(3, "MISMATCH: %s <-> %s" % (wd_user['First_Name'],xm_user['firstName']))
+      print_debug(3, "MISMATCH (first name): %s <-> %s" % (wd_user['First_Name'],xm_user['firstName']))
       return False
     elif wd_user['Last_Name'] != xm_user['lastName']:
-      print_debug(3, "MISMATCH: %s <-> %s" % (wd_user['Last_Name'],xm_user['lastName']))
+      print_debug(3, "MISMATCH (last name): %s <-> %s" % (wd_user['Last_Name'],xm_user['lastName']))
       return False
     elif wd_user['Location'] != xm_user['site']['name']:
-      print_debug(3, "MISMATCH: %s <-> %s" % (wd_user['Location'],xm_user['site']['name']))
+      print_debug(3, "MISMATCH (site name): %s <-> %s" % (wd_user['Location'],xm_user['site']['name']))
       return False
     elif wd_user['Manager_Name'] != xm_user['properties']['Manager']:
-      print_debug(3, "MISMATCH: %s <-> %s" % (wd_user['Manager_Name'],xm_user['properties']['Manager']))
+      print_debug(3, "MISMATCH (manager name): %s <-> %s" % (wd_user['Manager_Name'],xm_user['properties']['Manager']))
       return False
     elif wd_user['Cost_Center'] != xm_user['properties']['Cost Center']:
-      print_debug(3, "MISMATCH: %s <-> %s" % (wd_user['Cost_Center'],xm_user['properties']['Cost Center']))
+      print_debug(3, "MISMATCH (cost center): %s <-> %s" % (wd_user['Cost_Center'],xm_user['properties']['Cost Center']))
       return False
     elif wd_user['Functional_Group'] != xm_user['properties']['Functional Group']:
-      print_debug(3, "MISMATCH: %s <-> %s" % (wd_user['Functional_Group'],xm_user['properties']['Functional Group']))
+      print_debug(3, "MISMATCH (functional group): %s <-> %s" % (wd_user['Functional_Group'],xm_user['properties']['Functional Group']))
       return False
     else:
       return True
@@ -73,11 +73,11 @@ if __name__ == "__main__":
   XMatters.debug(debug)
   Workday.debug(debug)
 
-  print XMatters.is_production()
-  XMatters.is_production(True)
-  print XMatters.is_production()
+  #print XMatters.is_production()
+  XMatters.is_production(False)
+  #print XMatters.is_production()
 
-  exit()
+  #exit()
 
   # get all sites in xmatters
   xm_sites = XMatters.get_all_sites()

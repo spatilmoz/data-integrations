@@ -27,8 +27,8 @@ def get_workday_users():
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday people")
   try:
-    #r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(_config['wd_username'],_config['wd_password']),proxies=proxies)
-    r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(_config['wd_username'],_config['wd_password']))
+    #r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(_config.wd_username,_config.wd_password),proxies=proxies)
+    r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(_config.wd_username,_config.wd_password))
     results = json.loads(r.text)
     return results['Report_Entry']
   except:

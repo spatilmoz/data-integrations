@@ -5,13 +5,20 @@ from datetime import datetime
 
 class LocalConfig(object):
   def __init__(self):
-    self.proxies          = {"https" : "http://proxy.dmz.scl3.mozilla.com:3128"}
-    self.debug            = 3
-    self.base_URL         = 'https://mozilla-np.xmatters.com/api/xm/1'
-    self.base_URL_old_api = 'https://mozilla-np.xmatters.com/reapi/2015-04-01/'
-    self.production       = False
-    self.supervisor_id    = 'DEV-SUPERVISOR-ID-HERE'
-    self.access_token     = False
+    host_dev                   = 'mozilla-np'
+    host_prod                  = 'mozilla'
+    new_api_suffix             = '/api/xm/1'
+    old_api_suffix             = '/reapi/2015-04-01/'
+    self.proxies               = {'https' : 'http://proxy.dmz.scl3.mozilla.com:3128'}
+    self.debug                 = 3
+    self.base_URL_dev          = 'https://' + host_dev  + '.xmatters.com' + new_api_suffix
+    self.base_URL_prod         = 'https://' + host_prod + '.xmatters.com' + new_api_suffix
+    self.base_URL_old_api_dev  = 'https://' + host_dev  + '.xmatters.com' + old_api_suffix
+    self.base_URL_old_api_prod = 'https://' + host_prod + '.xmatters.com' + old_api_suffix
+    self.production            = False
+    self.supervisor_id_dev     = 'DEV-SUPERVISOR-ID-HERE'
+    self.supervisor_id_prod    = 'PROD-SUPERVISOR-ID-HERE'
+    self.access_token          = False
 
   def __getattr__(self, attr):
     return config[attr]
@@ -32,14 +39,14 @@ def is_production(is_prod=None):
   if is_prod == None:
     return _config.production
   if is_prod:
-    _config.base_URL         = 'https://mozilla.xmatters.com/api/xm/1'
-    _config.base_URL_old_api = 'https://mozilla.xmatters.com/reapi/2015-04-01/'
-    _config.supervisor_id    = 'PROD-SUPERVISOR-ID-HERE'
+    _config.base_URL         = _config.base_URL_prod
+    _config.base_URL_old_api = _config.base_URL_old_api_prod
+    _config.supervisor_id    = _config.supervisor_id_prod
     _config.production       = True
   else:
-    _config.base_URL         = 'https://mozilla-np.xmatters.com/api/xm/1'
-    _config.base_URL_old_api = 'https://mozilla-np.xmatters.com/reapi/2015-04-01/'
-    _config.supervisor_id    = 'DEV-SUPERVISOR-ID-HERE'
+    _config.base_URL         = _config.base_URL_dev
+    _config.base_URL_old_api = _config.base_URL_old_api_dev
+    _config.supervisor_id    = _config.supervisor_id_dev
     _config.production       = False
 
 def get_access_token():
@@ -50,7 +57,7 @@ def get_access_token():
 def _get_access_token():
   endpoint_URL = '/oauth2/token' 
   grant_type='password'
-  url = base_URL + endpoint_URL +'?grant_type='+grant_type+'&client_id='+_config['xm_client_id']+'&username='+_config['xm_username']+'&password='+_config['xm_password']
+  url = _config.base_URL + endpoint_URL +'?grant_type='+grant_type+'&client_id='+_config.xm_client_id+'&username='+_config.xm_username+'&password='+_config.xm_password
 
   headers = {'Content-Type': 'application/json'}
 
@@ -74,8 +81,8 @@ def _get_access_token():
 def get_all_sites():
   print_debug(3, "\n")
   print_debug(1, "Gathering all XMatters sites")
-  all_sites_url = base_URL_old_api + 'sites'
-  response =  requests.get(all_sites_url, auth=(_config['xm_username'],_config['xm_password']))
+  all_sites_url = _config.base_URL_old_api + 'sites'
+  response =  requests.get(all_sites_url, auth=(_config.xm_username,_config.xm_password))
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(5, rjson)
@@ -102,7 +109,7 @@ def get_all_sites():
 def get_all_people():
   print_debug(3, "\n")
   print_debug(1, "Gathering all XMatters people")
-  url = base_URL + '/people'
+  url = _config.base_URL + '/people'
 
   headers = {'Authorization': 'Bearer ' + get_access_token()}
 
@@ -136,11 +143,11 @@ def add_site(site):
     'name':   site,
     'status': 'ACTIVE',
   }
-  sites_url = base_URL_old_api + 'sites'
+  sites_url = _config.base_URL_old_api + 'sites'
 
   headers = {'Content-Type': 'application/json'}
 
-  response =  requests.post(sites_url, auth=(_config['xm_username'],_config['xm_password']), headers=headers, data=json.dumps(site_data))
+  response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data))
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(1, rjson)
@@ -158,11 +165,11 @@ def set_site_inactive(xm_site_id):
   site_data = {
     'status': 'INACTIVE',
   }
-  sites_url = base_URL_old_api + 'sites/' + xm_site_id
+  sites_url = _config.base_URL_old_api + 'sites/' + xm_site_id
 
   headers = {'Content-Type': 'application/json'}
 
-  response =  requests.post(sites_url, auth=(_config['xm_username'],_config['xm_password']), headers=headers, data=json.dumps(site_data))
+  response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data))
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(1, rjson)
@@ -198,7 +205,7 @@ def delete_sites(xm_sites,xm_sites_in_wd):
 #
 def update_user(wd_user,xm_user,xm_sites):
   print_debug(1, "Updating user %s (%s) in XMatters" % (xm_user['id'],xm_user['targetName']))
-  url = base_URL + '/people'
+  url = _config.base_URL + '/people'
 
   headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
@@ -233,7 +240,7 @@ def add_user(wd_user,xm_sites):
   return
   print_debug(3, "\n")
   print_debug(1, "Adding user %s to XMatters" % (wd_user['Email_Address']))
-  url = base_URL + '/people'
+  url = _config.base_URL + '/people'
 
   headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
@@ -272,7 +279,7 @@ def add_user(wd_user,xm_sites):
 def actual_person_delete(target):
   print_debug(1, "Sending DELETE request for %s" % target)
 
-  url = base_URL + '/people/' + target
+  url = _config.base_URL + '/people/' + target
  
   headers = {'Authorization': 'Bearer ' +  get_access_token() }
 
