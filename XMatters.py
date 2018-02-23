@@ -1,6 +1,6 @@
 import requests
 import json,sys,os,errno,re
-from secret import config
+from secrets_xmatters import config
 from datetime import datetime
 
 class LocalConfig(object):

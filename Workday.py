@@ -1,7 +1,7 @@
 import requests
 import json,sys,os,errno,re,argparse
 from datetime import datetime
-from secret import config
+from secrets_workday import config
 
 class LocalConfig(object):
   def __init__(self):

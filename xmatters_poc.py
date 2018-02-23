@@ -5,7 +5,6 @@ import json,sys,os,errno,re,argparse
 from datetime import datetime
 import XMatters
 import Workday
-from secret import config
 
 parser = argparse.ArgumentParser(description="Sync up XMatters with Workday")
 parser.add_argument('-d', '--debug', action='store', help='debug level', type=int, default=3)
