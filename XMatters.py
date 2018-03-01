@@ -1,6 +1,7 @@
+import time
 import requests
 import json,sys,os,errno,re
-from secrets_xmatters import config
+from secrets_xmatters import config as xm_config
 from datetime import datetime
 
 class LocalConfig(object):
@@ -15,13 +16,15 @@ class LocalConfig(object):
     self.base_URL_prod         = 'https://' + host_prod + '.xmatters.com' + new_api_suffix
     self.base_URL_old_api_dev  = 'https://' + host_dev  + '.xmatters.com' + old_api_suffix
     self.base_URL_old_api_prod = 'https://' + host_prod + '.xmatters.com' + old_api_suffix
+    self.base_URL_no_path_dev  = 'https://' + host_dev  + '.xmatters.com'
+    self.base_URL_no_path_prod = 'https://' + host_prod + '.xmatters.com'
     self.production            = False
-    self.supervisor_id_dev     = 'DEV-SUPERVISOR-ID-HERE'
+    self.supervisor_id_dev     = '72a77545-4c4b-465d-b22a-41a14e0a1b78',
     self.supervisor_id_prod    = 'PROD-SUPERVISOR-ID-HERE'
     self.access_token          = False
 
   def __getattr__(self, attr):
-    return config[attr]
+    return xm_config[attr]
 
 _config = LocalConfig()
 
@@ -38,14 +41,16 @@ def debug(debug=None):
 def is_production(is_prod=None):
   if is_prod == None:
     return _config.production
-  if is_prod:
+  elif is_prod:
     _config.base_URL         = _config.base_URL_prod
     _config.base_URL_old_api = _config.base_URL_old_api_prod
+    _config.base_URL_no_path = _config.base_URL_no_path_prod
     _config.supervisor_id    = _config.supervisor_id_prod
     _config.production       = True
   else:
     _config.base_URL         = _config.base_URL_dev
     _config.base_URL_old_api = _config.base_URL_old_api_dev
+    _config.base_URL_no_path = _config.base_URL_no_path_dev
     _config.supervisor_id    = _config.supervisor_id_dev
     _config.production       = False
 
@@ -82,23 +87,31 @@ def get_all_sites():
   print_debug(3, "\n")
   print_debug(1, "Gathering all XMatters sites")
   all_sites_url = _config.base_URL_old_api + 'sites'
-  response =  requests.get(all_sites_url, auth=(_config.xm_username,_config.xm_password))
-  if (response.status_code == 200):
-    rjson = response.json();
-    print_debug(5, rjson)
-  else:
-    error = 'Could not get sites'
-    print error
-    raise Exception(error)
-  
   xm_sites = {}
-  for site in rjson['sites']:
-    print_debug(3, site['name']+' -- '+site['identifier'])
-    print_debug(5, site)
-    if site['status'] == 'ACTIVE':
-      xm_sites[ site['name'] ] = site['identifier']
+  while True:
+    response = requests.get(all_sites_url, auth=(_config.xm_username,_config.xm_password))
+    if (response.status_code == 200):
+      rjson = response.json();
+      print_debug(5, rjson)
     else:
-      print_debug(2, "Skipping XMatters site %s because status is %s" % (site['name'],site['status']))
+      error = 'Could not get sites'
+      print error
+      raise Exception(error)
+    
+    for site in rjson['sites']:
+      print_debug(3, site['name']+' -- '+site['identifier'])
+      print_debug(5, site)
+      if site['status'] == 'ACTIVE':
+        xm_sites[ site['name'] ] = site['identifier']
+      else:
+        print_debug(2, "Skipping XMatters site %s because status is %s" % (site['name'],site['status']))
+
+    if rjson['nextRecordsURL'] == '':
+      print_debug(5, "No nextRecordsURL found. done with fetching")
+      break
+    else:
+      print_debug(5,"NEXT RECORDS URL FOUND: %s" % rjson['nextRecordsURL'])
+      all_sites_url = _config.base_URL_no_path + rjson['nextRecordsURL']
 
   return xm_sites
 
@@ -113,21 +126,27 @@ def get_all_people():
 
   headers = {'Authorization': 'Bearer ' + get_access_token()}
 
-  response = requests.get(url, headers=headers)
-
-  if (response.status_code == 200):
-    rjson = response.json()
-    print_debug(2, 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " people.")
-  else:
-    print response
-    raise Exception(response.content)
-
   xm_people = {}
-  for person in rjson['data']:
-    print_debug(2, "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
-    if person['lastName'] == 'Valaas':
-      print_debug(2, person)
-    xm_people[ person['targetName'] ] = person
+  while True:
+    response = requests.get(url, headers=headers)
+
+    if (response.status_code == 200):
+      rjson = response.json()
+      print_debug(2, 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " people.")
+    else:
+      print response
+      raise Exception(response.content)
+  
+    for person in rjson['data']:
+      print_debug(3, "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
+      if person['lastName'] == 'Valaas':
+        print_debug(3, person)
+      xm_people[ person['targetName'] ] = person
+
+    if 'next' in rjson['links']:
+      url = _config.base_URL_no_path + rjson['links']['next']
+    else:
+      break
 
   return xm_people
 
@@ -139,9 +158,24 @@ def add_site(site):
   print_debug(3, "\n")
   print_debug(1, "Adding site %s to XMatters" % site)
 
+  # fixup bad data
+  if site['country'] == 'United States of America':
+    site['country'] = 'United States'
+  elif site['country'] == 'Vietnam':
+    site['country'] = 'Viet Nam'
+  if site['postal_code'] == 'CZECH REPUBLIC':
+    site['postal_code'] = ''
+
   site_data = {
-    'name':   site,
-    'status': 'ACTIVE',
+    'name':       site['name'],
+    'timezone':   site['timezone'],
+    # skip address for now as it's mostly bad data (remote sites)
+    #'address1':   site['address'],
+    'country':    site['country'],
+    'city':       site['city'],
+    'state':      site['state'],
+    'postalCode': site['postal_code'],
+    'status':   'ACTIVE',
   }
   sites_url = _config.base_URL_old_api + 'sites'
 
@@ -184,11 +218,12 @@ def add_new_sites(wd_sites,xm_sites):
   xm_sites_in_wd = {}
   for wd_site in wd_sites:
     if wd_site in xm_sites:
-      print_debug(5, "WD site %s found in XMatters! No action." % wd_site)
+      print_debug(3, "WD site %s found in XMatters! No action." % wd_site)
       xm_sites_in_wd[ wd_site ] = 1
     else:
       print_debug(1, "WD site %s NOT found in XMatters! Adding to XMatters." % wd_site)
-      add_site(wd_site)
+      add_site(wd_sites[wd_site])
+
 
   return xm_sites_in_wd
 
@@ -211,13 +246,16 @@ def update_user(wd_user,xm_user,xm_sites):
 
   person_data = {
     'id':        xm_user['id'],
-    'firstName': wd_user['First_Name'],
-    'lastName':  wd_user['Last_Name'],
-    'site':      xm_sites[ wd_user['Location'] ],
+    'firstName': wd_user['User_Preferred_First_Name'],
+    'lastName':  wd_user['User_Preferred_Last_Name'],
+    'site':      xm_sites[ wd_user['User_Work_Location'] ],
     'properties': {
-      'Cost Center':      wd_user['Cost_Center'],
-      'Manager':          wd_user['Manager_Name'],
-      'Functional Group': wd_user['Functional_Group'],
+      'Cost Center':      wd_user['User_Cost_Center'],
+      'Manager':          wd_user['User_Manager_Email_Address'],
+      'Functional Group': wd_user.get('User_Functional_Group',''),
+      'Home City':        wd_user.get('User_Home_City',''),
+      'Home Country':     wd_user.get('User_Home_Country',''),
+      'Home Zipcode':     wd_user.get('User_Home_Postal_Code',''),
     }
   }
  
@@ -237,26 +275,28 @@ def update_user(wd_user,xm_user,xm_sites):
 # https://help.xmatters.com/xmAPI/?python#create-a-person
 #
 def add_user(wd_user,xm_sites):
-  return
   print_debug(3, "\n")
-  print_debug(1, "Adding user %s to XMatters" % (wd_user['Email_Address']))
+  print_debug(1, "Adding user %s to XMatters" % (wd_user['User_Email_Address']))
   url = _config.base_URL + '/people'
 
   headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
   person_data = {
-    'firstName':      wd_user['First_Name'],
-    'lastName':       wd_user['Last_Name'],
-    'targetName':     wd_user['Email_Address'],
-    'site':           xm_sites[ wd_user['Location'] ],
+    'firstName':      wd_user['User_Preferred_First_Name'],
+    'lastName':       wd_user['User_Preferred_Last_Name'],
+    'targetName':     wd_user['User_Email_Address'],
+    'site':           xm_sites[ wd_user['User_Work_Location'] ],
     'recipientType': 'PERSON',
     'status':        'ACTIVE',
     'roles':         ['Standard User'],
-    'supervisors':   ['INSERT-AN-ID-HERE'],
+    'supervisors':   _config.supervisor_id,
     'properties': {
-      'Cost Center':      wd_user['Cost_Center'],
-      'Manager':          wd_user['Manager_Name'],
-      'Functional Group': wd_user['Functional_Group'],
+      'Cost Center':      wd_user['User_Cost_Center'],
+      'Manager':          wd_user['User_Manager_Email_Address'],
+      'Functional Group': wd_user.get('User_Functional_Group',''),
+      'Home City':        wd_user.get('User_Home_City',''),
+      'Home Country':     wd_user.get('User_Home_Country',''),
+      'Home Zipcode':     wd_user.get('User_Home_Postal_Code',''),
     }
   }
  
@@ -268,7 +308,7 @@ def add_user(wd_user,xm_sites):
   if (response.status_code == 201):
     rjson = response.json()
   else:
-    print "ERROR: something went wrong adding user %s" % (wd_user['Email_Address'])
+    print "ERROR: something went wrong adding user %s" % (wd_user['User_Email_Address'])
     print response
     print response.content
     raise Exception(response.content)
