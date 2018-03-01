@@ -19,7 +19,7 @@ class LocalConfig(object):
     self.base_URL_no_path_dev  = 'https://' + host_dev  + '.xmatters.com'
     self.base_URL_no_path_prod = 'https://' + host_prod + '.xmatters.com'
     self.production            = False
-    self.supervisor_id_dev     = '72a77545-4c4b-465d-b22a-41a14e0a1b78',
+    self.supervisor_id_dev     = '72a77545-4c4b-465d-b22a-41a14e0a1b78'
     self.supervisor_id_prod    = 'PROD-SUPERVISOR-ID-HERE'
     self.access_token          = False
 
@@ -244,6 +244,10 @@ def update_user(wd_user,xm_user,xm_sites):
 
   headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
+  manager_name = ''
+  if 'Worker_s_Manager' in wd_user:
+    manager_name = wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_First_Name'] + ' ' \
+                   + wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_Last_Name']
   person_data = {
     'id':        xm_user['id'],
     'firstName': wd_user['User_Preferred_First_Name'],
@@ -251,7 +255,8 @@ def update_user(wd_user,xm_user,xm_sites):
     'site':      xm_sites[ wd_user['User_Work_Location'] ],
     'properties': {
       'Cost Center':      wd_user['User_Cost_Center'],
-      'Manager':          wd_user['User_Manager_Email_Address'],
+      'Manager':          manager_name,
+      'Manager Email':    wd_user.get('User_Manager_Email_Address',''),
       'Functional Group': wd_user.get('User_Functional_Group',''),
       'Home City':        wd_user.get('User_Home_City',''),
       'Home Country':     wd_user.get('User_Home_Country',''),
@@ -281,6 +286,10 @@ def add_user(wd_user,xm_sites):
 
   headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
+  manager_name = ''
+  if 'Worker_s_Manager' in wd_user:
+    manager_name = wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_First_Name'] + ' ' \
+                   + wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_Last_Name']
   person_data = {
     'firstName':      wd_user['User_Preferred_First_Name'],
     'lastName':       wd_user['User_Preferred_Last_Name'],
@@ -289,10 +298,11 @@ def add_user(wd_user,xm_sites):
     'recipientType': 'PERSON',
     'status':        'ACTIVE',
     'roles':         ['Standard User'],
-    'supervisors':   _config.supervisor_id,
+    'supervisors':   [_config.supervisor_id],
     'properties': {
       'Cost Center':      wd_user['User_Cost_Center'],
-      'Manager':          wd_user['User_Manager_Email_Address'],
+      'Manager':          manager_name,
+      'Manager Email':    wd_user.get('User_Manager_Email_Address',''),
       'Functional Group': wd_user.get('User_Functional_Group',''),
       'Home City':        wd_user.get('User_Home_City',''),
       'Home Country':     wd_user.get('User_Home_Country',''),
