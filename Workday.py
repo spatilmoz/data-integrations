@@ -5,11 +5,12 @@ from secrets_workday import config as wd_config
 
 class LocalConfig(object):
   def __init__(self):
-    self.proxies            = {'https' : 'http://proxy.dmz.scl3.mozilla.com:3128'}
-    self.debug              = 3
-    self.workday_url_prefix = 'https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/ISU_RAAS/'
-    self.workday_sites_url  = self.workday_url_prefix + 'Mozilla_BusContSites?format=json'
-    self.workday_people_url = self.workday_url_prefix + 'Mozilla_BusContUsers?format=json'
+    self.proxies             = {'https' : 'http://proxy.dmz.scl3.mozilla.com:3128'}
+    self.debug               = 3
+    self.workday_url_prefix  = 'https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/ISU_RAAS/'
+    self.workday_sites_url   = self.workday_url_prefix + 'Mozilla_BusContSites?format=json'
+    self.workday_people_url  = self.workday_url_prefix + 'Mozilla_BusContUsers?format=json'
+    self.workday_seating_url = self.workday_url_prefix + 'WPR_Worker_Space_Number?format=json'
     # TODO: This should move to the XMatters module:
     self.workday_to_xmatters_tz = {
       'GMT United Kingdom Time (London)'                         : 'GMT',
@@ -80,6 +81,24 @@ def get_users():
     r = requests.get(_config.workday_people_url,auth=(_config.wd_username,_config.wd_password))
     results = json.loads(r.text)
     return results['Report_Entry']
+  except:
+    print(sys.exc_info()[0])
+    raise
+
+def get_seating():
+  print_debug(3,"\n")
+  print_debug(1,"Gathering all Workday seating")
+  try:
+    r = requests.get(_config.workday_seating_url,auth=(_config.wd_seating_username,_config.wd_seating_password))
+    results = json.loads(r.text)
+    wd_seating_chart = {}
+    for seat in results['Report_Entry']:
+        if seat['Employment_Status'] == 'Terminated':
+          continue
+        wd_seating_chart[ seat['Employee_ID'] ] = seat.get('WPR_Desk_Number','')
+
+    return wd_seating_chart
+    
   except:
     print(sys.exc_info()[0])
     raise

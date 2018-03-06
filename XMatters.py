@@ -150,6 +150,9 @@ def get_all_people():
 
   return xm_people
 
+# THIS IS A URL TO POST ALERTS TO XMATTERS IF YOU WANT TO DO THAT
+#https://mozilla-np.xmatters.com/api/integration/1/functions/33853389-18a6-419a-891f-8b367e0c7209/triggers?apiKey=f0f6ebf0-082c-49da-8be0-52d770fdc168
+
 # add site to xmatters
 # OLD API
 # https://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/appendixrestapi.htm?cshid=apiGETsites#GETsites
