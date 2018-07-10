@@ -47,7 +47,7 @@ def download_and_extract_file( filename_and_path ):
   filename_only = os.path.basename(downloaded_file_and_path)
   if re.match('DailySFMC.*zip', filename_only):
     print_debug(3, "Unzipping file")
-    call(['unzip', '-qof', filename_only], cwd=full_dest_path)
+    call(['unzip', '-qo', filename_only], cwd=full_dest_path)
     print_debug(3, "Removing zip file")
     call(['rm',    filename_only], cwd=full_dest_path)
   else:
