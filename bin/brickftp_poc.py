@@ -63,11 +63,11 @@ if __name__ == "__main__":
   for file in files_list:
     if file['type'] == 'file' and re.match('DailySFMC', file['display_name']):
       download_and_extract_file( file['path'] )
-      print_debug(3, "moving file to Archive in BrickFTP")
-      BrickFTP.move_file( file['path'],
-                          os.path.join(os.path.dirname(file['path']),
-                          'Archive',
-                          os.path.basename(file['path'])) )
+#      print_debug(3, "moving file to Archive in BrickFTP")
+#      BrickFTP.move_file( file['path'],
+#                          os.path.join(os.path.dirname(file['path']),
+#                          'Archive',
+#                          os.path.basename(file['path'])) )
 
 
   print_debug(1, "Finished.")
