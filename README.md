@@ -16,3 +16,6 @@ which is for OAuth, People, and the rest.
 
 ## Workday.py
 Basically just a stub
+
+## BrickFTP.py
+For interacting with BrickFTP's API.
