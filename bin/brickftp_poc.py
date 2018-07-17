@@ -13,7 +13,7 @@ import BrickFTP
 parser = argparse.ArgumentParser(description="BrickFTP stuff")
 parser.add_argument('-d', '--debug', action='store', help='debug level', type=int, default=3)
 parser.add_argument('--dest-dir', action='store', help='destination directory', type=str, default='.')
-parser.add_argument('-f', '--force', action='store_true', help='force changes even if there are a lot')
+parser.add_argument('-a', '--archive', action='store_true', help='move the zip files to the Archive directory after downloading')
 args = parser.parse_args()
 
 debug = args.debug
@@ -65,11 +65,12 @@ if __name__ == "__main__":
   for file in files_list:
     if file['type'] == 'file' and re.match('DailySFMC', file['display_name']):
       download_and_extract_file( file['path'] )
-#      print_debug(3, "moving file to Archive in BrickFTP")
-#      BrickFTP.move_file( file['path'],
-#                          os.path.join(os.path.dirname(file['path']),
-#                          'Archive',
-#                          os.path.basename(file['path'])) )
+      if args.archive:
+        print_debug(3, "moving file to Archive in BrickFTP")
+        BrickFTP.move_file( file['path'],
+                            os.path.join(os.path.dirname(file['path']),
+                            'Archive',
+                            os.path.basename(file['path'])) )
 
 
   print_debug(1, "Finished.")
