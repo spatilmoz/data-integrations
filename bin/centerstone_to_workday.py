@@ -5,6 +5,8 @@ import time
 import requests
 import json,sys,os,errno,re,argparse
 from datetime import datetime
+
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
 import Centerstone
 import Workday
 

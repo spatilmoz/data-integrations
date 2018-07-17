@@ -6,6 +6,8 @@ import requests
 import json,sys,os,errno,re,argparse
 from datetime import datetime
 from subprocess import call
+
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
 import BrickFTP
 
 parser = argparse.ArgumentParser(description="BrickFTP stuff")
