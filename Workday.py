@@ -1,11 +1,24 @@
 import requests
 import json,sys,os,errno,re,argparse
 from datetime import datetime
-from secrets_workday import config as wd_config
+
+wd_config = {}
+
+# I feel this is wrong and bad - just use the "from __ import __ as __"
+def load_config(config_path):
+  global wd_config
+  if config_path and os.path.isfile(config_path):
+    exec(open(config_path).read())
+    # ew:
+    wd_config = config
+  else:
+    try:
+      from secrets_workday import config as wd_config
+    except:
+      raise Exception("No Workday config file found!")
 
 class LocalConfig(object):
   def __init__(self):
-    self.proxies             = {'https' : 'http://proxy.dmz.scl3.mozilla.com:3128'}
     self.debug               = 3
     self.workday_url_prefix  = 'https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/ISU_RAAS/'
     self.workday_sites_url   = self.workday_url_prefix + 'Mozilla_BusContSites?format=json'
@@ -84,7 +97,7 @@ def get_users():
   print_debug(1,"Gathering all Workday people")
   try:
     #r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(_config.wd_username,_config.wd_password),proxies=proxies)
-    r = requests.get(_config.workday_people_url,auth=(_config.wd_username,_config.wd_password))
+    r = requests.get(_config.workday_people_url,auth=(_config.wd_username,_config.wd_password),proxies=_config.proxies)
     results = json.loads(r.text)
     return results['Report_Entry']
   except:
@@ -95,7 +108,7 @@ def get_seating():
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday seating")
   try:
-    r = requests.get(_config.workday_seating_url,auth=(_config.wd_seating_username,_config.wd_seating_password))
+    r = requests.get(_config.workday_seating_url,auth=(_config.wd_seating_username,_config.wd_seating_password),proxies=_config.proxies)
     results = json.loads(r.text)
     wd_seating_chart = {}
     for seat in results['Report_Entry']:
@@ -113,7 +126,7 @@ def get_sites():
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday sites")
   try:
-    r = requests.get(_config.workday_sites_url,auth=(_config.wd_username,_config.wd_password))
+    r = requests.get(_config.workday_sites_url,auth=(_config.wd_username,_config.wd_password),proxies=_config.proxies)
     results = json.loads(r.text)
     #return results['Report_Entry']
     wd_locations = {}

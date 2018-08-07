@@ -1,8 +1,21 @@
 import time
 import requests
 import json,sys,os,errno,re
-from secrets_xmatters import config as xm_config
 from datetime import datetime
+
+xm_config = {}
+
+def load_config(config_path):
+  global xm_config
+  if config_path and os.path.isfile(config_path):
+    exec(open(config_path).read())
+    xm_config = config
+  else:
+    try:
+      from secrets_xmatters import config as xm_config
+    except:
+      raise Exception("No XMatters config file found!")
+      
 
 class LocalConfig(object):
   def __init__(self):
@@ -10,7 +23,6 @@ class LocalConfig(object):
     host_prod                  = 'mozilla'
     new_api_suffix             = '/api/xm/1'
     old_api_suffix             = '/reapi/2015-04-01/'
-    self.proxies               = {'https' : 'http://proxy.dmz.scl3.mozilla.com:3128'}
     self.debug                 = 3
     self.base_URL_dev          = 'https://' + host_dev  + '.xmatters.com' + new_api_suffix
     self.base_URL_prod         = 'https://' + host_prod + '.xmatters.com' + new_api_suffix
@@ -66,7 +78,7 @@ def _get_access_token():
 
   headers = {'Content-Type': 'application/json'}
 
-  response = requests.post(url, headers=headers)
+  response = requests.post(url, headers=headers, proxies=_config.proxies)
 
   if (response.status_code == 200):
      rjson = response.json();
@@ -89,7 +101,7 @@ def get_all_sites():
   all_sites_url = _config.base_URL_old_api + 'sites'
   xm_sites = {}
   while True:
-    response = requests.get(all_sites_url, auth=(_config.xm_username,_config.xm_password))
+    response = requests.get(all_sites_url, auth=(_config.xm_username,_config.xm_password), proxies=_config.proxies)
     if (response.status_code == 200):
       rjson = response.json();
       print_debug(5, rjson)
@@ -128,7 +140,7 @@ def get_all_people():
 
   xm_people = {}
   while True:
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, proxies=_config.proxies)
 
     if (response.status_code == 200):
       rjson = response.json()
@@ -184,7 +196,7 @@ def add_site(site):
 
   headers = {'Content-Type': 'application/json'}
 
-  response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data))
+  response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(1, rjson)
@@ -206,7 +218,7 @@ def set_site_inactive(xm_site_id):
 
   headers = {'Content-Type': 'application/json'}
 
-  response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data))
+  response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(1, rjson)
@@ -270,7 +282,7 @@ def update_user(wd_user,xm_user,xm_sites):
   print_debug(3, "will upload this:")
   print_debug(3, json.dumps(person_data))
 
-  response = requests.post(url, headers=headers, data=json.dumps(person_data))
+  response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
   if (response.status_code == 200):
     rjson = response.json()
@@ -316,7 +328,7 @@ def add_user(wd_user,xm_sites):
   print_debug(3, "will upload this:")
   print_debug(3, json.dumps(person_data))
 
-  response = requests.post(url, headers=headers, data=json.dumps(person_data))
+  response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
   if (response.status_code == 201):
     rjson = response.json()
@@ -336,7 +348,7 @@ def actual_person_delete(target):
  
   headers = {'Authorization': 'Bearer ' +  get_access_token() }
 
-  response = requests.delete(url, headers=headers)
+  response = requests.delete(url, headers=headers, proxies=_config.proxies)
 
   if (response.status_code == 200):
     print_debug(1, 'Deleted person ' +  response.json().get('targetName'))
