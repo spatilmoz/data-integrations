@@ -30,7 +30,7 @@ _config = LocalConfig()
 
 def print_debug(level, message):
   if _config.debug >= level:
-    print "[%s] %s" % (datetime.now(),message)
+    print("[%s] %s" % (datetime.now(),message))
 
 def debug(debug=None):
   if debug == None:

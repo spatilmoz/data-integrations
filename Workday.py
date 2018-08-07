@@ -31,12 +31,14 @@ class LocalConfig(object):
       'GMT+05:00 Pakistan Standard Time (Karachi)'               : 'Asia/Karachi',
       'GMT+05:00 Yekaterinburg Standard Time (Yekaterinburg)'    : 'Asia/Yekaterinburg',
       'GMT+05:30 India Standard Time (Kolkata)'                  : 'Asia/Kolkata',
+      'GMT+06:00 East Kazakhstan Time (Almaty)'                  : 'Asia/Almaty',
       'GMT+07:00 Indochina Time (Ho Chi Minh City)'              : 'Asia/Ho_Chi_Minh',
       'GMT+07:00 Western Indonesia Time (Jakarta)'               : 'Asia/Jakarta',
       'GMT+08:00 Australian Western Standard Time (Perth)'       : 'Australia/Perth',
       'GMT+08:00 China Standard Time (Shanghai)'                 : 'Asia/Shanghai',
       'GMT+08:00 Singapore Standard Time (Singapore)'            : 'Asia/Singapore',
       'GMT+08:00 Taipei Standard Time (Taipei)'                  : 'Asia/Taipei',
+      'GMT+08:00 Hong Kong Standard Time (Hong Kong)'            : 'Asia/Hong_Kong',
       'GMT+09:00 Japan Standard Time (Tokyo)'                    : 'Asia/Tokyo',
       'GMT+09:30 Australian Central Standard Time (Darwin)'      : 'Australia/Darwin',
       'GMT+10:00 Australian Eastern Standard Time (Brisbane)'    : 'Australia/Brisbane',
@@ -47,12 +49,16 @@ class LocalConfig(object):
       'GMT-04:00 Atlantic Time (Halifax)'                        : 'America/Halifax',
       'GMT-05:00 Colombia Standard Time (Bogota)'                : 'America/Bogota',
       'GMT-05:00 Eastern Time (Indianapolis)'                    : 'America/Indiana/Indianapolis',
+      'GMT-05:00 Eastern Time'                                   : 'America/New_York',
       'GMT-05:00 Eastern Time (New York)'                        : 'America/New_York',
       'GMT-06:00 Central Standard Time (Regina)'                 : 'America/Regina',
+      'GMT-06:00 Central Time'                                   : 'America/Chicago',
       'GMT-06:00 Central Time (Chicago)'                         : 'America/Chicago',
       'GMT-06:00 Central Time (Mexico City)'                     : 'America/Mexico_City',
       'GMT-07:00 Mountain Standard Time (Phoenix)'               : 'America/Phoenix',
+      'GMT-07:00 Mountain Time'                                  : 'America/Phoenix',
       'GMT-07:00 Mountain Time (Denver)'                         : 'America/Denver',
+      'GMT-08:00 Pacific Time'                                   : 'America/Los_Angeles',
       'GMT-08:00 Pacific Time (Los Angeles)'                     : 'America/Los_Angeles',
       'GMT-08:00 Pacific Time (Tijuana)'                         : 'America/Tijuana',
       'GMT-10:00 Hawaii-Aleutian Standard Time (Honolulu)'       : 'America/Anchorage',
@@ -71,7 +77,7 @@ def debug(debug=None):
 
 def print_debug(level, message):
   if _config.debug >= level:
-    print "[%s] %s" % (datetime.now(),message)
+    print("[%s] %s" % (datetime.now(),message))
 
 def get_users():
   print_debug(3,"\n")

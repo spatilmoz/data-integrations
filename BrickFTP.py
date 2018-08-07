@@ -17,7 +17,7 @@ _config = LocalConfig()
 
 def print_debug(level, message):
   if _config.debug >= level:
-    print "[%s] %s" % (datetime.now(),message)
+    print("[%s] %s" % (datetime.now(),message))
 
 def debug(debug=None):
   if debug == None:
@@ -55,7 +55,7 @@ def list_files(path='/'):
     print_debug(5, rjson)
   else:
     error = 'Could not get files'
-    print error
+    print(error)
     raise Exception(error)
     
   for file in rjson:
@@ -91,7 +91,7 @@ def get_file_download_link(filename):
     print_debug(5, rjson)
   else:
     error = 'Could not get download link'
-    print error
+    print(error)
     raise Exception(error)
     
   print_debug(5, rjson)
@@ -107,7 +107,7 @@ def delete_file(filename):
     print_debug(5, "File deleted")
   else:
     error = 'Could not delete file'
-    print error
+    print(error)
     raise Exception(error)
     
 
@@ -140,7 +140,7 @@ def move_file(filepath,newfilepath):
     print_debug(5, "File moved")
   else:
     error = 'Could not move file'
-    print error
+    print(error)
     raise Exception(error)
 
 def upload_file(filename):

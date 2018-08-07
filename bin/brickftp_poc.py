@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/bin/env python3
 
 from __future__ import division
 import time
@@ -22,7 +22,7 @@ proxies = {"https" : "http://proxy.dmz.scl3.mozilla.com:3128"}
 
 def print_debug(level, message):
   if debug >= level:
-    print "[%s] %s" % (datetime.now(),message)
+    print("[%s] %s" % (datetime.now(),message))
 
 def get_date_from_sfmc_filename(filename):
   m = re.search('DailySFMC(\d+), (\d+), (\d+).zip', filename)
