@@ -24,7 +24,24 @@ config = {
 ```
 
 ## Workday.py
-Basically just a stub
+Expects a config file called `secrets_workday.py` which looks like this:
+```
+config = {
+  'proxies'              : {},
+  'wd_username'          : 'FIRSTUSERNAMEHERE',
+  'wd_password'          : 'FIRSTPASSWORDHERE',
+  'wd_seating_username'  : 'SECONDUSERNAME',
+  'wd_seating_password'  : 'SECONDPASSWORD',
+}
+```
 
 ## BrickFTP.py
 For interacting with BrickFTP's API.
+
+Expects a config file called `secrets_brickftp.py` which looks like this:
+```
+config = {
+  'api_key'  : 'putyourapikeyhere',
+  'username' : 'username',   # not used, just including FYI
+}
+```
