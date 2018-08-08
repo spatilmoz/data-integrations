@@ -13,6 +13,15 @@ https://help.xmatters.com/xmAPI/?python
 
 which is for OAuth, People, and the rest.
 
+Expects a config file called `secrets_xmatters.py` which looks like this:
+```
+config = {
+  'proxies'      : {},
+  'xm_client_id' : 'CLIENT-ID-HERE',
+  'xm_username'  : 'USERNAMEHERE',
+  'xm_password'  : 'PASSWORDHERE',
+}
+```
 
 ## Workday.py
 Basically just a stub
