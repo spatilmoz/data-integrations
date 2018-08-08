@@ -8,4 +8,7 @@ setup(name='data-integrations',
       author='Chris Valaas',
       author_email='cvalaas@mozilla.com',
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+      install_requires=[
+        'requests',
+      ]
     )
