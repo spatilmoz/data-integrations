@@ -93,10 +93,35 @@ def print_debug(level, message):
     print("[%s] %s" % (datetime.now(),message))
 
 def get_users():
+  """Gets all users from Workday
+
+  Returns a list of dicts, each dict is an employee:
+  [
+    {
+      u'User_Home_Country': u'United States of America',
+      u'User_Home_City': u'Portland',
+      u'User_Functional_Group': u'IT',
+      u'User_Preferred_First_Name': u'Chris',
+      u'Worker_s_Manager': [
+        {
+          u'User_Manager_Preferred_Last_Name': u'Bixby',
+          u'User_Manager_Preferred_First_Name': u'Bill'
+        }],
+      u'User_Cost_Center': u'1440 - Enterprise Applications and Services (EApps)',
+      u'User_Email_Address': u'test@mozilla.com',
+      u'User_Work_Location': u'Portland Office',
+      u'User_Preferred_Last_Name': u'Test',
+      u'User_Employee_ID': u'12345678',
+      u'User_Home_Postal_Code': u'90210',
+      u'User_Manager_Email_Address': u'thehulk@mozilla.com'},
+    {...},
+    ...
+  ]
+  """
+
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday people")
   try:
-    #r = requests.get('https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/sstorey/IT_Data_Warehouse_Worker_Sync_Full_File?format=json',auth=(_config.wd_username,_config.wd_password),proxies=proxies)
     r = requests.get(_config.workday_people_url,auth=(_config.wd_username,_config.wd_password),proxies=_config.proxies)
     results = json.loads(r.text)
     return results['Report_Entry']
@@ -105,6 +130,14 @@ def get_users():
     raise
 
 def get_seating():
+  """Gets all employee IDs and seat assignments
+
+  Parameters:
+    None
+  Returns:
+    dict: employee ID -> WPR_Desk_Number
+  """
+
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday seating")
   try:
@@ -123,6 +156,28 @@ def get_seating():
     raise
 
 def get_sites():
+  """Gets all sites from workday
+
+  Parameters:
+    None
+ 
+  Returns:
+    dict: a dict with location names as keys and the values are a dict like:
+        {
+          'name':        'Location Name',
+          'timezone':    'Timezone converted to XMatters style',
+          'address':     'Location Address',
+          'country':     'Location Country',
+          'city':        'Location City',
+          'state':       'Location State',
+          'postal_code': 'Location Postal Code',
+        }
+
+    One could successfully argue that the timezone format conversion should not happen here.
+
+
+  """
+
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday sites")
   try:
