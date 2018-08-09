@@ -86,7 +86,7 @@ def _get_access_token():
      access_token = rjson.get('access_token')
   else:
      error = 'Could not get an access token'
-     print error
+     print(error)
      raise Exception(error)
 
   return access_token
@@ -107,7 +107,7 @@ def get_all_sites():
       print_debug(5, rjson)
     else:
       error = 'Could not get sites'
-      print error
+      print(error)
       raise Exception(error)
     
     for site in rjson['sites']:
@@ -146,7 +146,7 @@ def get_all_people():
       rjson = response.json()
       print_debug(2, 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " people.")
     else:
-      print response
+      print(response)
       raise Exception(response.content)
   
     for person in rjson['data']:
@@ -201,8 +201,8 @@ def add_site(site):
     rjson = response.json();
     print_debug(1, rjson)
   else:
-    print ('Could not create site')
-    print response.content
+    print('Could not create site')
+    print(response.content)
     raise Exception(response.content)
 
 # OLD API
@@ -223,8 +223,8 @@ def set_site_inactive(xm_site_id):
     rjson = response.json();
     print_debug(1, rjson)
   else:
-    print ('Could not deactivate site')
-    print response.content
+    print('Could not deactivate site')
+    print(response.content)
     raise Exception(response.content)
 
 def add_new_sites(wd_sites,xm_sites):
@@ -287,8 +287,8 @@ def update_user(wd_user,xm_user,xm_sites):
   if (response.status_code == 200):
     rjson = response.json()
   else:
-    print "ERROR: something went wrong updating user %s (%s)" % (xm_user['id'],xm_user['targetName'])
-    print response
+    print("ERROR: something went wrong updating user %s (%s)" % (xm_user['id'],xm_user['targetName']))
+    print(response)
     raise Exception(response.content)
 
 # NEW API
@@ -333,9 +333,9 @@ def add_user(wd_user,xm_sites):
   if (response.status_code == 201):
     rjson = response.json()
   else:
-    print "ERROR: something went wrong adding user %s" % (wd_user['User_Email_Address'])
-    print response
-    print response.content
+    print("ERROR: something went wrong adding user %s" % (wd_user['User_Email_Address']))
+    print(response)
+    print(response.content)
     raise Exception(response.content)
 
 # NEW API
@@ -355,9 +355,9 @@ def actual_person_delete(target):
   elif (response.status_code == 204):
     print_debug(1, 'The person could not be found.')
   else:
-    print 'Could not delete person!'
-    print response
-    print response.content
+    print('Could not delete person!')
+    print(response)
+    print(response.content)
     raise Exception(response.content)
 
 def delete_users(xm_users,users_seen_in_wd):
