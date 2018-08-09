@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/bin/env python3
 
 from __future__ import division
 import time
@@ -19,7 +19,7 @@ debug = args.debug
 
 def print_debug(level, message):
   if debug >= level:
-    print "[%s] %s" % (datetime.now(),message)
+    print("[%s] %s" % (datetime.now(),message))
 
 def compare_seats(wd_seats,cs_seats):
   print_debug(1, "Comparing Workday seats to Centerstone...")
