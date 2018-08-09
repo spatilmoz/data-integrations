@@ -96,6 +96,26 @@ def _get_access_token():
 # https://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/appendixrestapi.htm?cshid=apiGETsites#GETsites
 #
 def get_all_sites():
+  """Gets all sites from xMatters
+
+  Parameters:
+    None
+
+  Returns:
+    dict: site name -> xmatters site id
+      for all sites with status "ACTIVE"
+
+  Example:
+    {
+      [...]
+      'US Remote (NV)' : '656173de-809d-46c3-82f3-dd718efa6af4',
+      'Israel Remote'  : '7ed98c24-c73f-4fa5-b987-a005e80e2d63',
+      'US Remote (NM)' : '5224215b-337f-4c6b-bc6a-6211246e2086',
+      'US Remote (LA)' : '96c2de74-247d-4bb8-b0ec-592b86768f85',
+      [...]
+    }
+  """
+
   print_debug(3, "\n")
   print_debug(1, "Gathering all XMatters sites")
   all_sites_url = _config.base_URL_old_api + 'sites'
@@ -132,6 +152,50 @@ def get_all_sites():
 # https://help.xmatters.com/xmAPI/?python#get-people
 #
 def get_all_people():
+  """Gets all users/people from xMatters
+
+  Parameters:
+    None
+
+  Returns:
+    dict: name -> { attributes }
+
+  Example:
+    {
+      [...]
+      'test@mozilla.com' : {
+        u'recipientType': u'PERSON',
+        u'status': u'ACTIVE',
+        u'firstName': u'Chris',
+        u'lastName': u'Test',
+        u'links': {u'self': u'/api/xm/1/people/fc97c634-6e9b-4788-bdca-xxxxxxxxxxxx'},
+        u'externallyOwned': False,
+        u'site': {
+          u'id': u'2e6f8d1c-ced7-460e-bf5a-902109021090',
+          u'links': { u'self': u'/api/xm/1/sites/2e6f8d1c-ced7-460e-bf5a-902109021090' },
+          u'name': u'Beverly Hills Office'
+        },
+        u'properties': {
+          u'Functional Group': u'IT',
+          u'Executive': False,
+          u'Manager Email': u'bbixby@mozilla.com',
+          u'Home Country': u'United States of America',
+          u'Cost Center': u'1440 - Enterprise Applications and Services (EApps)',
+          u'Manager': u'Bill Bixby',
+          u'Home Zipcode': u'90210',
+          u'MERT/EVAC/Warden': False,
+          u'Home City': u'Beverly Hills'
+        },
+        u'language': u'en',
+        u'webLogin': u'test@mozilla.com',
+        u'timezone': u'US/Pacific',
+        u'targetName': u'test@mozilla.com',
+        u'id': u'fc97c634-6e9b-4788-bdca-xxxxxxxxxxxx'
+      },
+      [...]
+    }
+  """
+
   print_debug(3, "\n")
   print_debug(1, "Gathering all XMatters people")
   url = _config.base_URL + '/people'
