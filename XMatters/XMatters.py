@@ -12,7 +12,7 @@ def load_config(config_path):
     xm_config = config
   else:
     try:
-      from secrets_xmatters import config as xm_config
+      from .secrets_xmatters import config as xm_config
     except:
       raise Exception("No XMatters config file found!")
       

@@ -2,7 +2,6 @@
 
 from __future__ import division
 import time
-import requests
 import json,sys,os,errno,re,argparse
 from datetime import datetime
 from subprocess import call
@@ -17,8 +16,6 @@ parser.add_argument('-a', '--archive', action='store_true', help='move the zip f
 args = parser.parse_args()
 
 debug = args.debug
-
-proxies = {"https" : "http://proxy.dmz.scl3.mozilla.com:3128"}
 
 def print_debug(level, message):
   if debug >= level:

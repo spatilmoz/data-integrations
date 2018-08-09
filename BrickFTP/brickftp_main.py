@@ -7,7 +7,6 @@ from datetime import datetime
 class LocalConfig(object):
   def __init__(self):
     self.api_url  = 'https://mozilla.brickftp.com/api/rest/v1/'
-    self.proxies  = {'https' : 'http://proxy.dmz.scl3.mozilla.com:3128'}
     self.debug    = 3
 
   def __getattr__(self, attr):
@@ -49,7 +48,7 @@ def list_files(path='/'):
   #
   print_debug(1, "Listing files for path: %s" % path)
   brickftp_url = _config.api_url + '/folders/' + path
-  response = requests.get(brickftp_url, auth=(_config.api_key,'x'))
+  response = requests.get(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(5, rjson)
@@ -85,7 +84,7 @@ def get_file_download_link(filename):
   #
   print_debug(1, "Getting link for file: %s" % filename)
   brickftp_url = _config.api_url + '/files/' + filename
-  response = requests.get(brickftp_url, auth=(_config.api_key,'x'))
+  response = requests.get(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
     print_debug(5, rjson)
@@ -102,7 +101,7 @@ def get_file_download_link(filename):
 def delete_file(filename):
   print_debug(1, "Deleting file: %s" % filename)
   brickftp_url = _config.api_url + '/files/' + filename
-  response = requests.delete(brickftp_url, auth=(_config.api_key,'x'))
+  response = requests.delete(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
     print_debug(5, "File deleted")
   else:
@@ -125,7 +124,7 @@ def get_file_from_link(filepath,dl_link,dest_dir):
   else:
     filename = filepath
 
-  response = requests.get(dl_link)
+  response = requests.get(dl_link, proxies=_config.proxies)
   print_debug(3, "writing to: %s" % dest_dir + '/' + filename)
   open(os.path.join(dest_dir, filename),'wb').write(response.content)
   return os.path.join(dest_dir, filename)
@@ -135,7 +134,7 @@ def move_file(filepath,newfilepath):
   print_debug(1, "Moving file %s to %s" % (filepath,newfilepath))
  
   brickftp_url = _config.api_url + '/files/' + filepath
-  response = requests.post(brickftp_url, auth=(_config.api_key,'x'), data = {'move-destination':newfilepath})
+  response = requests.post(brickftp_url, auth=(_config.api_key,'x'), data = {'move-destination':newfilepath}, proxies=_config.proxies)
   if (response.status_code == 201):
     print_debug(5, "File moved")
   else:

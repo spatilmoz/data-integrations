@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #!/usr/local/bin/python2.7
 
 from __future__ import division
@@ -21,7 +22,7 @@ debug = args.debug
 
 def print_debug(level, message):
   if debug >= level:
-    print "[%s] %s" % (datetime.now(),message)
+    print("[%s] %s" % (datetime.now(),message))
 
 def user_data_matches(wd_user,xm_user):
   manager_name = ''
@@ -68,9 +69,9 @@ def user_data_matches(wd_user,xm_user):
 def iterate_thru_wd_users(wd_users,xm_users,xm_sites):
   wd_users_seen = {}
   for user in wd_users:
-    if not user.has_key('User_Email_Address'):
-      print "WORKDAY USER ID %s (%s) HAS NO EMAIL ADDRESS! SKIPPING. THIS SHOULD BE FIXED IN WORKDAY" % \
-        (user['User_Employee_ID'], user['User_Preferred_First_Name'] + ' ' + user['User_Preferred_Last_Name'])
+    if 'User_Email_Address' not in user:
+      print("WORKDAY USER ID %s (%s) HAS NO EMAIL ADDRESS! SKIPPING. THIS SHOULD BE FIXED IN WORKDAY" % \
+        (user['User_Employee_ID'], user['User_Preferred_First_Name'] + ' ' + user['User_Preferred_Last_Name']))
       continue
     wd_users_seen[ user['User_Email_Address'] ] = 1
     if user['User_Email_Address'] in xm_users:

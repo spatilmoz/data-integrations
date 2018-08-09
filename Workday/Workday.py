@@ -13,7 +13,7 @@ def load_config(config_path):
     wd_config = config
   else:
     try:
-      from secrets_workday import config as wd_config
+      from .secrets_workday import config as wd_config
     except:
       raise Exception("No Workday config file found!")
 
