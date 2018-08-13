@@ -214,7 +214,7 @@ def get_all_people():
       raise Exception(response.content)
   
     for person in rjson['data']:
-      print_debug(3, "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
+      print_debug(4, "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
       if person['lastName'] == 'Valaas':
         print_debug(3, person)
       xm_people[ person['targetName'] ] = person
