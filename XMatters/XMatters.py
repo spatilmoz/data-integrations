@@ -32,7 +32,7 @@ class LocalConfig(object):
     self.base_URL_no_path_prod = 'https://' + host_prod + '.xmatters.com'
     self.production            = False
     self.supervisor_id_dev     = '72a77545-4c4b-465d-b22a-41a14e0a1b78'
-    self.supervisor_id_prod    = 'PROD-SUPERVISOR-ID-HERE'
+    self.supervisor_id_prod    = '6cc72a91-2b6d-4bf0-8551-019bd2e9e87c'
     self.access_token          = False
 
   def __getattr__(self, attr):
