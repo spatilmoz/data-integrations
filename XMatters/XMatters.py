@@ -219,6 +219,11 @@ def get_all_people():
       if person['lastName'] == 'Valaas':
         print_debug(3, person)
       xm_people[ person['targetName'] ] = person
+ 
+# Only to backfill data
+#      devs = get_devices_by_person(person['id'])
+#      if not devs:
+#        add_work_email_device(person)
 
     if 'next' in rjson['links']:
       url = _config.base_URL_no_path + rjson['links']['next']
@@ -226,6 +231,91 @@ def get_all_people():
       break
 
   return xm_people
+
+def get_devices_by_person(person_id):
+  """Gets a person's device(s)
+
+  Parameters:
+    ID (targetName or id)
+
+  Returns:
+    {
+      "count":3,
+      "total":3,
+      "data":[
+      {
+        "id":"a4d69579-f436-4e85-9d93-703714d85d72",
+        "name":"Home Phone",
+        "recipientType":"DEVICE",
+        "phoneNumber":"+13235553643",
+        "targetName":"akaur",
+        "deviceType":"VOICE",
+    [...]
+  """
+
+  print_debug(3, "\n")
+  print_debug(1, "Gathering all devices for %s" % person_id)
+  url = _config.base_URL + '/people/' + person_id + '/devices'
+
+  headers = {'Authorization': 'Bearer ' + get_access_token()}
+
+  xm_devices = []
+  while True:
+    response = requests.get(url, headers=headers, proxies=_config.proxies)
+
+    if (response.status_code == 200):
+      rjson = response.json()
+      print_debug(2, 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " devices.")
+    else:
+      print(response)
+      raise Exception(response.content)
+  
+    for device in rjson['data']:
+      print_debug(4, "Device - %s %s" % (device['name'],device['targetName']))
+      xm_devices.append(device)
+
+    if 'next' in rjson['links']:
+      url = _config.base_URL_no_path + rjson['links']['next']
+    else:
+      break
+
+  return xm_devices
+
+def add_work_email_device(xm_user):
+  print_debug(3, "\n")
+  print_debug(1, "Adding device %s to XMatters" % (xm_user['targetName']))
+  url = _config.base_URL + '/devices'
+
+  headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
+
+  if not re.search('@', xm_user['targetName']):
+    print_debug(1, "NOT adding device for %s because that ain't no email address!" % xm_user['targetName'])
+    return
+
+  device_data = {
+    'recipientType': 'DEVICE',
+    'deviceType' : 'EMAIL',
+    'owner': xm_user['id'],
+    'name': 'Work Email',
+    'emailAddress': xm_user['targetName'],
+    'delay' : 0,
+    'priorityThreshold': 'MEDIUM',
+    'testStatus' : 'UNTESTED',
+  }
+
+  response = requests.post(url, headers=headers, data=json.dumps(device_data), proxies=_config.proxies)
+
+  if (response.status_code == 201):
+    rjson = response.json()
+  else:
+    print("ERROR: something went wrong adding device for user %s" % (xm_user['targetName']))
+    print(response)
+    print(response.content)
+    raise Exception(response.content)
+
+
+
+
 
 # THIS IS A URL TO POST ALERTS TO XMATTERS IF YOU WANT TO DO THAT
 #https://mozilla-np.xmatters.com/api/integration/1/functions/33853389-18a6-419a-891f-8b367e0c7209/triggers?apiKey=f0f6ebf0-082c-49da-8be0-52d770fdc168
@@ -402,6 +492,8 @@ def add_user(wd_user,xm_sites):
     print(response)
     print(response.content)
     raise Exception(response.content)
+
+  add_work_email_device(person_data)
 
 # NEW API
 # https://help.xmatters.com/xmAPI/?python#delete-a-person
