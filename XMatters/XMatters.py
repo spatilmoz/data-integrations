@@ -2,19 +2,20 @@ import time
 import requests
 import json,sys,os,errno,re
 from datetime import datetime
+from .secrets_xmatters import config as xm_config
 
-xm_config = {}
-
-def load_config(config_path):
-  global xm_config
-  if config_path and os.path.isfile(config_path):
-    exec(open(config_path).read())
-    xm_config = config
-  else:
-    try:
-      from .secrets_xmatters import config as xm_config
-    except:
-      raise Exception("No XMatters config file found!")
+#xm_config = {}
+#
+#def load_config(config_path):
+#  global xm_config
+#  if config_path and os.path.isfile(config_path):
+#    exec(open(config_path).read())
+#    xm_config = config
+#  else:
+#    try:
+#      from .secrets_xmatters import config as xm_config
+#    except:
+#      raise Exception("No XMatters config file found!")
       
 
 class LocalConfig(object):
