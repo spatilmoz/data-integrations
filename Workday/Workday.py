@@ -1,29 +1,31 @@
 import requests
 import json,sys,os,errno,re,argparse
 from datetime import datetime
+from .secrets_workday import config as wd_config
 
-wd_config = {}
-
-# I feel this is wrong and bad - just use the "from __ import __ as __"
-def load_config(config_path):
-  global wd_config
-  if config_path and os.path.isfile(config_path):
-    exec(open(config_path).read())
-    # ew:
-    wd_config = config
-  else:
-    try:
-      from .secrets_workday import config as wd_config
-    except:
-      raise Exception("No Workday config file found!")
+#wd_config = {}
+#
+## I feel this is wrong and bad - just use the "from __ import __ as __"
+#def load_config(config_path):
+#  global wd_config
+#  if config_path and os.path.isfile(config_path):
+#    exec(open(config_path).read())
+#    # ew:
+#    wd_config = config
+#  else:
+#    try:
+#      from .secrets_workday import config as wd_config
+#    except:
+#      raise Exception("No Workday config file found!")
 
 class LocalConfig(object):
   def __init__(self):
     self.debug               = 3
     self.workday_url_prefix  = 'https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/ISU_RAAS/'
-    self.workday_sites_url   = self.workday_url_prefix + 'Mozilla_BusContSites?format=json'
-    self.workday_people_url  = self.workday_url_prefix + 'Mozilla_BusContUsers?format=json'
-    self.workday_seating_url = self.workday_url_prefix + 'WPR_Worker_Space_Number?format=json'
+    self.workday_sites_url     = self.workday_url_prefix + 'Mozilla_BusContSites?format=json'
+    self.workday_people_url    = self.workday_url_prefix + 'Mozilla_BusContUsers?format=json'
+    self.workday_seating_url   = self.workday_url_prefix + 'WPR_Worker_Space_Number?format=json'
+    self.workday_dashboard_url = self.workday_url_prefix + 'Employee_Details_Report_-_HR_Tableau?format=csv'
     # TODO: This should move to the XMatters module:
     self.workday_to_xmatters_tz = {
       'GMT United Kingdom Time (London)'                         : 'GMT',
@@ -205,6 +207,24 @@ def get_sites():
         }
     return wd_locations
     
+  except:
+    print(sys.exc_info()[0])
+    raise
+
+def get_dashboard_data(date):
+  print_debug(3,"\n")
+  print_debug(1,"Gathering Workday People Dashboard data")
+
+  if not re.match('^\d{4}-\d{2}-\d{2}$', date):
+    raise Exception("Date does not match expected format")
+
+  url = _config.workday_dashboard_url + '&Effective_as_of_Date=' + date + '-07%3A00'
+
+  try:
+    r = requests.get(url,auth=(_config.wd_dashboard_username,_config.wd_dashboard_password),
+                         proxies=_config.proxies)
+    r.encoding = "utf-8" # otherwise requests thinks it's ISO-8859-1
+    return(r.text)
   except:
     print(sys.exc_info()[0])
     raise

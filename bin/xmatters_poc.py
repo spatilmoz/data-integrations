@@ -14,8 +14,8 @@ import Workday
 parser = argparse.ArgumentParser(description="Sync up XMatters with Workday")
 parser.add_argument('-d', '--debug', action='store', help='debug level', type=int, default=3)
 parser.add_argument('-f', '--force', action='store_true', help='force changes even if there are a lot')
-parser.add_argument('--xm-config',   action='store', help='specify an xmatters config file')
-parser.add_argument('--wd-config',   action='store', help='specify a workday config file')
+#parser.add_argument('--xm-config',   action='store', help='specify an xmatters config file')
+#parser.add_argument('--wd-config',   action='store', help='specify a workday config file')
 args = parser.parse_args()
 
 debug = args.debug
@@ -95,8 +95,8 @@ if __name__ == "__main__":
  
   print_debug(1, "Starting...")
 
-  XMatters.load_config(args.xm_config)
-  Workday.load_config(args.wd_config)
+  #XMatters.load_config(args.xm_config)
+  #Workday.load_config(args.wd_config)
 
   XMatters.debug(debug)
   Workday.debug(debug)
