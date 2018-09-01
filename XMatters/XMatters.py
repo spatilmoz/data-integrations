@@ -493,6 +493,7 @@ def add_user(wd_user,xm_sites):
     print(response.content)
     raise Exception(response.content)
 
+  person_data['id'] = rjson['id']
   add_work_email_device(person_data)
 
 # NEW API
