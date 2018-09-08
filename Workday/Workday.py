@@ -1,6 +1,6 @@
 import requests
 import json,sys,os,errno,re,argparse
-from datetime import datetime
+import datetime
 from .secrets_workday import config as wd_config
 
 #wd_config = {}
@@ -21,11 +21,6 @@ from .secrets_workday import config as wd_config
 class LocalConfig(object):
   def __init__(self):
     self.debug               = 3
-    self.workday_url_prefix  = 'https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/ISU_RAAS/'
-    self.workday_sites_url     = self.workday_url_prefix + 'Mozilla_BusContSites?format=json'
-    self.workday_people_url    = self.workday_url_prefix + 'Mozilla_BusContUsers?format=json'
-    self.workday_seating_url   = self.workday_url_prefix + 'WPR_Worker_Space_Number?format=json'
-    self.workday_dashboard_url = self.workday_url_prefix + 'Employee_Details_Report_-_HR_Tableau?format=csv'
     # TODO: This should move to the XMatters module:
     self.workday_to_xmatters_tz = {
       'GMT United Kingdom Time (London)'                         : 'GMT',
@@ -92,7 +87,7 @@ def debug(debug=None):
 
 def print_debug(level, message):
   if _config.debug >= level:
-    print("[%s] %s" % (datetime.now(),message))
+    print("[%s] %s" % (datetime.datetime.now(),message))
 
 def get_users():
   """Gets all users from Workday
@@ -124,7 +119,7 @@ def get_users():
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday people")
   try:
-    r = requests.get(_config.workday_people_url,auth=(_config.wd_username,_config.wd_password),proxies=_config.proxies)
+    r = requests.get(_config.xmatters_integration['people_url'],auth=(_config.xmatters_integration['username'],_config.xmatters_integration['password']),proxies=_config.proxies)
     results = json.loads(r.text)
     return results['Report_Entry']
   except:
@@ -143,7 +138,7 @@ def get_seating():
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday seating")
   try:
-    r = requests.get(_config.workday_seating_url,auth=(_config.wd_seating_username,_config.wd_seating_password),proxies=_config.proxies)
+    r = requests.get(_config.seating['url'],auth=(_config.seating['username'],_config.seating['password']),proxies=_config.proxies)
     results = json.loads(r.text)
     wd_seating_chart = {}
     for seat in results['Report_Entry']:
@@ -183,7 +178,7 @@ def get_sites():
   print_debug(3,"\n")
   print_debug(1,"Gathering all Workday sites")
   try:
-    r = requests.get(_config.workday_sites_url,auth=(_config.wd_username,_config.wd_password),proxies=_config.proxies)
+    r = requests.get(_config.xmatters_integration['sites_url'],auth=(_config.xmatters_integration['username'],_config.xmatters_integration['password']),proxies=_config.proxies)
     results = json.loads(r.text)
     #return results['Report_Entry']
     wd_locations = {}
@@ -211,18 +206,42 @@ def get_sites():
     print(sys.exc_info()[0])
     raise
 
-def get_dashboard_data(date):
+def date_x_days_from(date, delta_days):
+  # TODO: move this to a util module
+  if type(date) is str:
+    date_l = [ int(i) for i in date.split('-') ]
+    date   = datetime.date(date_l[0], date_l[1], date_l[2])
+  else:
+    # assume it's already a datetime obj?
+    pass
+
+  # now that "date" is a datetime object:
+  return str(date + datetime.timedelta(days=int(delta_days)))
+
+def get_dashboard_data(type, end_date, start_date=None):
   print_debug(3,"\n")
-  print_debug(1,"Gathering Workday People Dashboard data")
+  print_debug(1,"Gathering Workday People %s data" % type)
 
-  if not re.match('^\d{4}-\d{2}-\d{2}$', date):
-    raise Exception("Date does not match expected format")
+  if not re.match('^\d{4}-\d{2}-\d{2}$', end_date):
+    raise Exception("End Date does not match expected format")
 
-  url = _config.workday_dashboard_url + '&Effective_as_of_Date=' + date + '-07%3A00'
+  if type == 'headcount':
+    url = _config.hr_dashboard['urls'][type] + '&Effective_as_of_Date=' + end_date + '-07%3A00'
+  else:
+    if not start_date:
+      # if no start date is provided, grab the last 7 days
+      start_date = date_x_days_from(end_date, '-7')
 
+    url = _config.hr_dashboard['urls'][type] + '&Effective_End_Date=' + end_date + '-07%3A00' + \
+          '&Effective_Start_Date=' + start_date + '-07%3A00'
+
+  print_debug(5,"Will grab url: %s" % url)
+
+  return get_generic_workday_report(url,_config.hr_dashboard['username'],_config.hr_dashboard['password'])
+
+def get_generic_workday_report(url,uname,pword):
   try:
-    r = requests.get(url,auth=(_config.wd_dashboard_username,_config.wd_dashboard_password),
-                         proxies=_config.proxies)
+    r = requests.get(url,auth=(uname,pword), proxies=_config.proxies)
     r.encoding = "utf-8" # otherwise requests thinks it's ISO-8859-1
     return(r.text)
   except:
