@@ -19,8 +19,8 @@ if __name__ == "__main__":
   parser.add_argument('-d', '--debug', action='store', help='debug level', type=int, default=3)
   parser.add_argument('--date', action='store', help='date to retrieve', type=str)
   parser.add_argument('-o', '--output-dir', action='store', help='output directory', type=str, default='./')
-  parser.add_argument('--output-filename', action='store', help='output filename', type=str)
-  parser.add_argument('-f', '--force', action='store_true', help='force changes even if there are a lot')
+  #parser.add_argument('--output-filename', action='store', help='output filename', type=str)
+  parser.add_argument('-f', '--force', action='store_true', help='run on a date even if it\'s not friday')
   args = parser.parse_args()
   
   debug = args.debug
@@ -40,19 +40,24 @@ if __name__ == "__main__":
     print_debug(1, "Specified output dir (%s) is not a directory." % args.output_dir)
     exit()
 
-  if args.output_filename:
-    outfile = os.path.join(args.output_dir, args.output_filename)
-  else:
-    outfile = os.path.join(args.output_dir, 'Employee_Details_Report_' + str(retrieve_date) + '.csv')
-
-  print_debug(3, "Writing data to %s" % outfile)
+#  if args.output_filename:
+#    outfile = os.path.join(args.output_dir, args.output_filename)
+#  else:
+#    outfile = os.path.join(args.output_dir, 'Employee_Details_Report_' + str(retrieve_date) + '.csv')
+#
+#  print_debug(3, "Writing data to %s" % outfile)
 
   Workday.debug(debug)
 
-  # get all users from workday
-  wd_csv_data = Workday.get_dashboard_data(str(retrieve_date))
+  for report_type in ['headcount', 'hires', 'terminations', 'promotions']:
 
-  with open(outfile, 'w') as f:
-    f.write(wd_csv_data)
+    print_debug(3, "Getting %s data" % report_type)
+    outfile = os.path.join(args.output_dir, report_type + '_' + str(retrieve_date) + '.csv')
+    wd_csv_data = Workday.get_dashboard_data(report_type, str(retrieve_date))
+
+    print_debug(3, "Writing %s data to %s" % (report_type, outfile))
+
+    with open(outfile, 'w') as f:
+      f.write(wd_csv_data)
 
   print_debug(1, "Finished.")
