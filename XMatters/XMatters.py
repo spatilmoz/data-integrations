@@ -20,20 +20,23 @@ from .secrets_xmatters import config as xm_config
 
 class LocalConfig(object):
   def __init__(self):
-    host_dev                   = 'mozilla-np'
-    host_prod                  = 'mozilla'
-    new_api_suffix             = '/api/xm/1'
-    old_api_suffix             = '/reapi/2015-04-01/'
-    self.debug                 = 3
-    self.base_URL_dev          = 'https://' + host_dev  + '.xmatters.com' + new_api_suffix
-    self.base_URL_prod         = 'https://' + host_prod + '.xmatters.com' + new_api_suffix
-    self.base_URL_old_api_dev  = 'https://' + host_dev  + '.xmatters.com' + old_api_suffix
-    self.base_URL_old_api_prod = 'https://' + host_prod + '.xmatters.com' + old_api_suffix
-    self.base_URL_no_path_dev  = 'https://' + host_dev  + '.xmatters.com'
-    self.base_URL_no_path_prod = 'https://' + host_prod + '.xmatters.com'
-    self.production            = False
-    self.supervisor_id_dev     = '72a77545-4c4b-465d-b22a-41a14e0a1b78'
-    self.supervisor_id_prod    = '6cc72a91-2b6d-4bf0-8551-019bd2e9e87c'
+    new_api_suffix        = '/api/xm/1'
+    old_api_suffix        = '/reapi/2015-04-01/'
+    self.debug            = 3
+    self.base_URL         = xm_config['url'] + new_api_suffix
+    self.base_URL_old_api = xm_config['url'] + old_api_suffix
+
+#    host_dev                   = 'mozilla-np'
+#    host_prod                  = 'mozilla'
+#    self.base_URL_dev          = 'https://' + host_dev  + '.xmatters.com' + new_api_suffix
+#    self.base_URL_prod         = 'https://' + host_prod + '.xmatters.com' + new_api_suffix
+#    self.base_URL_old_api_dev  = 'https://' + host_dev  + '.xmatters.com' + old_api_suffix
+#    self.base_URL_old_api_prod = 'https://' + host_prod + '.xmatters.com' + old_api_suffix
+#    self.base_URL_no_path_dev  = 'https://' + host_dev  + '.xmatters.com'
+#    self.base_URL_no_path_prod = 'https://' + host_prod + '.xmatters.com'
+#    self.production            = False
+#    self.supervisor_id_dev     = '72a77545-4c4b-465d-b22a-41a14e0a1b78'
+#    self.supervisor_id_prod    = '6cc72a91-2b6d-4bf0-8551-019bd2e9e87c'
     self.access_token          = False
 
   def __getattr__(self, attr):
@@ -51,21 +54,21 @@ def debug(debug=None):
   else:
     _config.debug = debug
 
-def is_production(is_prod=None):
-  if is_prod == None:
-    return _config.production
-  elif is_prod:
-    _config.base_URL         = _config.base_URL_prod
-    _config.base_URL_old_api = _config.base_URL_old_api_prod
-    _config.base_URL_no_path = _config.base_URL_no_path_prod
-    _config.supervisor_id    = _config.supervisor_id_prod
-    _config.production       = True
-  else:
-    _config.base_URL         = _config.base_URL_dev
-    _config.base_URL_old_api = _config.base_URL_old_api_dev
-    _config.base_URL_no_path = _config.base_URL_no_path_dev
-    _config.supervisor_id    = _config.supervisor_id_dev
-    _config.production       = False
+#def is_production(is_prod=None):
+#  if is_prod == None:
+#    return _config.production
+#  elif is_prod:
+#    _config.base_URL         = _config.base_URL_prod
+#    _config.base_URL_old_api = _config.base_URL_old_api_prod
+#    _config.base_URL_no_path = _config.base_URL_no_path_prod
+#    _config.supervisor_id    = _config.supervisor_id_prod
+#    _config.production       = True
+#  else:
+#    _config.base_URL         = _config.base_URL_dev
+#    _config.base_URL_old_api = _config.base_URL_old_api_dev
+#    _config.base_URL_no_path = _config.base_URL_no_path_dev
+#    _config.supervisor_id    = _config.supervisor_id_dev
+#    _config.production       = False
 
 def get_access_token():
   if not _config.access_token:
@@ -144,7 +147,7 @@ def get_all_sites():
       break
     else:
       print_debug(5,"NEXT RECORDS URL FOUND: %s" % rjson['nextRecordsURL'])
-      all_sites_url = _config.base_URL_no_path + rjson['nextRecordsURL']
+      all_sites_url = _config.url + rjson['nextRecordsURL']
 
   return xm_sites
 
@@ -226,7 +229,7 @@ def get_all_people():
 #        add_work_email_device(person)
 
     if 'next' in rjson['links']:
-      url = _config.base_URL_no_path + rjson['links']['next']
+      url = _config.url + rjson['links']['next']
     else:
       break
 
@@ -275,7 +278,7 @@ def get_devices_by_person(person_id):
       xm_devices.append(device)
 
     if 'next' in rjson['links']:
-      url = _config.base_URL_no_path + rjson['links']['next']
+      url = _config.url + rjson['links']['next']
     else:
       break
 
@@ -420,11 +423,11 @@ def update_user(wd_user,xm_user,xm_sites):
                    + wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_Last_Name']
   person_data = {
     'id':        xm_user['id'],
-    'firstName': wd_user['User_Preferred_First_Name'],
-    'lastName':  wd_user['User_Preferred_Last_Name'],
+    'firstName': wd_user.get('User_Preferred_First_Name','[NO FIRST NAME]'),
+    'lastName':  wd_user.get('User_Preferred_Last_Name','[NO LAST NAME]'),
     'site':      xm_sites[ wd_user['User_Work_Location'] ],
     'properties': {
-      'Cost Center':      wd_user['User_Cost_Center'],
+      'Cost Center':      wd_user.get('User_Cost_Center',''),
       'Manager':          manager_name,
       'Manager Email':    wd_user.get('User_Manager_Email_Address',''),
       'Functional Group': wd_user.get('User_Functional_Group',''),

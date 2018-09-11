@@ -98,7 +98,7 @@ if __name__ == "__main__":
   XMatters.debug(debug)
   Workday.debug(debug)
 
-  XMatters.is_production(False)
+  #XMatters.is_production(False)
 
   # get all sites in xmatters
   xm_sites = XMatters.get_all_sites()
