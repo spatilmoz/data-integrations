@@ -461,8 +461,8 @@ def add_user(wd_user,xm_sites):
     manager_name = wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_First_Name'] + ' ' \
                    + wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_Last_Name']
   person_data = {
-    'firstName':      wd_user['User_Preferred_First_Name'],
-    'lastName':       wd_user['User_Preferred_Last_Name'],
+    'firstName':      wd_user.get('User_Preferred_First_Name','[NO FIRST NAME]'),
+    'lastName':       wd_user.get('User_Preferred_Last_Name','[NO LAST NAME]'),
     'targetName':     wd_user['User_Email_Address'],
     'site':           xm_sites[ wd_user['User_Work_Location'] ],
     'recipientType': 'PERSON',
@@ -470,7 +470,7 @@ def add_user(wd_user,xm_sites):
     'roles':         ['Standard User'],
     'supervisors':   [_config.supervisor_id],
     'properties': {
-      'Cost Center':      wd_user['User_Cost_Center'],
+      'Cost Center':      wd_user.get('User_Cost_Center',''),
       'Manager':          manager_name,
       'Manager Email':    wd_user.get('User_Manager_Email_Address',''),
       'Functional Group': wd_user.get('User_Functional_Group',''),
