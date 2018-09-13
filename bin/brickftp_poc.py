@@ -62,7 +62,7 @@ if __name__ == "__main__":
   files_list = BrickFTP.list_files(path='/etl/Moz_SFDC_Data_Team_Extract')
   for file in files_list:
     if file['type'] == 'file' and re.match('DailySFMC', file['display_name']):
-      if args.date and not re.match(args.date, file['display_name']):
+      if args.date and not re.match(args.date, get_date_from_sfmc_filename(file['display_name'])):
         print_debug(3, "--date specified, skipping non-matching filename: %s" % file['display_name'])
         continue
       download_and_extract_file( file['path'] )
