@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser(description="BrickFTP stuff")
 parser.add_argument('-d', '--debug', action='store', help='debug level', type=int, default=3)
 parser.add_argument('--dest-dir', action='store', help='destination directory', type=str, default='.')
 parser.add_argument('-a', '--archive', action='store_true', help='move the zip files to the Archive directory after downloading')
+parser.add_argument('--date', action='store', help='the date to retrieve')
 args = parser.parse_args()
 
 debug = args.debug
@@ -61,6 +62,9 @@ if __name__ == "__main__":
   files_list = BrickFTP.list_files(path='/etl/Moz_SFDC_Data_Team_Extract')
   for file in files_list:
     if file['type'] == 'file' and re.match('DailySFMC', file['display_name']):
+      if args.date and not re.match(args.date, file['display_name']):
+        print_debug(3, "--date specified, skipping non-matching filename: %s" % file['display_name'])
+        continue
       download_and_extract_file( file['path'] )
       if args.archive:
         print_debug(3, "moving file to Archive in BrickFTP")
