@@ -221,6 +221,10 @@ def get_all_people():
       print_debug(4, "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
       if person['lastName'] == 'Valaas':
         print_debug(3, person)
+      if person['lastName'] == '[NO LAST NAME]':
+        person['lastName'] = ''
+      if person['firstName'] == '[NO FIRST NAME]':
+        person['firstName'] = ''
       xm_people[ person['targetName'] ] = person
  
 # Only to backfill data
