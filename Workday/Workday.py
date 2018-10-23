@@ -162,7 +162,7 @@ def get_sites():
     dict: a dict with location names as keys and the values are a dict like:
         {
           'name':        'Location Name',
-          'timezone':    'Timezone converted to XMatters style',
+          'timezone':    'Timezone converted to xMatters style',
           'address':     'Location Address',
           'country':     'Location Country',
           'city':        'Location City',
@@ -230,10 +230,10 @@ def get_dashboard_data(type, end_date, start_date=None):
   else:
     if not start_date:
       # if no start date is provided, grab the last 7 days
-      start_date = date_x_days_from(end_date, '-7')
+      start_date = date_x_days_from(end_date, '-6')
 
-    url = _config.hr_dashboard['urls'][type] + '&Effective_End_Date=' + end_date + '-07%3A00' + \
-          '&Effective_Start_Date=' + start_date + '-07%3A00'
+    url = _config.hr_dashboard['urls'][type] + '&Effective_End_Date=' + end_date + \
+          '&Effective_Start_Date=' + start_date
 
   print_debug(5,"Will grab url: %s" % url)
 

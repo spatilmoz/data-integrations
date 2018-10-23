@@ -34,12 +34,19 @@ if __name__ == "__main__":
   retrieve_date   = datetime.date(retrieve_date_l[0], retrieve_date_l[1], retrieve_date_l[2])
   start_date      = None
   if args.monthly:
-    if retrieve_date_l[2] != 1 and not args.force:
-      print_debug(1, "Specified date (%s) is not the first of the month. Use --force if you're sure" % retrieve_date)
-      exit()
-    first_day  = retrieve_date.replace(day=1)
-    last_month = first_day - datetime.timedelta(days=1)
-    start_date = last_month.strftime("%Y-%m-01")
+#    if retrieve_date_l[2] != 1 and not args.force:
+#      print_debug(1, "Specified date (%s) is not the first of the month. Use --force if you're sure" % retrieve_date)
+#      exit()
+#    first_day  = retrieve_date.replace(day=1)
+#    last_month = first_day - datetime.timedelta(days=1)
+#    start_date = last_month.strftime("%Y-%m-01")
+    # regardless of provided date, set the start_date to the 1st and the retrieve_date to the end
+    month = str(retrieve_date_l[1])
+    if retrieve_date_l[1] < 10:
+      month = '0' + month
+    start_date = str(retrieve_date_l[0]) + '-' + month + '-' + '01'
+    next_month = retrieve_date.replace(day=28) + datetime.timedelta(days=4)
+    retrieve_date = next_month - datetime.timedelta(days=next_month.day)
 
   else:
     if retrieve_date.isoweekday() != 5 and not args.force:
