@@ -226,7 +226,9 @@ def get_dashboard_data(type, end_date, start_date=None):
     raise Exception("End Date does not match expected format")
 
   if type == 'headcount':
-    url = _config.hr_dashboard['urls'][type] + '&Effective_as_of_Date=' + end_date + '-07%3A00'
+    url = _config.hr_dashboard['urls'][type] + '&Effective_as_of_Date_and_Time=' + end_date + \
+            'T23%3A59%3A59.000-07%3A00'      + '&Entry_Date_and_Time='           + end_date + \
+            'T23%3A59%3A59.000-07%3A00'
   else:
     if not start_date:
       # if no start date is provided, grab the last 7 days
