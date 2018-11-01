@@ -12,7 +12,7 @@ import Centerstone
 import Workday
 
 def compare_seats(wd_seats,cs_seats):
-  logging.info( "Comparing Workday seats to Centerstone...")
+  logger.info( "Comparing Workday seats to Centerstone...")
 
   errors_not_in_wd = []
   errors_not_in_cs = []
@@ -21,16 +21,16 @@ def compare_seats(wd_seats,cs_seats):
     if wd_emp not in cs_seats:
       errors_not_in_cs.append("[ERROR] Employee ID %s not found in Centerstone data" % wd_emp)
     elif wd_seats[wd_emp] != cs_seats[wd_emp]:
-      logging.warning( "Employee ID %s has seat %s in Centerstone and %s in Workday" % (wd_emp,cs_seats[wd_emp],wd_seats[wd_emp]))
+      logger.warning( "Employee ID %s has seat %s in Centerstone and %s in Workday" % (wd_emp,cs_seats[wd_emp],wd_seats[wd_emp]))
 
   for cs_emp in cs_seats:
     if cs_emp not in wd_seats:
       errors_not_in_wd.append("[ERROR] Employee ID %s not found in Workday data" % cs_emp)
 
   for error in errors_not_in_wd:
-    logging.error(error)
+    logger.error(error)
   for error in errors_not_in_cs:
-    logging.error(error)
+    logger.error(error)
 
 if __name__ == "__main__":
  
@@ -42,7 +42,9 @@ if __name__ == "__main__":
 
   Util.set_up_logging(args.log_level)
 
-  logging.info("Starting...")
+  logger = logging.getLogger(__name__)
+
+  logger.info("Starting...")
 
   # get all sites in xmatters
   cs_seats = Centerstone.get_all_seats()

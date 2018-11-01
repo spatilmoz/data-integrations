@@ -26,7 +26,7 @@ def set_up_logging(level):
     log_level = logging.ERROR
   elif re.match('^crit', level, flags=re.IGNORECASE):
     log_level = logging.CRITICAL
-  logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s', level=log_level)
+  logging.basicConfig(format='[%(asctime)s] %(name)s [%(levelname)s]: %(message)s', level=log_level)
 
 def postal_to_coords_and_timezone(loc):
   from .classes.mozgeo import MozGeo

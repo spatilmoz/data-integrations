@@ -5,6 +5,8 @@ from secrets_brickftp import config as brickftp_config
 from datetime import datetime
 import logging
 
+logger = logging.getLogger(__name__)
+
 class LocalConfig(object):
   def __init__(self):
     self.api_url  = 'https://mozilla.brickftp.com/api/rest/v1/'
@@ -37,20 +39,20 @@ def list_files(path='/'):
   #   }
   # ]
   #
-  logging.info( "Listing files for path: %s" % path)
+  logger.info( "Listing files for path: %s" % path)
   brickftp_url = _config.api_url + '/folders/' + path
   response = requests.get(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    logging.debug( rjson)
+    logger.debug( rjson)
   else:
     error = 'Could not get files'
-    logging.critical(error)
+    logger.critical(error)
     raise Exception(error)
     
   for file in rjson:
-    logging.debug(file)
-    logging.info( file['display_name']+' -- '+file['mtime']+' -- '+file['type'])
+    logger.debug(file)
+    logger.info( file['display_name']+' -- '+file['mtime']+' -- '+file['type'])
 
   return rjson
 
@@ -73,31 +75,31 @@ def get_file_download_link(filename):
   #   }
   # ]
   #
-  logging.info( "Getting link for file: %s" % filename)
+  logger.info( "Getting link for file: %s" % filename)
   brickftp_url = _config.api_url + '/files/' + filename
   response = requests.get(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    logging.debug( rjson)
+    logger.debug( rjson)
   else:
     error = 'Could not get download link'
-    logging.critical(error)
+    logger.critical(error)
     raise Exception(error)
     
-  logging.debug( rjson)
-  logging.debug( rjson['display_name']+' -- '+rjson['download_uri'])
+  logger.debug( rjson)
+  logger.debug( rjson['display_name']+' -- '+rjson['download_uri'])
 
   return rjson
 
 def delete_file(filename):
-  logging.info( "Deleting file: %s" % filename)
+  logger.info( "Deleting file: %s" % filename)
   brickftp_url = _config.api_url + '/files/' + filename
   response = requests.delete(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
-    logging.debug( "File deleted")
+    logger.debug( "File deleted")
   else:
     error = 'Could not delete file'
-    logging.critical(error)
+    logger.critical(error)
     raise Exception(error)
     
 
@@ -106,8 +108,8 @@ def get_file(filepath,dest_dir='.'):
   return get_file_from_link(filepath,link,dest_dir)
 
 def get_file_from_link(filepath,dl_link,dest_dir):
-  logging.info( "Downloading file %s" % filepath)
-  logging.info( "from link: %s" % dl_link)
+  logger.info( "Downloading file %s" % filepath)
+  logger.info( "from link: %s" % dl_link)
 
   if re.search('/',filepath):
     filename = filepath.rsplit('/',1)[1]
@@ -115,20 +117,20 @@ def get_file_from_link(filepath,dl_link,dest_dir):
     filename = filepath
 
   response = requests.get(dl_link, proxies=_config.proxies)
-  logging.info( "writing to: %s" % dest_dir + '/' + filename)
+  logger.info( "writing to: %s" % dest_dir + '/' + filename)
   open(os.path.join(dest_dir, filename),'wb').write(response.content)
   return os.path.join(dest_dir, filename)
 
 def move_file(filepath,newfilepath):
-  logging.info( "Moving file %s to %s" % (filepath,newfilepath))
+  logger.info( "Moving file %s to %s" % (filepath,newfilepath))
  
   brickftp_url = _config.api_url + '/files/' + filepath
   response = requests.post(brickftp_url, auth=(_config.api_key,'x'), data = {'move-destination':newfilepath}, proxies=_config.proxies)
   if (response.status_code == 201):
-    logging.debug("File moved")
+    logger.debug("File moved")
   else:
     error = 'Could not move file'
-    logging.critical(error)
+    logger.critical(error)
     raise Exception(error)
 
 def upload_file(filename):

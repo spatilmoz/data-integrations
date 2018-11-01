@@ -21,9 +21,9 @@ def get_date_from_sfmc_filename(filename):
 def create_dest_dir(dirname):
   full_path = os.path.join(args.dest_dir, dirname)
   if os.path.isdir(full_path):
-    logging.info( "Directory exists, not creating: %s" % full_path)
+    logger.info( "Directory exists, not creating: %s" % full_path)
   else:
-    logging.info( "Creating: %s" % full_path)
+    logger.info( "Creating: %s" % full_path)
     os.mkdir(full_path)
   return full_path
 
@@ -35,12 +35,12 @@ def download_and_extract_file( filename_and_path ):
 
   filename_only = os.path.basename(downloaded_file_and_path)
   if re.match('DailySFMC.*zip', filename_only):
-    logging.info( "Unzipping file")
+    logger.info( "Unzipping file")
     call(['unzip', '-qo', filename_only], cwd=full_dest_path)
-    logging.info( "Removing zip file")
+    logger.info( "Removing zip file")
     call(['rm',    filename_only], cwd=full_dest_path)
   else:
-    logging.error("Not sure what to make of: %s" % resulting_file_and_path)
+    logger.error("Not sure what to make of: %s" % resulting_file_and_path)
 
 if __name__ == "__main__":
  
@@ -54,21 +54,23 @@ if __name__ == "__main__":
 
   Util.set_up_logging(args.log_level)
 
-  logging.info("Starting...")
+  logger = logging.getLogger(__name__)
+
+  logger.info("Starting...")
 
   files_list = BrickFTP.list_files(path='/etl/Moz_SFDC_Data_Team_Extract')
   for file in files_list:
     if file['type'] == 'file' and re.match('DailySFMC', file['display_name']):
       if args.date and not re.match(args.date, get_date_from_sfmc_filename(file['display_name'])):
-        logging.warning( "--date specified, skipping non-matching filename: %s" % file['display_name'])
+        logger.warning( "--date specified, skipping non-matching filename: %s" % file['display_name'])
         continue
       download_and_extract_file( file['path'] )
       if args.archive:
-        logging.info( "moving file to Archive in BrickFTP")
+        logger.info( "moving file to Archive in BrickFTP")
         BrickFTP.move_file( file['path'],
                             os.path.join(os.path.dirname(file['path']),
                             'Archive',
                             os.path.basename(file['path'])) )
 
 
-  logging.info( "Finished.")
+  logger.info( "Finished.")

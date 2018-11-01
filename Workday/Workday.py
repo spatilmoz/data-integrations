@@ -4,6 +4,8 @@ import datetime
 import logging
 from .secrets_workday import config as wd_config
 
+logger = logging.getLogger(__name__)
+
 class LocalConfig(object):
   def __init__(self):
     self.debug               = 3
@@ -92,13 +94,13 @@ def get_users():
   ]
   """
 
-  logging.info("Gathering all Workday people")
+  logger.info("Gathering all Workday people")
   try:
     r = requests.get(_config.xmatters_integration['people_url'],auth=(_config.xmatters_integration['username'],_config.xmatters_integration['password']),proxies=_config.proxies)
     results = json.loads(r.text)
     return results['Report_Entry']
   except:
-    logging.critical(sys.exc_info()[0])
+    logger.critical(sys.exc_info()[0])
     raise
 
 def get_seating():
@@ -110,7 +112,7 @@ def get_seating():
     dict: employee ID -> WPR_Desk_Number
   """
 
-  logging.info("Gathering all Workday seating")
+  logger.info("Gathering all Workday seating")
   try:
     r = requests.get(_config.seating['url'],auth=(_config.seating['username'],_config.seating['password']),proxies=_config.proxies)
     results = json.loads(r.text)
@@ -123,7 +125,7 @@ def get_seating():
     return wd_seating_chart
     
   except:
-    logging.critical(sys.exc_info()[0])
+    logger.critical(sys.exc_info()[0])
     raise
 
 def get_sites():
@@ -149,7 +151,7 @@ def get_sites():
 
   """
 
-  logging.info("Gathering all Workday sites")
+  logger.info("Gathering all Workday sites")
   try:
     r = requests.get(_config.xmatters_integration['sites_url'],auth=(_config.xmatters_integration['username'],_config.xmatters_integration['password']),proxies=_config.proxies)
     results = json.loads(r.text)
@@ -176,7 +178,7 @@ def get_sites():
     return wd_locations
     
   except:
-    logging.critical(sys.exc_info()[0])
+    logger.critical(sys.exc_info()[0])
     raise
 
 def date_x_days_from(date, delta_days):
@@ -192,7 +194,7 @@ def date_x_days_from(date, delta_days):
   return str(date + datetime.timedelta(days=int(delta_days)))
 
 def get_dashboard_data(type, end_date, start_date=None):
-  logging.info("Gathering Workday People %s data" % type)
+  logger.info("Gathering Workday People %s data" % type)
 
   if not re.match('^\d{4}-\d{2}-\d{2}$', end_date):
     raise Exception("End Date does not match expected format")
@@ -209,7 +211,7 @@ def get_dashboard_data(type, end_date, start_date=None):
     url = _config.hr_dashboard['urls'][type] + '&Effective_End_Date=' + end_date + \
           '&Effective_Start_Date=' + start_date
 
-  logging.debug("Will grab url: %s" % url)
+  logger.debug("Will grab url: %s" % url)
 
   return get_generic_workday_report(url,_config.hr_dashboard['username'],_config.hr_dashboard['password'])
 
@@ -219,6 +221,6 @@ def get_generic_workday_report(url,uname,pword):
     r.encoding = "utf-8" # otherwise requests thinks it's ISO-8859-1
     return(r.text)
   except:
-    logging.critical(sys.exc_info()[0])
+    logger.critical(sys.exc_info()[0])
     raise
 

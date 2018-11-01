@@ -21,62 +21,62 @@ def user_data_matches(wd_user,xm_user):
   site_key = wd_user.get('User_Home_Country','') + ':' + wd_user.get('User_Home_Postal_Code','')
   try:
     if wd_user['User_Preferred_First_Name'] != xm_user['firstName']:
-      logging.info( "MISMATCH (first name): %s <-> %s" % (wd_user['User_Preferred_First_Name'],xm_user['firstName']))
+      logger.info( "MISMATCH (first name): %s <-> %s" % (wd_user['User_Preferred_First_Name'],xm_user['firstName']))
       return False
     elif wd_user['User_Preferred_Last_Name'] != xm_user['lastName']:
-      logging.info( "MISMATCH (last name): %s <-> %s" % (wd_user['User_Preferred_Last_Name'],xm_user['lastName']))
+      logger.info( "MISMATCH (last name): %s <-> %s" % (wd_user['User_Preferred_Last_Name'],xm_user['lastName']))
       return False
     elif site_key != xm_user['site']['name']:
-      logging.info( "MISMATCH (site name): %s <-> %s" % (site_key,xm_user['site']['name']))
+      logger.info( "MISMATCH (site name): %s <-> %s" % (site_key,xm_user['site']['name']))
       return False
     elif wd_user.get('User_Manager_Email_Address','') != xm_user['properties']['Manager Email']:
-      logging.info( "MISMATCH (manager email): %s <-> %s" % (wd_user['User_Manager_Email_Address'],xm_user['properties']['Manager Email']))
+      logger.info( "MISMATCH (manager email): %s <-> %s" % (wd_user['User_Manager_Email_Address'],xm_user['properties']['Manager Email']))
       return False
     elif manager_name != xm_user['properties']['Manager']:
-      logging.info( "MISMATCH (manager name): %s <-> %s" % (manager_name,xm_user['properties']['Manager']))
+      logger.info( "MISMATCH (manager name): %s <-> %s" % (manager_name,xm_user['properties']['Manager']))
       return False
     elif wd_user['User_Cost_Center'] != xm_user['properties']['Cost Center']:
-      logging.info( "MISMATCH (cost center): %s <-> %s" % (wd_user['User_Cost_Center'],xm_user['properties']['Cost Center']))
+      logger.info( "MISMATCH (cost center): %s <-> %s" % (wd_user['User_Cost_Center'],xm_user['properties']['Cost Center']))
       return False
     elif wd_user.get('User_Functional_Group','') != xm_user['properties']['Functional Group']:
-      logging.info( "MISMATCH (functional group): %s <-> %s" % (wd_user['User_Functional_Group'],xm_user['properties']['Functional Group']))
+      logger.info( "MISMATCH (functional group): %s <-> %s" % (wd_user['User_Functional_Group'],xm_user['properties']['Functional Group']))
       return False
     elif wd_user.get('User_Home_City','') != xm_user['properties']['Home City']:
-      logging.info( "MISMATCH (home city): %s <-> %s" % (wd_user['User_Home_City'],xm_user['properties']['Home City']))
+      logger.info( "MISMATCH (home city): %s <-> %s" % (wd_user['User_Home_City'],xm_user['properties']['Home City']))
       return False
     elif wd_user.get('User_Home_Country','') != xm_user['properties']['Home Country']:
-      logging.info( "MISMATCH (home country): %s <-> %s" % (wd_user['User_Home_Country'],xm_user['properties']['Home Country']))
+      logger.info( "MISMATCH (home country): %s <-> %s" % (wd_user['User_Home_Country'],xm_user['properties']['Home Country']))
       return False
     elif wd_user.get('User_Home_Postal_Code','') != xm_user['properties']['Home Zipcode']:
-      logging.info( "MISMATCH (home zipcode): %s <-> %s" % (wd_user['User_Home_Postal_Code'],xm_user['properties']['Home Zipcode']))
+      logger.info( "MISMATCH (home zipcode): %s <-> %s" % (wd_user['User_Home_Postal_Code'],xm_user['properties']['Home Zipcode']))
       return False
     elif wd_user['User_Work_Location'] != xm_user['properties']['Work Location']:
-      logging.info( "MISMATCH (Work Location): %s <-> %s" % (wd_user['User_Work_Location'],xm_user['properties']['Work Location']))
+      logger.info( "MISMATCH (Work Location): %s <-> %s" % (wd_user['User_Work_Location'],xm_user['properties']['Work Location']))
       return False
     else:
       return True
   except KeyError:
-    logging.warning( "Some key was not found, assuming a missing field in XMatters")
+    logger.warning( "Some key was not found, assuming a missing field in XMatters")
     return False
   
 def iterate_thru_wd_users(wd_users,xm_users,xm_sites):
   wd_users_seen = {}
   for user in wd_users:
     if 'User_Email_Address' not in user:
-      logging.warning("Workday User ID %s (%s) has no email address! Skipping." % \
+      logger.warning("Workday User ID %s (%s) has no email address! Skipping." % \
         (user['User_Employee_ID'], user['User_Preferred_First_Name'] + ' ' + user['User_Preferred_Last_Name']))
       continue
     elif not re.search('(?:mozilla.com|mozillafoundation.org|getpocket.com)$',user['User_Email_Address']):
-      logging.warning( "User {} has non-matching email. Skipping.".format(user['User_Email_Address']))
+      logger.warning( "User {} has non-matching email. Skipping.".format(user['User_Email_Address']))
       continue
     wd_users_seen[ user['User_Email_Address'] ] = 1
     if user['User_Email_Address'] in xm_users:
-      logging.debug( "User %s found in XM" % user['User_Email_Address'])
+      logger.debug( "User %s found in XM" % user['User_Email_Address'])
       if not user_data_matches(user,xm_users[ user['User_Email_Address'] ]):
-        logging.debug( "USER DATA NO MATCHES!")
+        logger.debug( "USER DATA NO MATCHES!")
         XMatters.update_user(user,xm_users[ user['User_Email_Address'] ], xm_sites)
       else:
-        logging.debug( "%s good" % user['User_Email_Address'])
+        logger.debug( "%s good" % user['User_Email_Address'])
     else:
       # add user to XM
       XMatters.add_user(user, xm_sites)
@@ -92,12 +92,12 @@ def get_wd_sites_from_users(users):
     postal  = user.get('User_Home_Postal_Code','')
     unq_key = country + ':' + postal
     if not country:
-      logging.warning("NO COUNTRY!!")
-      logging.warning(user)
+      logger.warning("NO COUNTRY!!")
+      logger.warning(user)
       country = 'United States of America'
     if not postal:
-      logging.warning("NO POSTAL!!")
-      logging.warning(user)
+      logger.warning("NO POSTAL!!")
+      logger.warning(user)
       postal = '97209'
 
     if unq_key not in unique_sites:
@@ -120,7 +120,9 @@ if __name__ == "__main__":
 
   Util.set_up_logging(args.log_level)
 
-  logging.info("Starting...")
+  logger = logging.getLogger(__name__)
+
+  logger.info("Starting...")
 
   # get all sites in xmatters
   xm_sites = XMatters.get_all_sites()
@@ -136,8 +138,8 @@ if __name__ == "__main__":
 
   sites_percentage = len(xm_sites) / len(wd_sites)
   if sites_percentage > 1.1 or sites_percentage < 0.9:
-    logging.critical( "The number of sites in Workday vs XMatters is different by more than 10%% (%.02f%%)." % (abs(100-sites_percentage*100)))
-    logging.critical( "Stopping unless --force")
+    logger.critical( "The number of sites in Workday vs XMatters is different by more than 10%% (%.02f%%)." % (abs(100-sites_percentage*100)))
+    logger.critical( "Stopping unless --force")
     if not args.force:
       exit()
 
@@ -152,8 +154,8 @@ if __name__ == "__main__":
 
   users_percentage = len(xm_users) / len(wd_users)
   if users_percentage > 1.1 or users_percentage < 0.9:
-    logging.critical( "The number of users in Workday vs XMatters is different by more than 10%% (%.02f%%)." % (abs(100-users_percentage * 100)))
-    logging.critical( "Stopping unless --force")
+    logger.critical( "The number of users in Workday vs XMatters is different by more than 10%% (%.02f%%)." % (abs(100-users_percentage * 100)))
+    logger.critical( "Stopping unless --force")
     if not args.force:
       exit()
 
@@ -167,4 +169,4 @@ if __name__ == "__main__":
   #   remove from xmatters
   XMatters.delete_users(xm_users,users_seen_in_workday)
 
-  logging.info("Finished.")
+  logger.info("Finished.")

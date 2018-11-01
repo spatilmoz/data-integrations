@@ -6,6 +6,8 @@ from datetime import datetime
 from subprocess import call
 import logging
 
+logger = logging.getLogger(__name__)
+
 class LocalConfig(object):
   def __init__(self):
     self.locations_to_codes = {

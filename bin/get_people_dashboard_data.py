@@ -22,7 +22,9 @@ if __name__ == "__main__":
   
   Util.set_up_logging(args.log_level)
 
-  logging.info("Starting...")
+  logger = logging.getLogger(__name__)
+
+  logger.info("Starting...")
 
   if not args.date:
     args.date = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -32,7 +34,7 @@ if __name__ == "__main__":
   start_date      = None
   if args.monthly:
 #    if retrieve_date_l[2] != 1 and not args.force:
-#      logging.critical( "Specified date (%s) is not the first of the month. Use --force if you're sure" % retrieve_date)
+#      logger.critical( "Specified date (%s) is not the first of the month. Use --force if you're sure" % retrieve_date)
 #      exit()
 #    first_day  = retrieve_date.replace(day=1)
 #    last_month = first_day - datetime.timedelta(days=1)
@@ -47,11 +49,11 @@ if __name__ == "__main__":
 
   else:
     if retrieve_date.isoweekday() != 5 and not args.force:
-      logging.critical( "Specified date (%s) is not a Friday. Use --force if you're sure" % retrieve_date)
+      logger.critical( "Specified date (%s) is not a Friday. Use --force if you're sure" % retrieve_date)
       exit()
 
   if not os.path.isdir(args.output_dir):
-    logging.critical( "Specified output dir (%s) is not a directory." % args.output_dir)
+    logger.critical( "Specified output dir (%s) is not a directory." % args.output_dir)
     exit()
 
 #  if args.output_filename:
@@ -59,18 +61,18 @@ if __name__ == "__main__":
 #  else:
 #    outfile = os.path.join(args.output_dir, 'Employee_Details_Report_' + str(retrieve_date) + '.csv')
 #
-#  logging.info( "Writing data to %s" % outfile)
+#  logger.info( "Writing data to %s" % outfile)
 
   for report_type in ['headcount', 'hires', 'terminations', 'promotions']:
 
-    logging.info( "Getting %s data" % report_type)
+    logger.info( "Getting %s data" % report_type)
     outfile = os.path.join(args.output_dir, report_type + '_' + str(retrieve_date) + '.csv')
 
     wd_csv_data = Workday.get_dashboard_data(report_type, str(retrieve_date), start_date)
 
-    logging.info( "Writing %s data to %s" % (report_type, outfile))
+    logger.info( "Writing %s data to %s" % (report_type, outfile))
 
     with open(outfile, 'w') as f:
       f.write(wd_csv_data)
 
-  logging.info( "Finished.")
+  logger.info( "Finished.")
