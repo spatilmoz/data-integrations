@@ -3,6 +3,7 @@ import requests
 import json,sys,os,errno,re
 from datetime import datetime
 from .secrets_xmatters import config as xm_config
+import Util
 
 #xm_config = {}
 #
@@ -335,7 +336,7 @@ def add_site(site):
   print_debug(3, "\n")
   print_debug(1, "Adding site %s to XMatters" % site)
 
-  # fixup bad data
+  # fixup "bad" data
   if site['country'] == 'United States of America':
     site['country'] = 'United States'
   elif site['country'] == 'Vietnam':
@@ -343,16 +344,30 @@ def add_site(site):
   if site['postal_code'] == 'CZECH REPUBLIC':
     site['postal_code'] = ''
 
+  if not 'timezone' not in site or 'latitude' not in site or 'longitude' not in site:
+      (coords, tz) = Util.postal_to_coords_and_timezone({'country'    : site['country'], 
+                                                         'postal_code': site['postal_code']})
+      lat = coords[0]
+      lng = coords[1]
+      if tz == None:
+        tz = 'America/Los_Angeles' # arbitrary
+      if lat == None:
+        lat = 0
+      if lng == None:
+        lng = 0
+
   site_data = {
     'name':       site['name'],
-    'timezone':   site['timezone'],
+    'timezone':   str(tz),
     # skip address for now as it's mostly bad data (remote sites)
-    #'address1':   site['address'],
+    #'address1':  site['address'],
     'country':    site['country'],
     'city':       site['city'],
-    'state':      site['state'],
+    #'state':     site['state'],
     'postalCode': site['postal_code'],
-    'status':   'ACTIVE',
+    'latitude':   lat,
+    'longitude':  lng,
+    'status':     'ACTIVE',
   }
   sites_url = _config.base_URL_old_api + 'sites'
 
@@ -425,11 +440,12 @@ def update_user(wd_user,xm_user,xm_sites):
   if 'Worker_s_Manager' in wd_user:
     manager_name = wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_First_Name'] + ' ' \
                    + wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_Last_Name']
+  site_key = wd_user.get('User_Home_Country','') + ':' + wd_user.get('User_Home_Postal_Code','')
   person_data = {
     'id':        xm_user['id'],
     'firstName': wd_user.get('User_Preferred_First_Name','[NO FIRST NAME]'),
     'lastName':  wd_user.get('User_Preferred_Last_Name','[NO LAST NAME]'),
-    'site':      xm_sites[ wd_user['User_Work_Location'] ],
+    'site':      xm_sites[ site_key ],
     'properties': {
       'Cost Center':      wd_user.get('User_Cost_Center',''),
       'Manager':          manager_name,
@@ -438,6 +454,7 @@ def update_user(wd_user,xm_user,xm_sites):
       'Home City':        wd_user.get('User_Home_City',''),
       'Home Country':     wd_user.get('User_Home_Country',''),
       'Home Zipcode':     wd_user.get('User_Home_Postal_Code',''),
+      'Work Location':    wd_user.get('User_Work_Location',''),
     }
   }
  
@@ -467,11 +484,12 @@ def add_user(wd_user,xm_sites):
   if 'Worker_s_Manager' in wd_user:
     manager_name = wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_First_Name'] + ' ' \
                    + wd_user['Worker_s_Manager'][0]['User_Manager_Preferred_Last_Name']
+  site_key = wd_user.get('User_Home_Country','') + ':' + wd_user.get('User_Home_Postal_Code','')
   person_data = {
     'firstName':      wd_user.get('User_Preferred_First_Name','[NO FIRST NAME]'),
     'lastName':       wd_user.get('User_Preferred_Last_Name','[NO LAST NAME]'),
     'targetName':     wd_user['User_Email_Address'],
-    'site':           xm_sites[ wd_user['User_Work_Location'] ],
+    'site':           xm_sites[ site_key ],
     'recipientType': 'PERSON',
     'status':        'ACTIVE',
     'roles':         ['Standard User'],
@@ -484,6 +502,7 @@ def add_user(wd_user,xm_sites):
       'Home City':        wd_user.get('User_Home_City',''),
       'Home Country':     wd_user.get('User_Home_Country',''),
       'Home Zipcode':     wd_user.get('User_Home_Postal_Code',''),
+      'Work Location':    wd_user.get('User_Work_Location',''),
     }
   }
  

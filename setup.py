@@ -11,5 +11,7 @@ setup(name='data-integrations',
       scripts=[s for s in setuptools.findall('bin/') if os.path.splitext(s)[1] != '.pyc'],
       install_requires=[
         'requests',
+        'geopy',
+        'pytz',
       ]
     )
