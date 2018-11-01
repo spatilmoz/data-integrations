@@ -3,6 +3,7 @@ import requests
 import json,sys,os,errno,re
 from secrets_brickftp import config as brickftp_config
 from datetime import datetime
+import logging
 
 class LocalConfig(object):
   def __init__(self):
@@ -13,16 +14,6 @@ class LocalConfig(object):
     return brickftp_config[attr]
 
 _config = LocalConfig()
-
-def print_debug(level, message):
-  if _config.debug >= level:
-    print("[%s] %s" % (datetime.now(),message))
-
-def debug(debug=None):
-  if debug == None:
-    return _config.debug
-  else:
-    _config.debug = debug
 
 def list_files(path='/'):
   # Returns an array like:
@@ -46,20 +37,20 @@ def list_files(path='/'):
   #   }
   # ]
   #
-  print_debug(1, "Listing files for path: %s" % path)
+  logging.info( "Listing files for path: %s" % path)
   brickftp_url = _config.api_url + '/folders/' + path
   response = requests.get(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    print_debug(5, rjson)
+    logging.debug( rjson)
   else:
     error = 'Could not get files'
-    print(error)
+    logging.critical(error)
     raise Exception(error)
     
   for file in rjson:
-    print_debug(5, file)
-    print_debug(3, file['display_name']+' -- '+file['mtime']+' -- '+file['type'])
+    logging.debug(file)
+    logging.info( file['display_name']+' -- '+file['mtime']+' -- '+file['type'])
 
   return rjson
 
@@ -82,31 +73,31 @@ def get_file_download_link(filename):
   #   }
   # ]
   #
-  print_debug(1, "Getting link for file: %s" % filename)
+  logging.info( "Getting link for file: %s" % filename)
   brickftp_url = _config.api_url + '/files/' + filename
   response = requests.get(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    print_debug(5, rjson)
+    logging.debug( rjson)
   else:
     error = 'Could not get download link'
-    print(error)
+    logging.critical(error)
     raise Exception(error)
     
-  print_debug(5, rjson)
-  print_debug(4, rjson['display_name']+' -- '+rjson['download_uri'])
+  logging.debug( rjson)
+  logging.debug( rjson['display_name']+' -- '+rjson['download_uri'])
 
   return rjson
 
 def delete_file(filename):
-  print_debug(1, "Deleting file: %s" % filename)
+  logging.info( "Deleting file: %s" % filename)
   brickftp_url = _config.api_url + '/files/' + filename
   response = requests.delete(brickftp_url, auth=(_config.api_key,'x'), proxies=_config.proxies)
   if (response.status_code == 200):
-    print_debug(5, "File deleted")
+    logging.debug( "File deleted")
   else:
     error = 'Could not delete file'
-    print(error)
+    logging.critical(error)
     raise Exception(error)
     
 
@@ -115,9 +106,8 @@ def get_file(filepath,dest_dir='.'):
   return get_file_from_link(filepath,link,dest_dir)
 
 def get_file_from_link(filepath,dl_link,dest_dir):
-  print_debug(3, "\n")
-  print_debug(1, "Downloading file %s" % filepath)
-  print_debug(4, "from link: %s" % dl_link)
+  logging.info( "Downloading file %s" % filepath)
+  logging.info( "from link: %s" % dl_link)
 
   if re.search('/',filepath):
     filename = filepath.rsplit('/',1)[1]
@@ -125,21 +115,20 @@ def get_file_from_link(filepath,dl_link,dest_dir):
     filename = filepath
 
   response = requests.get(dl_link, proxies=_config.proxies)
-  print_debug(3, "writing to: %s" % dest_dir + '/' + filename)
+  logging.info( "writing to: %s" % dest_dir + '/' + filename)
   open(os.path.join(dest_dir, filename),'wb').write(response.content)
   return os.path.join(dest_dir, filename)
 
 def move_file(filepath,newfilepath):
-  print_debug(3, "\n")
-  print_debug(1, "Moving file %s to %s" % (filepath,newfilepath))
+  logging.info( "Moving file %s to %s" % (filepath,newfilepath))
  
   brickftp_url = _config.api_url + '/files/' + filepath
   response = requests.post(brickftp_url, auth=(_config.api_key,'x'), data = {'move-destination':newfilepath}, proxies=_config.proxies)
   if (response.status_code == 201):
-    print_debug(5, "File moved")
+    logging.debug("File moved")
   else:
     error = 'Could not move file'
-    print(error)
+    logging.critical(error)
     raise Exception(error)
 
 def upload_file(filename):

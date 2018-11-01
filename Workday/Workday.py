@@ -1,22 +1,8 @@
 import requests
 import json,sys,os,errno,re,argparse
 import datetime
+import logging
 from .secrets_workday import config as wd_config
-
-#wd_config = {}
-#
-## I feel this is wrong and bad - just use the "from __ import __ as __"
-#def load_config(config_path):
-#  global wd_config
-#  if config_path and os.path.isfile(config_path):
-#    exec(open(config_path).read())
-#    # ew:
-#    wd_config = config
-#  else:
-#    try:
-#      from .secrets_workday import config as wd_config
-#    except:
-#      raise Exception("No Workday config file found!")
 
 class LocalConfig(object):
   def __init__(self):
@@ -79,16 +65,6 @@ class LocalConfig(object):
 
 _config = LocalConfig()
 
-def debug(debug=None):
-  if debug == None:
-    return _config.debug
-  else:
-    _config.debug = debug
-
-def print_debug(level, message):
-  if _config.debug >= level:
-    print("[%s] %s" % (datetime.datetime.now(),message))
-
 def get_users():
   """Gets all users from Workday
 
@@ -116,14 +92,13 @@ def get_users():
   ]
   """
 
-  print_debug(3,"\n")
-  print_debug(1,"Gathering all Workday people")
+  logging.info("Gathering all Workday people")
   try:
     r = requests.get(_config.xmatters_integration['people_url'],auth=(_config.xmatters_integration['username'],_config.xmatters_integration['password']),proxies=_config.proxies)
     results = json.loads(r.text)
     return results['Report_Entry']
   except:
-    print(sys.exc_info()[0])
+    logging.critical(sys.exc_info()[0])
     raise
 
 def get_seating():
@@ -135,8 +110,7 @@ def get_seating():
     dict: employee ID -> WPR_Desk_Number
   """
 
-  print_debug(3,"\n")
-  print_debug(1,"Gathering all Workday seating")
+  logging.info("Gathering all Workday seating")
   try:
     r = requests.get(_config.seating['url'],auth=(_config.seating['username'],_config.seating['password']),proxies=_config.proxies)
     results = json.loads(r.text)
@@ -149,7 +123,7 @@ def get_seating():
     return wd_seating_chart
     
   except:
-    print(sys.exc_info()[0])
+    logging.critical(sys.exc_info()[0])
     raise
 
 def get_sites():
@@ -175,8 +149,7 @@ def get_sites():
 
   """
 
-  print_debug(3,"\n")
-  print_debug(1,"Gathering all Workday sites")
+  logging.info("Gathering all Workday sites")
   try:
     r = requests.get(_config.xmatters_integration['sites_url'],auth=(_config.xmatters_integration['username'],_config.xmatters_integration['password']),proxies=_config.proxies)
     results = json.loads(r.text)
@@ -203,7 +176,7 @@ def get_sites():
     return wd_locations
     
   except:
-    print(sys.exc_info()[0])
+    logging.critical(sys.exc_info()[0])
     raise
 
 def date_x_days_from(date, delta_days):
@@ -219,8 +192,7 @@ def date_x_days_from(date, delta_days):
   return str(date + datetime.timedelta(days=int(delta_days)))
 
 def get_dashboard_data(type, end_date, start_date=None):
-  print_debug(3,"\n")
-  print_debug(1,"Gathering Workday People %s data" % type)
+  logging.info("Gathering Workday People %s data" % type)
 
   if not re.match('^\d{4}-\d{2}-\d{2}$', end_date):
     raise Exception("End Date does not match expected format")
@@ -237,7 +209,7 @@ def get_dashboard_data(type, end_date, start_date=None):
     url = _config.hr_dashboard['urls'][type] + '&Effective_End_Date=' + end_date + \
           '&Effective_Start_Date=' + start_date
 
-  print_debug(5,"Will grab url: %s" % url)
+  logging.debug("Will grab url: %s" % url)
 
   return get_generic_workday_report(url,_config.hr_dashboard['username'],_config.hr_dashboard['password'])
 
@@ -247,18 +219,6 @@ def get_generic_workday_report(url,uname,pword):
     r.encoding = "utf-8" # otherwise requests thinks it's ISO-8859-1
     return(r.text)
   except:
-    print(sys.exc_info()[0])
+    logging.critical(sys.exc_info()[0])
     raise
-
-#def extract_sites_from_wd(wd_users):
-#  print_debug(3,"\n")
-#  print_debug(1,"Extracting sites from Workday data")
-#  wd_locations = {}
-#  for user in wd_users:
-#    if user['Location'] in wd_locations:
-#      wd_locations[user['Location']] += 1
-#    else:
-#      wd_locations[user['Location']] = 1
-#  print_debug(3, wd_locations)
-#  return wd_locations
 

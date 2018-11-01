@@ -1,6 +1,7 @@
 import time
 import requests
 import json,sys,os,errno,re
+import logging
 from datetime import datetime
 from .secrets_xmatters import config as xm_config
 import Util
@@ -45,32 +46,6 @@ class LocalConfig(object):
 
 _config = LocalConfig()
 
-def print_debug(level, message):
-  if _config.debug >= level:
-    print("[%s] %s" % (datetime.now(),message))
-
-def debug(debug=None):
-  if debug == None:
-    return _config.debug
-  else:
-    _config.debug = debug
-
-#def is_production(is_prod=None):
-#  if is_prod == None:
-#    return _config.production
-#  elif is_prod:
-#    _config.base_URL         = _config.base_URL_prod
-#    _config.base_URL_old_api = _config.base_URL_old_api_prod
-#    _config.base_URL_no_path = _config.base_URL_no_path_prod
-#    _config.supervisor_id    = _config.supervisor_id_prod
-#    _config.production       = True
-#  else:
-#    _config.base_URL         = _config.base_URL_dev
-#    _config.base_URL_old_api = _config.base_URL_old_api_dev
-#    _config.base_URL_no_path = _config.base_URL_no_path_dev
-#    _config.supervisor_id    = _config.supervisor_id_dev
-#    _config.production       = False
-
 def get_access_token():
   if not _config.access_token:
     _config.access_token = _get_access_token()
@@ -87,11 +62,11 @@ def _get_access_token():
 
   if (response.status_code == 200):
      rjson = response.json();
-     print_debug(5, 'Access token: ' + rjson.get('access_token') + ', \nRefresh token: ' + rjson.get('refresh_token'))
+     logging.debug('Access token: ' + rjson.get('access_token') + ', \nRefresh token: ' + rjson.get('refresh_token'))
      access_token = rjson.get('access_token')
   else:
      error = 'Could not get an access token'
-     print(error)
+     logging.critical(error)
      raise Exception(error)
 
   return access_token
@@ -121,33 +96,33 @@ def get_all_sites():
     }
   """
 
-  print_debug(3, "\n")
-  print_debug(1, "Gathering all XMatters sites")
+  logging.info( "\n")
+  logging.info( "Gathering all XMatters sites")
   all_sites_url = _config.base_URL_old_api + 'sites'
   xm_sites = {}
   while True:
     response = requests.get(all_sites_url, auth=(_config.xm_username,_config.xm_password), proxies=_config.proxies)
     if (response.status_code == 200):
       rjson = response.json();
-      print_debug(5, rjson)
+      logging.debug(rjson)
     else:
       error = 'Could not get sites'
-      print(error)
+      logging.critical(error)
       raise Exception(error)
     
     for site in rjson['sites']:
-      print_debug(3, site['name']+' -- '+site['identifier'])
-      print_debug(5, site)
+      logging.debug( site['name']+' -- '+site['identifier'])
+      logging.debug(site)
       if site['status'] == 'ACTIVE':
         xm_sites[ site['name'] ] = site['identifier']
       else:
-        print_debug(2, "Skipping XMatters site %s because status is %s" % (site['name'],site['status']))
+        logging.warning( "Skipping XMatters site %s because status is %s" % (site['name'],site['status']))
 
     if rjson['nextRecordsURL'] == '':
-      print_debug(5, "No nextRecordsURL found. done with fetching")
+      logging.debug("No nextRecordsURL found. done with fetching")
       break
     else:
-      print_debug(5,"NEXT RECORDS URL FOUND: %s" % rjson['nextRecordsURL'])
+      logging.debug("NEXT RECORDS URL FOUND: %s" % rjson['nextRecordsURL'])
       all_sites_url = _config.url + rjson['nextRecordsURL']
 
   return xm_sites
@@ -201,8 +176,8 @@ def get_all_people():
     }
   """
 
-  print_debug(3, "\n")
-  print_debug(1, "Gathering all XMatters people")
+  logging.info("\n")
+  logging.info( "Gathering all XMatters people")
   url = _config.base_URL + '/people'
 
   headers = {'Authorization': 'Bearer ' + get_access_token()}
@@ -213,15 +188,15 @@ def get_all_people():
 
     if (response.status_code == 200):
       rjson = response.json()
-      print_debug(2, 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " people.")
+      logging.debug( 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " people.")
     else:
-      print(response)
+      logging.critical(response)
       raise Exception(response.content)
   
     for person in rjson['data']:
-      print_debug(4, "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
+      logging.debug( "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
       if person['lastName'] == 'Valaas':
-        print_debug(3, person)
+        logging.info(person)
       if person['lastName'] == '[NO LAST NAME]':
         person['lastName'] = ''
       if person['firstName'] == '[NO FIRST NAME]':
@@ -261,8 +236,8 @@ def get_devices_by_person(person_id):
     [...]
   """
 
-  print_debug(3, "\n")
-  print_debug(1, "Gathering all devices for %s" % person_id)
+  logging.info("\n")
+  logging.info( "Gathering all devices for %s" % person_id)
   url = _config.base_URL + '/people/' + person_id + '/devices'
 
   headers = {'Authorization': 'Bearer ' + get_access_token()}
@@ -273,13 +248,13 @@ def get_devices_by_person(person_id):
 
     if (response.status_code == 200):
       rjson = response.json()
-      print_debug(2, 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " devices.")
+      logging.debug( 'Retrieved ' + str(rjson['count']) + ' of ' + str(rjson['total']) + " devices.")
     else:
-      print(response)
+      logging.critical(response)
       raise Exception(response.content)
   
     for device in rjson['data']:
-      print_debug(4, "Device - %s %s" % (device['name'],device['targetName']))
+      logging.debug("Device - %s %s" % (device['name'],device['targetName']))
       xm_devices.append(device)
 
     if 'next' in rjson['links']:
@@ -290,14 +265,14 @@ def get_devices_by_person(person_id):
   return xm_devices
 
 def add_work_email_device(xm_user):
-  print_debug(3, "\n")
-  print_debug(1, "Adding device %s to XMatters" % (xm_user['targetName']))
+  logging.info("\n")
+  logging.info("Adding device %s to XMatters" % (xm_user['targetName']))
   url = _config.base_URL + '/devices'
 
   headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
   if not re.search('@', xm_user['targetName']):
-    print_debug(1, "NOT adding device for %s because that ain't no email address!" % xm_user['targetName'])
+    logging.error("NOT adding device for %s because that ain't no email address!" % xm_user['targetName'])
     return
 
   device_data = {
@@ -316,9 +291,9 @@ def add_work_email_device(xm_user):
   if (response.status_code == 201):
     rjson = response.json()
   else:
-    print("ERROR: something went wrong adding device for user %s" % (xm_user['targetName']))
-    print(response)
-    print(response.content)
+    logging.critical("ERROR: something went wrong adding device for user %s" % (xm_user['targetName']))
+    logging.critical(response)
+    logging.critical(response.content)
     raise Exception(response.content)
 
 
@@ -333,8 +308,8 @@ def add_work_email_device(xm_user):
 # https://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/appendixrestapi.htm?cshid=apiGETsites#GETsites
 #
 def add_site(site):
-  print_debug(3, "\n")
-  print_debug(1, "Adding site %s to XMatters" % site)
+  logging.info("\n")
+  logging.info("Adding site %s to XMatters" % site)
 
   # fixup "bad" data
   if site['country'] == 'United States of America':
@@ -376,17 +351,17 @@ def add_site(site):
   response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    print_debug(1, rjson)
+    logging.info(rjson)
   else:
-    print('Could not create site')
-    print(response.content)
+    logging.critical('Could not create site')
+    logging.critical(response.content)
     raise Exception(response.content)
 
 # OLD API
 # https://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/appendixrestapi.htm?cshid=apiGETsites#GETsites
 #
 def set_site_inactive(xm_site_id):
-  print_debug(1, "Setting site %s to inactive" % xm_site_id)
+  logging.info("Setting site %s to inactive" % xm_site_id)
 
   site_data = {
     'status': 'INACTIVE',
@@ -398,40 +373,40 @@ def set_site_inactive(xm_site_id):
   response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    print_debug(1, rjson)
+    logging.info(rjson)
   else:
-    print('Could not deactivate site')
-    print(response.content)
+    logging.critical('Could not deactivate site')
+    logging.critical(response.content)
     raise Exception(response.content)
 
 def add_new_sites(wd_sites,xm_sites):
-  print_debug(3, "\n")
-  print_debug(1, "Adding new sites to XMatters")
+  logging.info( "\n")
+  logging.info( "Adding new sites to XMatters")
   xm_sites_in_wd = {}
   for wd_site in wd_sites:
     if wd_site in xm_sites:
-      print_debug(3, "WD site %s found in XMatters! No action." % wd_site)
+      logging.debug( "WD site %s found in XMatters! No action." % wd_site)
       xm_sites_in_wd[ wd_site ] = 1
     else:
-      print_debug(1, "WD site %s NOT found in XMatters! Adding to XMatters." % wd_site)
+      logging.info( "WD site %s NOT found in XMatters! Adding to XMatters." % wd_site)
       add_site(wd_sites[wd_site])
 
 
   return xm_sites_in_wd
 
 def delete_sites(xm_sites,xm_sites_in_wd):
-  print_debug(3, "\n")
-  print_debug(1, "Deleting empty sites from XMatters")
+  logging.info( "\n")
+  logging.info( "Deleting empty sites from XMatters")
   for site in xm_sites:
-    if site not in xm_sites_in_wd:
-      print_debug(1, "Site %s not in WorkDay. INACTIVATING %s from XMatters" % (site,xm_sites[site]))
+    if site not in xm_sites_in_wd and site != 'Mountain View Office':
+      logging.info( "Site %s not in WorkDay. INACTIVATING %s from XMatters" % (site,xm_sites[site]))
       set_site_inactive(xm_sites[site])
 
 # NEW API
 # https://help.xmatters.com/xmAPI/?python#modify-a-person
 #
 def update_user(wd_user,xm_user,xm_sites):
-  print_debug(1, "Updating user %s (%s) in XMatters" % (xm_user['id'],xm_user['targetName']))
+  logging.info( "Updating user %s (%s) in XMatters" % (xm_user['id'],xm_user['targetName']))
   url = _config.base_URL + '/people'
 
   headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
@@ -458,24 +433,24 @@ def update_user(wd_user,xm_user,xm_sites):
     }
   }
  
-  print_debug(3, "will upload this:")
-  print_debug(3, json.dumps(person_data))
+  logging.info( "will upload this:")
+  logging.info( json.dumps(person_data))
 
   response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
   if (response.status_code == 200):
     rjson = response.json()
   else:
-    print("ERROR: something went wrong updating user %s (%s)" % (xm_user['id'],xm_user['targetName']))
-    print(response)
+    logging.critical("ERROR: something went wrong updating user %s (%s)" % (xm_user['id'],xm_user['targetName']))
+    logging.critical(response)
     raise Exception(response.content)
 
 # NEW API
 # https://help.xmatters.com/xmAPI/?python#create-a-person
 #
 def add_user(wd_user,xm_sites):
-  print_debug(3, "\n")
-  print_debug(1, "Adding user %s to XMatters" % (wd_user['User_Email_Address']))
+  logging.info( "\n")
+  logging.info( "Adding user %s to XMatters" % (wd_user['User_Email_Address']))
   url = _config.base_URL + '/people'
 
   headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
@@ -506,17 +481,17 @@ def add_user(wd_user,xm_sites):
     }
   }
  
-  print_debug(3, "will upload this:")
-  print_debug(3, json.dumps(person_data))
+  logging.info( "will upload this:")
+  logging.info( json.dumps(person_data))
 
   response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
   if (response.status_code == 201):
     rjson = response.json()
   else:
-    print("ERROR: something went wrong adding user %s" % (wd_user['User_Email_Address']))
-    print(response)
-    print(response.content)
+    logging.critical("ERROR: something went wrong adding user %s" % (wd_user['User_Email_Address']))
+    logging.critical(response)
+    logging.critical(response.content)
     raise Exception(response.content)
 
   person_data['id'] = rjson['id']
@@ -526,7 +501,7 @@ def add_user(wd_user,xm_sites):
 # https://help.xmatters.com/xmAPI/?python#delete-a-person
 #
 def actual_person_delete(target):
-  print_debug(1, "Sending DELETE request for %s" % target)
+  logging.info( "Sending DELETE request for %s" % target)
 
   url = _config.base_URL + '/people/' + target
  
@@ -535,22 +510,22 @@ def actual_person_delete(target):
   response = requests.delete(url, headers=headers, proxies=_config.proxies)
 
   if (response.status_code == 200):
-    print_debug(1, 'Deleted person ' +  response.json().get('targetName'))
+    logging.info( 'Deleted person ' +  response.json().get('targetName'))
   elif (response.status_code == 204):
-    print_debug(1, 'The person could not be found.')
+    logging.warning( 'The person could not be found.')
   else:
-    print('Could not delete person!')
-    print(response)
-    print(response.content)
+    logging.critical('Could not delete person!')
+    logging.critical(response)
+    logging.critical(response.content)
     raise Exception(response.content)
 
 def delete_users(xm_users,users_seen_in_wd):
-  print_debug(3, "\n")
-  print_debug(1, "Deleting old users from XMatters")
+  logging.info( "\n")
+  logging.info( "Deleting old users from XMatters")
   for user in xm_users:
     if not re.search('@',user):
       # let's just skip any usernames that don't look like emails
       continue
     if user not in users_seen_in_wd:
-      print_debug(1, "User %s not seen in workday, will delete from xmatters" % user)
+      logging.info( "User %s not seen in workday, will delete from xmatters" % user)
       actual_person_delete(user)

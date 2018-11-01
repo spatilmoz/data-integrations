@@ -1,6 +1,7 @@
 import time
 import requests
 import json,sys,os,errno,re
+import logging
 from datetime import datetime
 from .secrets_util import config as util_config
 
@@ -13,16 +14,20 @@ class LocalConfig(object):
 
 _config = LocalConfig()
 
-def debug(debug=None):
-  if debug == None:
-    return _config.debug
-  else:
-    _config.debug = debug
+def set_up_logging(level):
+  log_level = logging.INFO
+  if re.match('^debug$', level, flags=re.IGNORECASE):
+    log_level = logging.DEBUG
+  elif re.match('^info$', level, flags=re.IGNORECASE):
+    log_level = logging.INFO
+  elif re.match('^warn', level, flags=re.IGNORECASE):
+    log_level = logging.WARNING
+  elif re.match('^err', level, flags=re.IGNORECASE):
+    log_level = logging.ERROR
+  elif re.match('^crit', level, flags=re.IGNORECASE):
+    log_level = logging.CRITICAL
+  logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s', level=log_level)
 
-def print_debug(level, message):
-  if _config.debug >= level:
-    print("[%s] %s" % (datetime.now(),message))
-  
 def postal_to_coords_and_timezone(loc):
   from .classes.mozgeo import MozGeo
   geo = MozGeo(_config)

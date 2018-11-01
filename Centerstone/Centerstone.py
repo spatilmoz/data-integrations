@@ -4,6 +4,7 @@ import json,sys,os,errno,re
 from secrets_centerstone import config as cs_config
 from datetime import datetime
 from subprocess import call
+import logging
 
 class LocalConfig(object):
   def __init__(self):
@@ -27,16 +28,6 @@ class LocalConfig(object):
     return cs_config[attr]
 
 _config = LocalConfig()
-
-def print_debug(level, message):
-  if _config.debug >= level:
-    print "[%s] %s" % (datetime.now(),message)
-
-def debug(debug=None):
-  if debug == None:
-    return _config.debug
-  else:
-    _config.debug = debug
 
 def get_seating_data():
   # This happens from the AWS boomi box - maybe a cert there? or limited by IP?
