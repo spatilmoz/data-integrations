@@ -435,8 +435,8 @@ def update_user(wd_user,xm_user,xm_sites):
     }
   }
  
-  logger.info( "will upload this:")
-  logger.info( json.dumps(person_data))
+  logger.debug( "will upload this:")
+  logger.debug( json.dumps(person_data))
 
   response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
@@ -483,8 +483,8 @@ def add_user(wd_user,xm_sites):
     }
   }
  
-  logger.info( "will upload this:")
-  logger.info( json.dumps(person_data))
+  logger.debug( "will upload this:")
+  logger.debug( json.dumps(person_data))
 
   response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
