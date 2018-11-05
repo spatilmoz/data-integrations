@@ -9,6 +9,7 @@ import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
 import BrickFTP
+import Util
 
 
 def get_date_from_sfmc_filename(filename):
