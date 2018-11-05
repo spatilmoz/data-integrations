@@ -92,12 +92,12 @@ def get_wd_sites_from_users(users):
     postal  = user.get('User_Home_Postal_Code','')
     unq_key = country + ':' + postal
     if not country:
-      logger.warning("NO COUNTRY!!")
-      logger.warning(user)
+      logger.debug("NO COUNTRY!!")
+      logger.debug(user)
       country = 'United States of America'
     if not postal:
-      logger.warning("NO POSTAL!!")
-      logger.warning(user)
+      logger.debug("NO POSTAL!!")
+      logger.debug(user)
       postal = '97209'
 
     if unq_key not in unique_sites:
@@ -149,6 +149,9 @@ if __name__ == "__main__":
   # delete any sites NOT in workday that ARE in xmatters
   XMatters.delete_sites(xm_sites,xm_sites_in_wd)
   
+  # re-get all sites in xmatters
+  xm_sites = XMatters.get_all_sites()
+
   # get all users from xmatters
   xm_users = XMatters.get_all_people()
 
