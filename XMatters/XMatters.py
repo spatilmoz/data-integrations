@@ -8,19 +8,7 @@ import Util
 
 logger = logging.getLogger(__name__)
 
-#xm_config = {}
-#
-#def load_config(config_path):
-#  global xm_config
-#  if config_path and os.path.isfile(config_path):
-#    exec(open(config_path).read())
-#    xm_config = config
-#  else:
-#    try:
-#      from .secrets_xmatters import config as xm_config
-#    except:
-#      raise Exception("No XMatters config file found!")
-      
+USE_BASIC_AUTH = True
 
 class LocalConfig(object):
   def __init__(self):
@@ -30,18 +18,7 @@ class LocalConfig(object):
     self.base_URL         = xm_config['url'] + new_api_suffix
     self.base_URL_old_api = xm_config['url'] + old_api_suffix
 
-#    host_dev                   = 'mozilla-np'
-#    host_prod                  = 'mozilla'
-#    self.base_URL_dev          = 'https://' + host_dev  + '.xmatters.com' + new_api_suffix
-#    self.base_URL_prod         = 'https://' + host_prod + '.xmatters.com' + new_api_suffix
-#    self.base_URL_old_api_dev  = 'https://' + host_dev  + '.xmatters.com' + old_api_suffix
-#    self.base_URL_old_api_prod = 'https://' + host_prod + '.xmatters.com' + old_api_suffix
-#    self.base_URL_no_path_dev  = 'https://' + host_dev  + '.xmatters.com'
-#    self.base_URL_no_path_prod = 'https://' + host_prod + '.xmatters.com'
-#    self.production            = False
-#    self.supervisor_id_dev     = '72a77545-4c4b-465d-b22a-41a14e0a1b78'
-#    self.supervisor_id_prod    = '6cc72a91-2b6d-4bf0-8551-019bd2e9e87c'
-    self.access_token          = False
+    self.access_token     = False
 
   def __getattr__(self, attr):
     return xm_config[attr]
@@ -58,6 +35,10 @@ def _get_access_token():
   grant_type='password'
   url = _config.base_URL + endpoint_URL +'?grant_type='+grant_type+'&client_id='+_config.xm_client_id+'&username='+_config.xm_username+'&password='+_config.xm_password
 
+  if USE_BASIC_AUTH:
+    return ''
+
+  #print(url)
   headers = {'Content-Type': 'application/json'}
 
   response = requests.post(url, headers=headers, proxies=_config.proxies)
@@ -67,6 +48,8 @@ def _get_access_token():
      logger.debug('Access token: ' + rjson.get('access_token') + ', \nRefresh token: ' + rjson.get('refresh_token'))
      access_token = rjson.get('access_token')
   else:
+     print(response.status_code)
+     logger.critical(response.json())
      error = 'Could not get an access token'
      logger.critical(error)
      raise Exception(error)
@@ -183,10 +166,15 @@ def get_all_people():
   url = _config.base_URL + '/people'
 
   headers = {'Authorization': 'Bearer ' + get_access_token()}
+  if USE_BASIC_AUTH:
+    headers = {}
 
   xm_people = {}
   while True:
-    response = requests.get(url, headers=headers, proxies=_config.proxies)
+    if USE_BASIC_AUTH:
+      response = requests.get(url, auth=(_config.xm_username,_config.xm_password), proxies=_config.proxies)
+    else:
+      response = requests.get(url, headers=headers, proxies=_config.proxies)
 
     if (response.status_code == 200):
       rjson = response.json()
@@ -243,10 +231,15 @@ def get_devices_by_person(person_id):
   url = _config.base_URL + '/people/' + person_id + '/devices'
 
   headers = {'Authorization': 'Bearer ' + get_access_token()}
+  if USE_BASIC_AUTH:
+    headers = {}
 
   xm_devices = []
   while True:
-    response = requests.get(url, headers=headers, proxies=_config.proxies)
+    if USE_BASIC_AUTH:
+      response = requests.get(url, auth=(_config.xm_username,_config.xm_password), proxies=_config.proxies)
+    else:
+      response = requests.get(url, headers=headers, proxies=_config.proxies)
 
     if (response.status_code == 200):
       rjson = response.json()
@@ -271,7 +264,10 @@ def add_work_email_device(xm_user):
   logger.info("Adding device %s to XMatters" % (xm_user['targetName']))
   url = _config.base_URL + '/devices'
 
-  headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
+  if USE_BASIC_AUTH:
+    headers = {'Content-Type': 'application/json'}
+  else:
+    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
   if not re.search('@', xm_user['targetName']):
     logger.error("NOT adding device for %s because that ain't no email address!" % xm_user['targetName'])
@@ -288,7 +284,10 @@ def add_work_email_device(xm_user):
     'testStatus' : 'UNTESTED',
   }
 
-  response = requests.post(url, headers=headers, data=json.dumps(device_data), proxies=_config.proxies)
+  if USE_BASIC_AUTH:
+    response = requests.post(url, headers=headers, auth=(_config.xm_username,_config.xm_password), data=json.dumps(device_data), proxies=_config.proxies)
+  else:
+    response = requests.post(url, headers=headers, data=json.dumps(device_data), proxies=_config.proxies)
 
   if (response.status_code == 201):
     rjson = response.json()
@@ -411,7 +410,10 @@ def update_user(wd_user,xm_user,xm_sites):
   logger.info( "Updating user %s (%s) in XMatters" % (xm_user['id'],xm_user['targetName']))
   url = _config.base_URL + '/people'
 
-  headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
+  if USE_BASIC_AUTH:
+    headers = { 'Content-Type': 'application/json' }
+  else:
+    headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
   manager_name = ''
   if 'Worker_s_Manager' in wd_user:
@@ -438,7 +440,10 @@ def update_user(wd_user,xm_user,xm_sites):
   logger.debug( "will upload this:")
   logger.debug( json.dumps(person_data))
 
-  response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
+  if USE_BASIC_AUTH:
+    response = requests.post(url, headers=headers, auth=(_config.xm_username,_config.xm_password), data=json.dumps(person_data), proxies=_config.proxies)
+  else:
+    response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
   if (response.status_code == 200):
     rjson = response.json()
@@ -455,7 +460,10 @@ def add_user(wd_user,xm_sites):
   logger.info( "Adding user %s to XMatters" % (wd_user['User_Email_Address']))
   url = _config.base_URL + '/people'
 
-  headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
+  if USE_BASIC_AUTH:
+    headers = {'Content-Type': 'application/json'}
+  else:
+    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + get_access_token() }
 
   manager_name = ''
   if 'Worker_s_Manager' in wd_user:
@@ -486,7 +494,10 @@ def add_user(wd_user,xm_sites):
   logger.debug( "will upload this:")
   logger.debug( json.dumps(person_data))
 
-  response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
+  if USE_BASIC_AUTH:
+    response = requests.post(url, headers=headers, auth=(_config.xm_username,_config.xm_password), data=json.dumps(person_data), proxies=_config.proxies)
+  else:
+    response = requests.post(url, headers=headers, data=json.dumps(person_data), proxies=_config.proxies)
 
   if (response.status_code == 201):
     rjson = response.json()
@@ -509,7 +520,10 @@ def actual_person_delete(target):
  
   headers = {'Authorization': 'Bearer ' +  get_access_token() }
 
-  response = requests.delete(url, headers=headers, proxies=_config.proxies)
+  if USE_BASIC_AUTH:
+    response = requests.delete(url, auth=(_config.xm_username,_config.xm_password), proxies=_config.proxies)
+  else:
+    response = requests.delete(url, headers=headers, proxies=_config.proxies)
 
   if (response.status_code == 200):
     logger.info( 'Deleted person ' +  response.json().get('targetName'))
