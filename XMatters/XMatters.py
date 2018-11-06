@@ -185,8 +185,6 @@ def get_all_people():
   
     for person in rjson['data']:
       logger.debug( "%s %s (%s)" % (person['firstName'],person['lastName'],person['targetName']))
-      if person['lastName'] == 'Valaas':
-        logger.info(person)
       if person['lastName'] == '[NO LAST NAME]':
         person['lastName'] = ''
       if person['firstName'] == '[NO FIRST NAME]':
