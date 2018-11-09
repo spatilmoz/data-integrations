@@ -258,7 +258,6 @@ def get_devices_by_person(person_id):
   return xm_devices
 
 def add_work_email_device(xm_user):
-  logger.info("\n")
   logger.info("Adding device %s to XMatters" % (xm_user['targetName']))
   url = _config.base_URL + '/devices'
 
@@ -307,7 +306,6 @@ def add_work_email_device(xm_user):
 # https://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/appendixrestapi.htm?cshid=apiGETsites#GETsites
 #
 def add_site(site):
-  logger.info("\n")
   logger.info("Adding site %s to XMatters" % site)
 
   # fixup "bad" data
@@ -350,7 +348,7 @@ def add_site(site):
   response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    logger.info(rjson)
+    logger.debug(rjson)
   else:
     logger.critical('Could not create site')
     logger.critical(response.content)
@@ -372,14 +370,13 @@ def set_site_inactive(xm_site_id):
   response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data), proxies=_config.proxies)
   if (response.status_code == 200):
     rjson = response.json();
-    logger.info(rjson)
+    logger.debug(rjson)
   else:
     logger.critical('Could not deactivate site')
     logger.critical(response.content)
     raise Exception(response.content)
 
 def add_new_sites(wd_sites,xm_sites):
-  logger.info( "\n")
   logger.info( "Adding new sites to XMatters")
   xm_sites_in_wd = {}
   for wd_site in wd_sites:
@@ -454,7 +451,6 @@ def update_user(wd_user,xm_user,xm_sites):
 # https://help.xmatters.com/xmAPI/?python#create-a-person
 #
 def add_user(wd_user,xm_sites):
-  logger.info( "\n")
   logger.info( "Adding user %s to XMatters" % (wd_user['User_Email_Address']))
   url = _config.base_URL + '/people'
 

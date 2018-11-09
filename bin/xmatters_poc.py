@@ -63,11 +63,11 @@ def iterate_thru_wd_users(wd_users,xm_users,xm_sites):
   wd_users_seen = {}
   for user in wd_users:
     if 'User_Email_Address' not in user:
-      logger.warning("Workday User ID %s (%s) has no email address! Skipping." % \
+      logger.info("Workday User ID %s (%s) has no email address! Skipping." % \
         (user['User_Employee_ID'], user['User_Preferred_First_Name'] + ' ' + user['User_Preferred_Last_Name']))
       continue
     elif not re.search('(?:mozilla.com|mozillafoundation.org|getpocket.com)$',user['User_Email_Address']):
-      logger.warning( "User {} has non-matching email. Skipping.".format(user['User_Email_Address']))
+      logger.info( "User {} has non-matching email. Skipping.".format(user['User_Email_Address']))
       continue
     wd_users_seen[ user['User_Email_Address'] ] = 1
     if user['User_Email_Address'] in xm_users:
