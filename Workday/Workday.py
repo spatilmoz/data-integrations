@@ -208,8 +208,10 @@ def get_dashboard_data(type, end_date, start_date=None):
       # if no start date is provided, grab the last 7 days
       start_date = date_x_days_from(end_date, '-6')
 
-    url = _config.hr_dashboard['urls'][type] + '&Effective_End_Date=' + end_date + \
-          '&Effective_Start_Date=' + start_date
+    url = _config.hr_dashboard['urls'][type]    + '&Effective_End_Date=' + end_date + \
+          '&Effective_Start_Date=' + start_date + '&Effective_as_of_Date_and_Time=' + end_date + \
+          'T23%3A59%3A59.000-07%3A00'           + '&Entry_Date_and_Time='           + end_date + \
+          'T23%3A59%3A59.000-07%3A00'
 
   logger.debug("Will grab url: %s" % url)
 
