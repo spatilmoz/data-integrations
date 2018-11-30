@@ -74,6 +74,6 @@ if __name__ == "__main__":
     logger.info( "Writing %s data to %s" % (report_type, outfile))
 
     with open(outfile, 'w') as f:
-      f.write(wd_csv_data)
+      f.write(wd_csv_data.encode('utf-8'))
 
   logger.info( "Finished.")
