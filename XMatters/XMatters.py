@@ -84,7 +84,8 @@ def get_all_sites():
   logger.info( "\n")
   logger.info( "Gathering all XMatters sites")
   all_sites_url = _config.base_URL_old_api + 'sites'
-  xm_sites = {}
+  xm_sites          = {}
+  xm_sites_inactive = {}
   while True:
     response = requests.get(all_sites_url, auth=(_config.xm_username,_config.xm_password), proxies=_config.proxies)
     if (response.status_code == 200):
@@ -101,7 +102,7 @@ def get_all_sites():
       if site['status'] == 'ACTIVE':
         xm_sites[ site['name'] ] = site['identifier']
       else:
-        logger.debug( "Skipping XMatters site %s because status is %s" % (site['name'],site['status']))
+        xm_sites_inactive[ site['name'] ] = site['identifier']
 
     if rjson['nextRecordsURL'] == '':
       logger.debug("No nextRecordsURL found. done with fetching")
@@ -110,7 +111,7 @@ def get_all_sites():
       logger.debug("NEXT RECORDS URL FOUND: %s" % rjson['nextRecordsURL'])
       all_sites_url = _config.url + rjson['nextRecordsURL']
 
-  return xm_sites
+  return xm_sites, xm_sites_inactive
 
 # get all people from xmatters
 # NEW API
@@ -313,6 +314,8 @@ def add_site(site):
     site['country'] = 'United States'
   elif site['country'] == 'Vietnam':
     site['country'] = 'Viet Nam'
+  elif site['country'] == 'Czechia':
+    site['country'] = 'Czech Republic'
   if site['postal_code'] == 'CZECH REPUBLIC':
     site['postal_code'] = ''
 
@@ -339,6 +342,7 @@ def add_site(site):
     'postalCode': site['postal_code'],
     'latitude':   lat,
     'longitude':  lng,
+    'language':   'English',
     'status':     'ACTIVE',
   }
   sites_url = _config.base_URL_old_api + 'sites'
@@ -346,7 +350,7 @@ def add_site(site):
   headers = {'Content-Type': 'application/json'}
 
   response =  requests.post(sites_url, auth=(_config.xm_username,_config.xm_password), headers=headers, data=json.dumps(site_data), proxies=_config.proxies)
-  if (response.status_code == 200):
+  if (response.status_code == 200 or response.status_code == 201):
     rjson = response.json();
     logger.debug(rjson)
   else:
@@ -354,14 +358,21 @@ def add_site(site):
     logger.critical(response.content)
     raise Exception(response.content)
 
+
+def set_site_inactive(xm_site_id):
+  set_site_status(xm_site_id, 'INACTIVE')
+
+def set_site_active(xm_site_id):
+  set_site_status(xm_site_id, 'ACTIVE')
+
 # OLD API
 # https://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/appendixrestapi.htm?cshid=apiGETsites#GETsites
 #
-def set_site_inactive(xm_site_id):
-  logger.info("Setting site %s to inactive" % xm_site_id)
+def set_site_status(xm_site_id, status):
+  logger.info("Setting site %s to %s" % (xm_site_id, status))
 
   site_data = {
-    'status': 'INACTIVE',
+    'status': status,
   }
   sites_url = _config.base_URL_old_api + 'sites/' + xm_site_id
 
@@ -376,13 +387,16 @@ def set_site_inactive(xm_site_id):
     logger.critical(response.content)
     raise Exception(response.content)
 
-def add_new_sites(wd_sites,xm_sites):
+def add_new_sites(wd_sites,xm_sites,xm_sites_inactive):
   logger.info( "Adding new sites to XMatters")
   xm_sites_in_wd = {}
   for wd_site in wd_sites:
     if wd_site in xm_sites:
       logger.debug( "WD site %s found in XMatters! No action." % wd_site)
       xm_sites_in_wd[ wd_site ] = 1
+    elif wd_site in xm_sites_inactive:
+      logger.info( "WD site %s INACTIVE in XMatters! Reactivating." % wd_site)
+      set_site_active(xm_sites_inactive[wd_site])
     else:
       logger.info( "WD site %s NOT found in XMatters! Adding to XMatters." % wd_site)
       add_site(wd_sites[wd_site])

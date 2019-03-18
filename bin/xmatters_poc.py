@@ -125,7 +125,7 @@ if __name__ == "__main__":
   logger.info("Starting...")
 
   # get all sites in xmatters
-  xm_sites = XMatters.get_all_sites()
+  xm_sites, xm_sites_inactive = XMatters.get_all_sites()
 
   # get all users from workday
   wd_users = Workday.get_users()
@@ -144,13 +144,13 @@ if __name__ == "__main__":
       exit()
 
   # add any sites in workday that aren't in xmatters to xmatters
-  xm_sites_in_wd = XMatters.add_new_sites(wd_sites,xm_sites)
+  xm_sites_in_wd = XMatters.add_new_sites(wd_sites,xm_sites,xm_sites_inactive)
 
   # delete any sites NOT in workday that ARE in xmatters
   XMatters.delete_sites(xm_sites,xm_sites_in_wd)
   
   # re-get all sites in xmatters
-  xm_sites = XMatters.get_all_sites()
+  xm_sites, xm_sites_inactive = XMatters.get_all_sites()
 
   # get all users from xmatters
   xm_users = XMatters.get_all_people()
