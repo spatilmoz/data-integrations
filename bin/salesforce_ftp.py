@@ -62,7 +62,7 @@ if __name__ == "__main__":
   files_list = SalesforceFTP.list_files(path=path)
   for filename, facts in files_list:
     print(filename)
-    if facts['type'] == 'file' and re.match('DailyEmailSendSummary_', filename):
+    if facts['type'] == 'file' and re.match('DailyEmailSendSummary', filename):
       print(facts)
       file_date = get_date_from_modify(facts['modify'])
       print(file_date)
