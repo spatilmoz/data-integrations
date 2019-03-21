@@ -30,7 +30,6 @@ def get_access_token():
     _config.access_token = _get_access_token()
   return _config.access_token
 
-
 def _get_access_token():
   endpoint_URL = '/oauth2/token' 
   grant_type='password'
