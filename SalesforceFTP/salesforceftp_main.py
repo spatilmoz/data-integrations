@@ -4,6 +4,7 @@ import json,sys,os,errno,re
 from secrets_salesforceftp import config as salesforceftp_config
 from datetime import datetime
 import logging
+from subprocess import call
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,16 @@ def get_file(path, filename, dest_dir='.'):
 
   ftp_obj.cwd(path)
   ftp_obj.retrbinary('RETR %s' % filename, open(os.path.join(dest_dir, filename), 'wb').write)
+
+def get_file_stupid_way(path, filename, dest_dir='.'):
+  logger.info( "Downloading file %s the stupid way" % filename)
+
+  if 'https' in _config.proxies:
+    command_string = "set ftp:proxy %s; open %s; USER %s %s; GET %s; quit" % ( _config.proxies['https'], _config.hostname, _config.username, _config.password, os.path.join(path, filename))
+  else:
+    command_string = "open %s; USER %s %s; GET %s; quit" % ( _config.hostname, _config.username, _config.password, os.path.join(path, filename))
+  call(['lftp', '-e', command_string], cwd=dest_dir)
+
 
 def move_file(filepath,newfilepath):
   # UNIMPLEMENTED

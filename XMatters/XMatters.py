@@ -38,7 +38,6 @@ def _get_access_token():
   if USE_BASIC_AUTH:
     return ''
 
-  #print(url)
   headers = {'Content-Type': 'application/json'}
 
   response = requests.post(url, headers=headers, proxies=_config.proxies)

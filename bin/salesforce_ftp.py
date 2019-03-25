@@ -4,7 +4,6 @@ from __future__ import division
 import time
 import json,sys,os,errno,re,argparse
 from datetime import datetime
-from subprocess import call
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
@@ -26,8 +25,8 @@ def get_date_from_modify(modify_date):
   else:
     raise Exception('unable to parse modify date %s' % modify_date)
 
-def create_dest_dir(dirname):
-  full_path = os.path.join(args.dest_dir, dirname)
+def create_dest_dir(dest_dir, dirname):
+  full_path = os.path.join(dest_dir, dirname)
   if os.path.isdir(full_path):
     logger.info( "Directory exists, not creating: %s" % full_path)
   else:
@@ -35,11 +34,11 @@ def create_dest_dir(dirname):
     os.mkdir(full_path)
   return full_path
 
-def download_file( path, filename, date ):
+def download_file( dest_dir, path, filename, date ):
   #date = get_date_from_filename(filename)
-  full_dest_path = create_dest_dir(date)
+  full_dest_path = create_dest_dir(dest_dir, date)
 
-  downloaded_file_and_path = SalesforceFTP.get_file(path, filename, full_dest_path)
+  downloaded_file_and_path = SalesforceFTP.get_file_stupid_way(path, filename, full_dest_path)
 
 if __name__ == "__main__":
  
@@ -59,6 +58,9 @@ if __name__ == "__main__":
 
   path = "/reports"
 
+  download_file( args.dest_dir, path, 'DailyEmailSendSummary.csv', args.date )
+  exit()
+
   files_list = SalesforceFTP.list_files(path=path)
   for filename, facts in files_list:
     print(filename)
@@ -70,7 +72,7 @@ if __name__ == "__main__":
       if args.date and args.date != file_date:
         logger.warning( "--date specified, skipping non-date-matching filename: %s date: %s" % (filename,file_date))
         continue
-      download_file( path, filename, file_date )
+      download_file( args.dest_dir, path, filename, file_date )
       if args.archive:
         raise(Exception("Unimplemented!"))
         logger.info( "moving file to Archive in SalesforceFTP")
