@@ -1,4 +1,5 @@
-secret*
+secrets_id_rsa.for_centerstone_data
+secret*sh
 *swp
 *pyc
 *bak
