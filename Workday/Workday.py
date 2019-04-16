@@ -216,6 +216,23 @@ def get_dashboard_data(type, end_date, start_date=None):
 
   return get_generic_workday_report(url,_config.hr_dashboard['username'],_config.hr_dashboard['password'])
 
+def get_ta_dashboard_data(type, end_date, start_date=None):
+  logger.info("Gathering Workday TA %s data" % type)
+
+  if not re.match('^\d{4}-\d{2}-\d{2}$', end_date):
+    raise Exception("End Date does not match expected format")
+
+  if type == 'hires':
+    # FIXME: Hardcoded dates
+    url = _config.ta_dashboard['urls'][type] + '&Effective_as_of_Date=2021-12-31-07%3A00' + \
+                                               '&Entry_Date=' + end_date + '-07%3A00'     + \
+                                               '&Effective_Start_Date=2017-01-01-07%3A00' + \
+                                               '&Effective_End_Date=2021-12-31-07%3A00'
+
+  logger.debug("Will grab url: %s" % url)
+
+  return get_generic_workday_report(url,_config.ta_dashboard['username'],_config.ta_dashboard['password'])
+
 def get_generic_workday_report(url,uname,pword):
   try:
     r = requests.get(url,auth=(uname,pword), proxies=_config.proxies)

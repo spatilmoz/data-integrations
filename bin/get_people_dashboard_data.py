@@ -12,13 +12,14 @@ import Util
 
 if __name__ == "__main__":
  
-  parser = argparse.ArgumentParser(description="Sync up XMatters with Workday")
+  parser = argparse.ArgumentParser(description="Get Workday data")
   parser.add_argument('-d', '--debug', action='store', help='debug level', type=int, default=3)
   parser.add_argument('-l', '--log-level', action='store', help='log level (debug, info, warning, error, or critical)', type=str, default='info')
   parser.add_argument('--date', action='store', help='date to retrieve', type=str)
   parser.add_argument('-o', '--output-dir', action='store', help='output directory', type=str, default='./')
   parser.add_argument('-f', '--force', action='store_true', help='run on a date even if it\'s not friday')
   parser.add_argument('-m', '--monthly', action='store_true', help='pull the monthly version of the reports')
+  parser.add_argument('--ta-dashboard', action='store_true', help='pull the TA dashboard stuff')
   args = parser.parse_args()
   
   Util.set_up_logging(args.log_level)
@@ -34,6 +35,8 @@ if __name__ == "__main__":
   retrieve_date   = datetime.date(retrieve_date_l[0], retrieve_date_l[1], retrieve_date_l[2])
   start_date      = None
   if args.monthly:
+    if args.ta_dashboard:
+      raise Exception('You can\'t use --monthly with --ta-dashboard')
 #    if retrieve_date_l[2] != 1 and not args.force:
 #      logger.critical( "Specified date (%s) is not the first of the month. Use --force if you're sure" % retrieve_date)
 #      exit()
@@ -48,7 +51,7 @@ if __name__ == "__main__":
     next_month = retrieve_date.replace(day=28) + datetime.timedelta(days=4)
     retrieve_date = next_month - datetime.timedelta(days=next_month.day)
 
-  else:
+  elif not args.ta_dashboard:
     if retrieve_date.isoweekday() != 5 and not args.force:
       logger.critical( "Specified date (%s) is not a Friday. Use --force if you're sure" % retrieve_date)
       exit()
@@ -64,16 +67,31 @@ if __name__ == "__main__":
 #
 #  logger.info( "Writing data to %s" % outfile)
 
-  for report_type in ['headcount', 'hires', 'terminations', 'promotions']:
+  if args.ta_dashboard:
+    # the ta_dashabord daily report is a separate special snowflake for the TA Dashboard
 
+    report_type = 'hires'
     logger.info( "Getting %s data" % report_type)
     outfile = os.path.join(args.output_dir, report_type + '_' + str(retrieve_date) + '.csv')
 
-    wd_csv_data = Workday.get_dashboard_data(report_type, str(retrieve_date), start_date)
+    wd_csv_data = Workday.get_ta_dashboard_data(report_type, str(retrieve_date), start_date)
 
     logger.info( "Writing %s data to %s" % (report_type, outfile))
 
     with open(outfile, 'w', encoding="utf-8") as f:
       f.write(wd_csv_data)
 
+  else:
+    for report_type in ['headcount', 'hires', 'terminations', 'promotions']:
+  
+      logger.info( "Getting %s data" % report_type)
+      outfile = os.path.join(args.output_dir, report_type + '_' + str(retrieve_date) + '.csv')
+  
+      wd_csv_data = Workday.get_dashboard_data(report_type, str(retrieve_date), start_date)
+  
+      logger.info( "Writing %s data to %s" % (report_type, outfile))
+  
+      with open(outfile, 'w', encoding="utf-8") as f:
+        f.write(wd_csv_data)
+  
   logger.info( "Finished.")
