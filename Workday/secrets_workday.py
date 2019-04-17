@@ -27,7 +27,8 @@ config = {
     'username': os.environ.get('HR_DASHBOARD_WORKDAY_USERNAME',''),
     'password': os.environ.get('HR_DASHBOARD_WORKDAY_PASSWORD',''),
     'urls': {
-      'hires': 'https://wd2-impl-services1.workday.com/ccx/service/customreport2/vhr_mozilla/candersen%40mozilla.com/intg__Tableau_Hires_-_Talent_-_Date_Range?Business_Processes%21WID=c24592468ed147b2ac6d0de4d699a7da!cd09c92e446c11de98360015c5e6daf6!cd09b970446c11de98360015c5e6daf6&Transaction_Status%21WID=b90bc51be01d4ae99b603b02b073714d&format=csv',
+      'hires': 'https://services1.myworkday.com/ccx/service/customreport2/vhr_mozilla/candersen%40mozilla.com/intg__Tableau_Hires_-_Talent_-_Date_Range?Business_Processes%21WID=c24592468ed147b2ac6d0de4d699a7da!cd09c92e446c11de98360015c5e6daf6!cd09b970446c11de98360015c5e6daf6&Transaction_Status%21WID=b90bc51be01d4ae99b603b02b073714d&format=csv',
+      #'hires': 'https://wd2-impl-services1.workday.com/ccx/service/customreport2/vhr_mozilla/candersen%40mozilla.com/intg__Tableau_Hires_-_Talent_-_Date_Range?Business_Processes%21WID=c24592468ed147b2ac6d0de4d699a7da!cd09c92e446c11de98360015c5e6daf6!cd09b970446c11de98360015c5e6daf6&Transaction_Status%21WID=b90bc51be01d4ae99b603b02b073714d&format=csv',
     },
   },
 }
