@@ -109,7 +109,7 @@ def get_file(filepath,dest_dir='.'):
 
 def get_file_from_link(filepath,dl_link,dest_dir):
   logger.info( "Downloading file %s" % filepath)
-  logger.info( "from link: %s" % dl_link)
+  logger.debug( "from link: %s" % dl_link)
 
   if re.search('/',filepath):
     filename = filepath.rsplit('/',1)[1]
