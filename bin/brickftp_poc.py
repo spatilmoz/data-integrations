@@ -63,7 +63,7 @@ if __name__ == "__main__":
   for file in files_list:
     if file['type'] == 'file' and re.match('DailySFMC', file['display_name']):
       if args.date and not re.match(args.date, get_date_from_sfmc_filename(file['display_name'])):
-        logger.warning( "--date specified, skipping non-matching filename: %s" % file['display_name'])
+        logger.debug( "--date specified, skipping non-matching filename: %s" % file['display_name'])
         continue
       download_and_extract_file( file['path'] )
       if args.archive:
