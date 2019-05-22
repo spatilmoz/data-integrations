@@ -52,7 +52,7 @@ def list_files(path='/'):
     
   for file in rjson:
     logger.debug(file)
-    logger.info( file['display_name']+' -- '+file['mtime']+' -- '+file['type'])
+    logger.debug( file['display_name']+' -- '+file['mtime']+' -- '+file['type'])
 
   return rjson
 
