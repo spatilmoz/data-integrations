@@ -11,19 +11,6 @@ import SalesforceFTP
 import Util
 
 
-def get_date_from_filename(filename):
-  m = re.search('DailyEmailSendSummary_(\d+), (\d+), (\d+).csv', filename)
-  if m:
-    return '-'.join(m.group(1,2,3))
-  else:
-    raise Exception('unable to parse filename %s' % filename)
-
-def get_date_from_modify(modify_date):
-  m = re.search('^(\d{4})(\d{2})(\d{2})', modify_date)
-  if m:
-    return '-'.join(m.group(1,2,3))
-  else:
-    raise Exception('unable to parse modify date %s' % modify_date)
 
 def create_dest_dir(dest_dir, dirname):
   full_path = os.path.join(dest_dir, dirname)
@@ -58,28 +45,6 @@ if __name__ == "__main__":
 
   path = "/reports"
 
-  download_file( args.dest_dir, path, 'DailyEmailSendSummary.csv', args.date )
-  exit()
-
-  files_list = SalesforceFTP.list_files(path=path)
-  for filename, facts in files_list:
-    print(filename)
-    if facts['type'] == 'file' and re.match('DailyEmailSendSummary', filename):
-      print(facts)
-      file_date = get_date_from_modify(facts['modify'])
-      print(file_date)
-      #if args.date and not re.match(args.date, get_date_from_filename(filename)):
-      if args.date and args.date != file_date:
-        logger.warning( "--date specified, skipping non-date-matching filename: %s date: %s" % (filename,file_date))
-        continue
-      download_file( args.dest_dir, path, filename, file_date )
-      if args.archive:
-        raise(Exception("Unimplemented!"))
-        logger.info( "moving file to Archive in SalesforceFTP")
-        SalesforceFTP.move_file( file['path'],
-                            os.path.join(os.path.dirname(file['path']),
-                            'Archive',
-                            os.path.basename(file['path'])) )
-
+  download_file( args.dest_dir, path, '15-Day-Email-Send-Summary.csv', args.date )
 
   logger.info( "Finished.")
