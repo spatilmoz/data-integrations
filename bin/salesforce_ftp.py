@@ -29,10 +29,11 @@ def download_file( dest_dir, path, filename, date ):
 
 if __name__ == "__main__":
  
-  parser = argparse.ArgumentParser(description="BrickFTP stuff")
+  parser = argparse.ArgumentParser(description="SalesforceFTP stuff")
   parser.add_argument('-d', '--debug', action='store', help='debug level', type=int, default=3)
   parser.add_argument('-l', '--log-level', action='store', help='log level (debug, info, warning, error, or critical)', type=str, default='info')
   parser.add_argument('--dest-dir', action='store', help='destination directory', type=str, default='.')
+  parser.add_argument('--filename', action='store', help='filename', type=str, default='15-Day-Email-Send-Summary.csv')
   parser.add_argument('-a', '--archive', action='store_true', help='move the zip files to the Archive directory after downloading')
   parser.add_argument('--date', action='store', help='the date to retrieve')
   args = parser.parse_args()
@@ -45,6 +46,6 @@ if __name__ == "__main__":
 
   path = "/reports"
 
-  download_file( args.dest_dir, path, '15-Day-Email-Send-Summary.csv', args.date )
+  download_file( args.dest_dir, path, args.filename, args.date )
 
   logger.info( "Finished.")
