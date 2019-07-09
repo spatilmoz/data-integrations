@@ -44,7 +44,6 @@ def _get_access_token():
 
   if (response.status_code == 200):
      rjson = response.json();
-     logger.debug('Access token: ' + rjson.get('access_token') + ', \nRefresh token: ' + rjson.get('refresh_token'))
      access_token = rjson.get('access_token')
   else:
      print(response.status_code)
@@ -294,12 +293,6 @@ def add_work_email_device(xm_user):
     logger.critical(response.content)
     raise Exception(response.content)
 
-
-
-
-
-# THIS IS A URL TO POST ALERTS TO XMATTERS IF YOU WANT TO DO THAT
-#https://mozilla-np.xmatters.com/api/integration/1/functions/33853389-18a6-419a-891f-8b367e0c7209/triggers?apiKey=f0f6ebf0-082c-49da-8be0-52d770fdc168
 
 # add site to xmatters
 # OLD API
