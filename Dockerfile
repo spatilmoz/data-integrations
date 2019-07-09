@@ -1,8 +1,8 @@
 FROM google/cloud-sdk
 
-RUN apt-get update && apt-get install python3                                                    \
-    && apt-get install python3-pip -y                                                            \
-    && apt-get install unzip -y                                                            \
-    && apt-get install lftp -y                                                            \
-    && pip3 install git+https://github.com/mozilla-it/data-integrations                     \
-    && pip3 install git+https://github.com/mozilla-it/salesforce-fetcher@21029351b026374cddd1b2e7e8a3f261ab6b8f81
+RUN apt-get update && apt-get install python3                             \
+    && apt-get install python3-pip -y                                     \
+    && apt-get install unzip -y                                           \
+    && apt-get install lftp -y                                            \
+    && pip3 install git+https://github.com/mozilla-it/data-integrations   \
+    && pip3 install git+https://github.com/mozilla-it/salesforce-fetcher@cd9b3bdfb3ad9dbb45bb8b0f453460b2e81cdc4b
