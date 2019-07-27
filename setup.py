@@ -1,5 +1,6 @@
-from setuptools import setup, find_packages
 import os
+import setuptools
+from setuptools import setup, find_packages
 
 setup(name='data-integrations',
       version='0.0.1',

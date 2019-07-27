@@ -1,9 +1,8 @@
-import time
-import requests
-import json,sys,os,errno,re
 import logging
-from datetime import datetime
+import re
+
 from .secrets_util import config as util_config
+
 
 class LocalConfig(object):
   def __init__(self):

@@ -1,66 +1,38 @@
-# data-integrations
+# Data Integrations
 
-## XMatters.py
-TODO: More documentation
+[![Build Status](https://travis-ci.org/bowlofstew/data-integrations.svg?branch=master)](https://travis-ci.org/bowlofstew/data-integrations)
 
-Two APIs for XMatters as of this writing (20180214). The old one:
+## Description
 
-https://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/appendixrestapi.htm
+This code base provides tooling for integrating with data connectors. The 
+currently supported data connectors are:
+* [XMatters](./docs/XMATTERS.md)
+* [Workday](./docs/WORKDAY.md)
+* [BrickFTP](./docs/BRICKFTP.md)
 
-which is for sites, and the new one:
+## Building
 
-https://help.xmatters.com/xmAPI/?python
+[Prerequisites](./docs/PREREQUISITES.md)
 
-which is for OAuth, People, and the rest.
+### Setup
 
-Expects a config file called `secrets_xmatters.py` which looks like this:
-```
-config = {
-  'proxies'      : {},
-  'xm_client_id' : 'CLIENT-ID-HERE',
-  'xm_username'  : 'USERNAMEHERE',
-  'xm_password'  : 'PASSWORDHERE',
-}
-```
+* `pipenv install -dev`
+* `pipenv shell`
 
-## Workday.py
-Expects a config file called `secrets_workday.py` which looks like this:
-```
-config = {
-  'proxies'               : {},
-  'xmatters_integration' : {
-    'username'   : 'USERNAME',
-    'password'   : 'PASSWORD',
-    'sites_url'  : 'https://example',
-    'people_url' : 'https://example1',
-  },
-  'seating' : {
-    'username': 'USERNAME2',
-    'password': 'PASSWORD2',
-    'url'     : 'https://example2',
-  },
-  'hr_dashboard' : {
-    'username': 'USERNAME3',
-    'password': 'PASSWORD3',
-    'urls': {
-      'headcount': 'https://example4',
-      'hires': 'https://example5',
-      'terminations': 'https://example6',
-      'promotions': 'https://example7',
-    },
-  },
-}
-```
+### Python
 
-## BrickFTP.py
-For interacting with BrickFTP's API.
+#### Setup Build
 
-Expects a config file called `secrets_brickftp.py` which looks like this:
-```
-config = {
-  'proxies'  : {},
-  'api_key'  : 'putyourapikeyhere',
-  'username' : 'username',   # not used, just including FYI
-}
-```
+To build the Python binary distribution, execute the following command line statement 
+in a terminal after meeting the project prerequisites:
 
+`python setup.py build`
+
+### Docker
+
+To build the docker image, execute the following command line statement 
+in a terminal after meeting the project prerequisites:
+
+  `docker build -t mozilla/data-integrations .`
+
+## Author(s)
