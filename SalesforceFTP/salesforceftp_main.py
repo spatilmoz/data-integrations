@@ -1,10 +1,9 @@
-import time
-from ftplib import FTP
-import json,sys,os,errno,re
-from secrets_salesforceftp import config as salesforceftp_config
-from datetime import datetime
 import logging
+import os
+from ftplib import FTP
 from subprocess import call
+
+from SalesforceFTP.secrets_salesforceftp import config as salesforceftp_config
 
 logger = logging.getLogger(__name__)
 

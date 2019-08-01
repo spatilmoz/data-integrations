@@ -2,7 +2,7 @@ import requests
 import json,sys,os,errno,re,argparse
 import datetime
 import logging
-from .secrets_workday import config as wd_config
+from Workday.secrets_workday import config as wd_config
 
 logger = logging.getLogger(__name__)
 

@@ -1,10 +1,7 @@
-import time
-#import requests
-import json,sys,os,errno,re
-from secrets_centerstone import config as cs_config
-from datetime import datetime
-from subprocess import call
 import logging
+from subprocess import call
+
+from Centerstone.secrets_centerstone import config as cs_config
 
 logger = logging.getLogger(__name__)
 

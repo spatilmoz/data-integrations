@@ -1,3 +1,3 @@
 import sys,os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from salesforceftp_main import *
+from SalesforceFTP.salesforceftp_main import *

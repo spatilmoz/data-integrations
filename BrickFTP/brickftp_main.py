@@ -1,9 +1,11 @@
-import time
 import requests
-import json,sys,os,errno,re
-from secrets_brickftp import config as brickftp_config
-from datetime import datetime
 import logging
+import os
+import re
+
+import requests
+
+from BrickFTP.secrets_brickftp import config as brickftp_config
 
 logger = logging.getLogger(__name__)
 
