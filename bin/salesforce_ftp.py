@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 
 from __future__ import division
-import time
-import json,sys,os,errno,re,argparse
-from datetime import datetime
+import sys,os, argparse
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-import SalesforceFTP
-import Util
-
+from integrations.connectors import SalesforceFTP, Util
 
 
 def create_dest_dir(dest_dir, dirname):

@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
 from __future__ import division
-import time
-import json,sys,os,errno,re,argparse
-from datetime import datetime
+import sys,os, re,argparse
 from subprocess import call
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-import BrickFTP
-import Util
+from integrations.connectors import BrickFTP, Util
 
 
 def get_date_from_sfmc_filename(filename):
@@ -68,10 +65,10 @@ if __name__ == "__main__":
       download_and_extract_file( file['path'] )
       if args.archive:
         logger.info( "moving file to Archive in BrickFTP")
-        BrickFTP.move_file( file['path'],
-                            os.path.join(os.path.dirname(file['path']),
+        BrickFTP.move_file(file['path'],
+                           os.path.join(os.path.dirname(file['path']),
                             'Archive',
-                            os.path.basename(file['path'])) )
+                            os.path.basename(file['path'])))
 
 
   logger.info( "Finished.")

@@ -1,12 +1,8 @@
 import ssl
-import time
-import requests
-import json,sys,os,errno,re
-from datetime import datetime
 import logging
 import geopy.geocoders
 from geopy.geocoders import GoogleV3
-import Util
+
 
 class MozGeo(object):
   def __init__(self, config):

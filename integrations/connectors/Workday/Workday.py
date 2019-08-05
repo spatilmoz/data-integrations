@@ -1,8 +1,8 @@
 import requests
-import json,sys,os,errno,re,argparse
+import json,sys, re
 import datetime
 import logging
-from Workday.secrets_workday import config as wd_config
+from integrations.connectors.Workday import config as wd_config
 
 logger = logging.getLogger(__name__)
 

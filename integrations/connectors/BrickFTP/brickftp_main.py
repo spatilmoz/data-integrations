@@ -1,11 +1,10 @@
-import requests
 import logging
 import os
 import re
 
 import requests
 
-from BrickFTP.secrets_brickftp import config as brickftp_config
+from integrations.connectors.BrickFTP.secrets_brickftp import config as brickftp_config
 
 logger = logging.getLogger(__name__)
 
