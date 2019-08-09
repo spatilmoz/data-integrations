@@ -3,7 +3,7 @@ import os
 from ftplib import FTP
 from subprocess import call
 
-from SalesforceFTP.secrets_salesforceftp import config as salesforceftp_config
+from integrations.connectors.SalesforceFTP.secrets_salesforceftp import config as salesforceftp_config
 
 logger = logging.getLogger(__name__)
 

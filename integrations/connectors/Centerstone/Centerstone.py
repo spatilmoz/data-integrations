@@ -1,7 +1,7 @@
 import logging
 from subprocess import call
 
-from Centerstone.secrets_centerstone import config as cs_config
+from integrations.connectors.Centerstone.secrets_centerstone import config as cs_config
 
 logger = logging.getLogger(__name__)
 

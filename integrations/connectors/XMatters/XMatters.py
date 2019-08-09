@@ -4,8 +4,8 @@ import re
 
 import requests
 
-import Util
-from XMatters.secrets_xmatters import config as xm_config
+from integrations.connectors import Util
+from integrations.connectors.XMatters import config as xm_config
 
 logger = logging.getLogger(__name__)
 

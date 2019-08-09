@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
-import time
-import requests
-import json,sys,os,errno,re,argparse
+import sys,os, argparse
 import datetime
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-import Workday
-import Util
+from integrations.connectors import Workday, Util
 
 if __name__ == "__main__":
  

@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 
 from __future__ import division
-import time
-import requests
-import json,sys,os,errno,re,argparse
-from datetime import datetime
+import sys,os, argparse
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-import Centerstone
-import Workday
-import Util
+from integrations.connectors import Centerstone, Workday, Util
+
 
 def compare_seats(wd_seats,cs_seats):
   logger.info( "Comparing Workday seats to Centerstone...")

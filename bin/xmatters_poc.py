@@ -2,16 +2,12 @@
 #!/usr/local/bin/python2.7
 
 from __future__ import division
-import time
-import requests
-import json,sys,os,errno,re,argparse
-from datetime import datetime
+import sys,os, re,argparse
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-import XMatters
-import Workday
-import Util
+from integrations.connectors import XMatters, Workday, Util
+
 
 def user_data_matches(wd_user,xm_user):
   manager_name = ''
@@ -74,7 +70,7 @@ def iterate_thru_wd_users(wd_users,xm_users,xm_sites):
       logger.debug( "User %s found in XM" % user['User_Email_Address'])
       if not user_data_matches(user,xm_users[ user['User_Email_Address'] ]):
         logger.debug( "USER DATA NO MATCHES!")
-        XMatters.update_user(user,xm_users[ user['User_Email_Address'] ], xm_sites)
+        XMatters.update_user(user, xm_users[ user['User_Email_Address']], xm_sites)
       else:
         logger.debug( "%s good" % user['User_Email_Address'])
     else:
@@ -144,10 +140,10 @@ if __name__ == "__main__":
       exit()
 
   # add any sites in workday that aren't in xmatters to xmatters
-  xm_sites_in_wd = XMatters.add_new_sites(wd_sites,xm_sites,xm_sites_inactive)
+  xm_sites_in_wd = XMatters.add_new_sites(wd_sites, xm_sites, xm_sites_inactive)
 
   # delete any sites NOT in workday that ARE in xmatters
-  XMatters.delete_sites(xm_sites,xm_sites_in_wd)
+  XMatters.delete_sites(xm_sites, xm_sites_in_wd)
   
   # re-get all sites in xmatters
   xm_sites, xm_sites_inactive = XMatters.get_all_sites()
@@ -170,6 +166,6 @@ if __name__ == "__main__":
   
   # iterate through xmatters users who aren't marked-as-seen
   #   remove from xmatters
-  XMatters.delete_users(xm_users,users_seen_in_workday)
+  XMatters.delete_users(xm_users, users_seen_in_workday)
 
   logger.info("Finished.")
