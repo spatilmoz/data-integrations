@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class AbstractOrchestrator(ABC):
     @property
     @abstractmethod
@@ -21,6 +20,7 @@ class AbstractOrchestrator(ABC):
         # The data will be passed through the tasks.
         task_data = None
         for task in self.ordered_tasks:
+            print("\nCurrent running task: \t%s" % type(task))
             task_data = task.execute(task_data)
 
         return task_data

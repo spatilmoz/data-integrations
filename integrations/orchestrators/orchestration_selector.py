@@ -19,7 +19,6 @@ class Orchestration_Selector:
 
     def __extract_orchestrator_key(self, input_args):
         # Extract key from passed in parameters
-        print(len(input_args))
         extracted_key = input_args = "WorkdayToAnaplan_FinancialSystemServices"
         return extracted_key
 

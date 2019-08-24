@@ -11,7 +11,7 @@ class AnaplanApiConnector(OrchestratedTask, ConnectorTask):
 
     def push_data(self, data):
         # abstract method impl
-        print("Pushing data to Ananplan API")
+        print("Pushing data to Anaplan API")
 
     def execute(self, input_data=None):
         # This method should do the necessary steps for the Connector
