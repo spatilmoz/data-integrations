@@ -8,6 +8,7 @@ class MockOrchestrator():
     def orchestrate(self):
         raise Exception
 
+
 class Tester(unittest.TestCase):
     def test_mocked_orchestrator(self):
         input_args = ""
@@ -28,7 +29,6 @@ class Tester(unittest.TestCase):
         orchestrator.arg_map = None
         with self.assertRaises(Exception):
             orchestrator.delegate_orchestration(input_args)
-
 
     def test_no_orchestrator_selected_passed_input(self):
         input_args = "WorkdayToAnaplan-FinancialSystemServices"

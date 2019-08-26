@@ -1,10 +1,16 @@
+from bonobo.config import use_context
+
 from integrations.orchestrators.abstract.orchestrated_task import OrchestratedTask
 
+class WorkdayToAnaplanFSSTransformer(OrchestratedTask):
 
-class WorkdayToAnaplanFSS(OrchestratedTask):
-    def transform(self, input_data):
-        print("Transforming data from Workday to Anaplan")
-        return input_data
 
     def execute(self, input_data=None):
-        return self.transform(input_data)
+        # This method should do the necessary steps for the Connector
+        # if input_data is not None:
+        #     print(input_data)
+        #     raise Exception("Not expecting input_data for pulling from Workday SFTP Connector (at this time).")
+        #
+        # self.connect()
+        # yield {self.fetch_data()}
+        print("WorkdayToAnaplanFSSTransformer")

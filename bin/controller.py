@@ -19,10 +19,8 @@ class Controller:
         parser.add_argument('--pipeline-keyword', action='pipeline', help='the date to retrieve')
         self.args = parser.parse_args()
         self.orchestrator = Orchestration_Selector(self.args)
-        #self.orchestrator = Orchestration_Selector()
 
     def initialize(self):
-        #self.orchestrator.select_orchestrator(self.args)
         self.orchestrator.delegate_orchestration()
 
 
