@@ -8,16 +8,13 @@ import logging
 
 class WorkdayToAnaplanOrchestrator(AbstractOrchestrator):
 
-    def __init__(self):
-        logging.basicConfig(level=logging.DEBUG)
-
     def get_graph(self):
         graph = bonobo.Graph()
-        graph.add_chain(AnaplanApiConnector(), WorkdayToAnaplanFSSTransformer(), WorkdaySftpConnector())
+        graph.add_chain( WorkdaySftpConnector(), WorkdayToAnaplanFSSTransformer(), AnaplanApiConnector())
         return graph
 
 
-    def orchestrate(self):
+    def orchestrate(self, input_args=None):
         bonobo.run(
             self.get_graph(),
             services={})
