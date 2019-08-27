@@ -10,9 +10,8 @@ class WorkdayToAnaplanOrchestrator(AbstractOrchestrator):
 
     def get_graph(self):
         graph = bonobo.Graph()
-        graph.add_chain( WorkdaySftpConnector(), WorkdayToAnaplanFSSTransformer(), AnaplanApiConnector())
+        graph.add_chain(WorkdaySftpConnector(), WorkdayToAnaplanFSSTransformer(), AnaplanApiConnector())
         return graph
-
 
     def orchestrate(self, input_args=None):
         bonobo.run(

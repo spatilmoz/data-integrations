@@ -5,9 +5,17 @@ from integrations.orchestrators.abstract.orchestrated_task import OrchestratedTa
 from integrations.orchestrators.orchestrator_data import OrchestratorData
 
 
-class AnaplanApiConnector(OrchestratedTask):
+class AnaplanApiConnector(OrchestratedTask, ConnectorTask):
 
-    def execute(self, orchestrator_data=None) -> OrchestratorData:
-        output_orchestrator_data = self.passthrough_inspector(orchestrator_data, "AnaplanApiConnector")
+    def connect(self):
+        print("Connected to Anaplan")
+
+    def push_data(self, orchestrator_data="test"):
+        print("Pushing data..." , str(orchestrator_data))
+
+    def execute(self, input_data=None) -> OrchestratorData:
+        self.connect()
+        output_orchestrator_data = self.passthrough_inspector(orchestrator_data=input_data, key="AnaplanApiConnector")
+        self.push_data(output_orchestrator_data)
         return output_orchestrator_data
 

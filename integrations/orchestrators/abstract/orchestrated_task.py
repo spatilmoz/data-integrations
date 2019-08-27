@@ -20,17 +20,15 @@ class OrchestratedTask(ABC):
         else:
             self.terminate()
 
-
     def terminate(self):
-        return # Return nothing to terminate
+        return  # Return nothing to terminate
 
-    @staticmethod
     def passthrough_inspector(self, orchestrator_data, key="testKey"):
         output_orchestrator_data = OrchestratorData()
         if orchestrator_data is None:
             print("No input data found in ", key)
         else:
-            print("Found input data from previous task: ", orchestrator_data.input)
+            print("Found input data from previous task: ", str(orchestrator_data.input))
             output_orchestrator_data.input = orchestrator_data.input
 
         output_orchestrator_data.output = key

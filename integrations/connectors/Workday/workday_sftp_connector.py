@@ -5,10 +5,18 @@ from integrations.orchestrators.abstract.orchestrated_task import OrchestratedTa
 from integrations.orchestrators.orchestrator_data import OrchestratorData
 
 
-class WorkdaySftpConnector(OrchestratedTask):
+class WorkdaySftpConnector(OrchestratedTask, ConnectorTask):
 
-    def execute(self, orchestrator_data=None) -> OrchestratorData:
-        output_orchestrator_data = self.passthrough_inspector(orchestrator_data, "WorkdaySftpConnector")
+    def connect(self):
+        print("Connecting to Workday ...")
+
+    def fetch_data(self):
+        return {"Workday": list(range(10))}
+
+    def execute(self, input_data=None) -> OrchestratorData:
+        self.connect()
+        output_orchestrator_data = self.passthrough_inspector(orchestrator_data=input_data, key="WorkdaySftpConnector")
+        output_orchestrator_data.output = self.fetch_data()
         return output_orchestrator_data
 
 

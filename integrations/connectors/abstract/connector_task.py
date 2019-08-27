@@ -17,7 +17,7 @@ class ConnectorTask(ABC):
         print("Ability to fetch data, not yet implemented.")
         return None
 
-    def push_data(self):
+    def push_data(self, orchestrator_data=None):
         ### Push data to established connection
         print("Ability to push data, not yet implemented.")
         return None
