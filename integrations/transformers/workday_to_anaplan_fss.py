@@ -1,11 +1,9 @@
-from bonobo.config import use_context
-
-from integrations.orchestrators import orchestrator_data
 from integrations.orchestrators.abstract.orchestrated_task import OrchestratedTask
 from integrations.orchestrators.orchestrator_data import OrchestratorData
+from integrations.transformers.abstract.transformer_task import TransformerTask
 
 
-class WorkdayToAnaplanFSSTransformer(OrchestratedTask):
+class WorkdayToAnaplanFSSTransformer(OrchestratedTask, TransformerTask):
     def transform(self, orchestrator_data: OrchestratorData):
         print("Transforming Workday Reports to Anaplan syntax")
         orchestrator_data.output = "modified and transformed data"

@@ -9,7 +9,7 @@ class OrchestratedTask(ABC):
 
     @abstractmethod
     def execute(self, orchestrator_data=None) -> OrchestratorData:
-        pass  # should return output_data
+        pass  # should return orchestrator_data with necessary changes
 
     @use_context
     def __call__(self, *args, **kwargs):
