@@ -11,13 +11,14 @@ class OrchestrationSelector:
         self.selected_orchestrator = None
         if input_args is not None:
             self.select_orchestrator(input_args)
+            self.input_args = input_args
 
     def delegate_orchestration(self, input_args=None):
-        '''
+        """
         This method runs the orchestrator's pipeline of OrchestratedTasks
         :param input_args: Optional, if not filled in on construction
         :return:
-        '''
+        """
         if self.selected_orchestrator is None:
             if input_args is not None:
                 self.select_orchestrator(input_args)
@@ -27,11 +28,11 @@ class OrchestrationSelector:
         self.selected_orchestrator.orchestrate()
 
     def select_orchestrator(self, input_args):
-        '''
+        """
         Determine the Orchestrator based on the input_args
         :param input_args: Expected key that maps to corresponding Orchestrator
         :return: Orchestrator to be run downstream
-        '''
+        """
         if self.selected_orchestrator is not None:
             return self.selected_orchestrator
         orchestrator_key = self.__extract_orchestrator_key(input_args)

@@ -6,7 +6,7 @@ from integrations.orchestrators.orchestrationselector import OrchestrationSelect
 
 class MockOrchestrator():
     def orchestrate(self):
-        raise c
+        raise Exception
 
 
 class MockArgParsed():
@@ -17,11 +17,11 @@ class MockArgParsed():
 
 class Tester(unittest.TestCase):
     input_args = Mock(return_value=MockArgParsed())
-    input_args.orchestrator_key = "WorkdayToAnaplan_FinancialSystemServices"
+    input_args.orchestrator_key = "gcp_storage_to_salesforce_sftp"
 
     def test_mocked_orchestrator(self):
         orchestrator = OrchestrationSelector()
-        orchestrator.argument_to_orchestrator_map["WorkdayToAnaplan_FinancialSystemServices"] = Mock(return_value=MockOrchestrator())()
+        orchestrator.argument_to_orchestrator_map['gcp_storage_to_salesforce_sftp'] = Mock(return_value=MockOrchestrator())()
         with self.assertRaises(Exception):
             orchestrator.delegate_orchestration(self.input_args)
 
