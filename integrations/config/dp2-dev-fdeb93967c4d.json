@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "imposing-union-227917",
+  "private_key_id": "fdeb93967c4d9dfd69013bf4023571c5da5b9a8a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDxipqOsx0nJgwF\n1TM2lcpvg2bBquCTNTGasC8Sm7Cx+1iK0uL2/i2moOY+G8UIAS7QzUya4nwlitp8\n/fX44kT4jBd89wlU/veYqN/QvSLyH/x4y311lhJVBdFK0bm8jYGZFN53CumSP7AF\nc9VoWNv9IuXwQcy2q1T1h7K1SI4whFksw6/bvYBOTCVTcspZa3bm3Sw4Pbv3qoWc\nKIryYfW9PFpOXnMGrVYKbhyXRZU9J5WL5lecR9jKThdceGs4R1fFlw6d+Scs5dq8\nU6r9L9WC5XaUiZez+ig9iCOk63bTSI7vTwipYPzPBUfhcNwyUfXfx8HbzVPgpfHz\nHzQwcDlrAgMBAAECggEAIZnLRrxM+xQJtSADp/1uHqrUDG9LHr9WH147ViaEDeZY\nsAsxLp83q4fo2k1TpfmVe8+AxMUVScWx/5RL95ZGdkr1aNlsGhT+ouUkfthozZo8\ngsilXcpa0iq6guLU/eazgh+gk5qC2T5J1ssBLisPrfxWVLYFQTNpYLSYBtbz4h9U\nnfeCcFAMhLrjbS99hCRli/3COEX8eKv8F/DRwSBjC1OtNKqR6JwZ7aw8U+pAKyuv\njyceplJzQFkWlrgcC4hTeerW3OQmrUZxGICxkOaOF9Hzwpkz/dHkoQs8ErYwyZEe\nQM6JECkGSBnQLh8MZ7Vldod3bCw02J7mI7rrKp1qcQKBgQD95suE+QOJgD1stt0o\nYbZCjng7VIyKPTAkd5bg7FHUVFU3loldsrCWFXVLmUKJxLRm48JY+Tuy4ZQMIQr4\nFuOs/zGJxo1v8Jmfhh/FzjzlFvR9jL8H2/myulQHZaWThNikec13lwlvT9OOzr6c\nPUEdAYp0VY+q0lAnwcbe/mxp0QKBgQDziag9nE/KDT1tfbjqBFijbFrwR7Y1gWNb\nF/3cKEBDmbav/hvRuHnIs2fHY6xNtphK86zd0CexQuojH8vG3Y54UpOkRT7iXk3N\nfuOK6JFjwQusrgCGOJcyvExtz73SbYUF4ZPg4iK7OLObrNlBvOIqBDqZYhDMJ/Sy\nN94ImNnCewKBgQC4v2IhrKv1Nln7rAe6pXbgcRhtW3Uz9Zf9QQOJQIu+a2rimufz\nRN2XJ6AE1U0EQBxgraOx6BCXdeqq9LQtl0ItlDcwoEg0RqcR259s6EeJDq3yWSJ7\njoXflhMkmsLjV4voCjUGquETnMs8o5UwzKV/fKqJQeTbEFOAylBx3EF4sQKBgCSs\nbR5iBI3rsn1jek4bO3HYplUap3ClPF4CXeMiWJMVebJE9NF/Ey/K/GzFMLQ/M+3N\nhhGc/+0so2+IoTogMQ0jekI5fz+9bb/tRLytSv+XmXd2eHO9397vBh9fMjmW7no1\nPvyVcR96aWme/NRuaixjmKNyZg8oUSvpR9FJmzkzAoGAP0cA1SE+gswDWTuy6cJR\ngVwIgOwSxHN8IbHaRZwTAtW3WHyeoLc7toaFmykmp+yQKCBmx9v/Oj3wE42fM65W\np44XES7zll+YBWfZCIkeUSJN8PUsiiocxCG9SSm5lDv/0s3cbWs0pW/dKxiTTh6W\nZC2uhm1BL/fqOKwOqZ7MyTA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "fxadatatransfer@imposing-union-227917.iam.gserviceaccount.com",
+  "client_id": "112331979701793807316",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fxadatatransfer%40imposing-union-227917.iam.gserviceaccount.com"
+}

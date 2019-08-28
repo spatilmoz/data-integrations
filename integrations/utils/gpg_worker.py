@@ -9,7 +9,7 @@ from integrations.utils.gcp_worker import GcpWorker
 
 
 class GpgWorker(object):
-    public_key = None
+    public_key_url = None
     key_id = None
     encrypted_dir = None
     bucket = None
@@ -18,14 +18,15 @@ class GpgWorker(object):
     Wrapper for handling interactions with GnuPG, including keyfile import, encryption and decryption.
     Raises: A RuntimeError with explanation message if there is a problem invoking GnuPG.
     """
-    def __init__(self, public_key : str, key_id : str, encrypted_dir : str, bucket : str):
-        self.public_key = public_key
+    def __init__(self, public_key_url : str, key_id : str, encrypted_dir : str, bucket : str):
+        self.public_key_url = public_key_url
         self.key_id = key_id
         self.encrypted_dir = encrypted_dir
         self.bucket = bucket
         self.gpg = gnupg.GPG()
         self.keys = None
         self.logger = logging.getLogger(__name__)
+        self.import_keys()
 
     def import_keys(self):
         """
@@ -35,7 +36,7 @@ class GpgWorker(object):
         :return: None
         """
         self.logger.info('Importing keys')
-        self.gpg.recv_keys(self.public_key,
+        self.gpg.recv_keys(self.public_key_url,
                            self.key_id)
         self.keys = self.gpg.list_keys()
 
@@ -51,17 +52,14 @@ class GpgWorker(object):
         df = pd.read_csv('gs://{}/{}'.format(self.bucket, blob_name))
         buf = io.StringIO()
         df.to_csv(buf, encoding='utf-8')
-        directory = self.encrypted_dir
+
         try:
-            if not os.path.exists(directory):
-                os.makedirs(directory, mode=777)
-                os.chmod(directory, 777)
             status = self.gpg.encrypt_file(
                 buf,
                 self.keys.fingerprints[0],
                 armor=True,
                 always_trust=True,
-                output='{}/{}.gpg'.format(directory, blob_name)
+                output='{}/{}.gpg'.format(self.encrypted_dir, blob_name)
             )
             self.logger.info("OK: {}".format(status.ok))
             self.logger.info("STDERR: {}".format(status.stderr))

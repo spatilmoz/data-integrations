@@ -8,10 +8,14 @@ from integrations.utils.gcp_worker import GcpWorker
 
 
 class SftpWorker:
-    def __init__(self, host : str, username : str, password : str):
+    def __init__(self, host: str, username: str, password: str, source_dir: str, destination_dir: str, bucket: str, dataset: str):
         self.host = host
         self.username = username
         self.password = password
+        self.source_dir = source_dir
+        self.destination_dir = destination_dir
+        self.bucket = bucket
+        self.dataset = dataset
 
     def upload_file(self, destination_dir, local_path, remote_path):
         """
@@ -25,11 +29,15 @@ class SftpWorker:
         """
         logging.info('Uploading local file {} to {} on stfp server'.format(
             local_path, remote_path))
+
+        cnopts = pysftp.CnOpts()
+        cnopts.hostkeys = None
+
         try:
 
             with pysftp.Connection(host=self.host,
                                    username=self.username,
-                                   password=self.password) as sftp:
+                                   password=self.password, cnopts=cnopts) as sftp:
                 with sftp.cd(destination_dir):
                     sftp.put(localpath=local_path, remotepath=remote_path)
             sftp.close()
@@ -57,17 +65,16 @@ class SftpWorker:
             logging.critical(sys.exc_info()[0])
             raise
 
-    def transfer(self, destination_path : str):
+    def transfer(self):
         logging.info('Starting transfer stage')
-        gcp_worker = GcpWorker()
-        current_ts = str(datetime.datetime.utcnow().isoformat())
-        destination_dir = '-'.join(['etl/salesforce/encrypted', current_ts])
-        self.mkdir(destination_dir)
-        for (dir_path, _, filename) in os.walk('/tmp/encrypted/'):
+        gcp_worker = GcpWorker(self.bucket, self.dataset)
+
+        self.mkdir(self.destination_dir)
+        for (dir_path, _, filename) in os.walk(self.source_dir):
             for name in filename:
                 if name.endswith('.gpg'):
                     logging.info('Uploading {} to sftp server'.format(name))
-                    self.upload_file(destination_dir=destination_dir,
+                    self.upload_file(destination_dir=self.destination_dir,
                                      local_path=os.path.join(dir_path, name),
                                      remote_path=name)
                     gcp_worker.upload_blob(source_file_name=os.path.join(dir_path, name),
