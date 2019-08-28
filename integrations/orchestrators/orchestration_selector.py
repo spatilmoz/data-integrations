@@ -1,3 +1,4 @@
+from integrations.orchestrators.abstract.abstract_orchestrator import AbstractOrchestrator
 from integrations.orchestrators.abstract.orchestrators_enum import Orchestrators
 
 
@@ -22,8 +23,12 @@ class Orchestration_Selector:
         extracted_key = input_args = "WorkdayToAnaplan_FinancialSystemServices"
         return extracted_key
 
-    def __retrieve_chosen_orchestrator(self, orchestrator_key):
-        # Determine correct Orchestrator
+    def __retrieve_chosen_orchestrator(self, orchestrator_key) -> AbstractOrchestrator:
+        """
+        Using arg_map and provided key to return Orchestrator
+        :param orchestrator_key: key provided for map
+        :return AbstractOrchestrator: a child class that implements the AbstractOrchestrator
+        """
         if not self.arg_map:
             raise NotImplementedError
         return self.arg_map[orchestrator_key]

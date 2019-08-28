@@ -1,5 +1,6 @@
 class OrchestratorData:
-    input = output = status = None
+    input = output = None
+    status = False
 
     def __init__(self, input=None, output=None, success=False):
         self.success = success
