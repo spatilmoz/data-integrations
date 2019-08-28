@@ -7,12 +7,8 @@ from integrations.transformers.comsolidate_csv_files_transformer import Comsolid
 
 
 class GcpStorageToSalesforceSftpOrchestrator(AbstractOrchestrator):
-    def get_graph(self):
-        graph = bonobo.Graph()
-        graph.add_chain(GcpStorageConnector(), ComsolidateCsvFilesTransformer(), SalesforceSftpConnector())
-        return graph
+    def list_of_ordered_orchestrated_tasks(self):
+        return [GcpStorageConnector(), ComsolidateCsvFilesTransformer(), SalesforceSftpConnector()]
 
-    def orchestrate(self, input_args=None):
-        bonobo.run(
-            self.get_graph(),
-            services={})
+    def dict_of_services(self):
+        return {}

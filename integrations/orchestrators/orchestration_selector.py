@@ -14,7 +14,7 @@ class Orchestration_Selector:
         if self.selected_orchestrator is not None:
             return self.selected_orchestrator
         orchestrator_key = self.__extract_orchestrator_key(input_args)
-        self.selected_orchestrator = chosen_orchestrator = self.__retrieve_chosen_orchestrator(orchestrator_key).entity_orchestrator
+        self.selected_orchestrator = chosen_orchestrator = self.__retrieve_chosen_orchestrator(orchestrator_key)
         return chosen_orchestrator
 
     def __extract_orchestrator_key(self, input_args):

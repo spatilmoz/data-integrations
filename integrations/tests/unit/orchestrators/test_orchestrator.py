@@ -13,7 +13,7 @@ class Tester(unittest.TestCase):
     def test_mocked_orchestrator(self):
         input_args = ""
         orchestrator = Orchestration_Selector()
-        orchestrator.arg_map["WorkdayToAnaplan-FinancialSystemServices"] = Mock(return_value=MockOrchestrator())
+        orchestrator.arg_map["WorkdayToAnaplan_FinancialSystemServices"] = Mock(return_value=MockOrchestrator())
         orchestrator.select_orchestrator(input_args)
 
     def test_no_orchestrator_found(self):
