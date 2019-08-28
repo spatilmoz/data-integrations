@@ -5,7 +5,7 @@ import logging
 
 from integrations.orchestrators.orchestrator_data import OrchestratorData
 from integrations.transformers.abstract.transformer_task import TransformerTask
-from integrations.transformers.workday_to_anaplan_fss import WorkdayToAnaplanFSSTransformer
+from integrations.transformers.workday_to_anaplan_fss_transformer import WorkdayToAnaplanFSSTransformer
 
 
 class MockTransformer(TransformerTask):

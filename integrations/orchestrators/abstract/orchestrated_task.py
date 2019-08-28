@@ -6,7 +6,9 @@ from integrations.orchestrators.orchestrator_data import OrchestratorData
 
 
 class OrchestratedTask(ABC):
-
+    def __init__(self):
+        pass
+    
     @abstractmethod
     def execute(self, orchestrator_data=None) -> OrchestratorData:
         pass  # should return orchestrator_data with necessary changes
