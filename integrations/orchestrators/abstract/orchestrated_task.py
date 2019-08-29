@@ -36,13 +36,13 @@ class OrchestratedTask(ABC):
         :return OrchestratorData: This contains the input to the next task for bonobo or termination of the sequence
         """
         prev_orchestrator_data = self.execute(*args)
-        if prev_orchestrator_data.success:
-            logging.debug("...Received success message from task.")
-            next_orchestrator_data = OrchestratorData(input=prev_orchestrator_data.output)
-            return next_orchestrator_data
-        else:
-            logging.error("Terminating: data was not successfully processed.")
-            self.terminate()
+        logging.debug("...Received success message from task.")
+
+        if not prev_orchestrator_data:
+            prev_orchestrator_data = OrchestratorData()
+
+        next_orchestrator_data = OrchestratorData(input=prev_orchestrator_data.output)
+        return next_orchestrator_data
 
     def terminate(self):
         """

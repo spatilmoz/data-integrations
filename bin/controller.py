@@ -18,7 +18,7 @@ class Controller:
         self.orchestrator = OrchestrationSelector(self.args)
 
     def initialize(self):
-        self.orchestrator.delegate_orchestration(self.args)
+        self.orchestrator.delegate_orchestration()
 
 
 if __name__ == "__main__":

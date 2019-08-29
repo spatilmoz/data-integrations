@@ -2,7 +2,7 @@ import os
 
 __location__ = os.path.realpath(os.path.dirname(__file__))
 script_dir = os.path.dirname(__file__)
-rel_path = 'dp2-dev-fdeb93967c4d.json'
+rel_path = 'dp2-dev-b9c283ede243.json'
 gcp_public_key_file_path = os.path.join(__location__, os.path.join(script_dir, rel_path))
 
 config = {
