@@ -36,3 +36,11 @@ in a terminal after meeting the project prerequisites:
   `docker build -t mozilla/data-integrations .`
 
 ## Author(s)
+
+### Best practices
+
+Before merging a PR, we can use pylint which provides good static analysis in addition of PEP-8 recommendations provided by PyCharm. Not all recommendations must be followed but it improves the code readability. It includes stuff like variables rename and spacing and documentation.
+
+Another recommendation would be to run coverage which provides a good summary about test coverage. Posting the output would let the team members know if your additions increased or decreased test coverage.
+
+Also, when adding unit tests, it would be good to post output of a unit test run of all modules, this makes sure your PR does not break your or anybody else's unit tests.
