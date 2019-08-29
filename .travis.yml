@@ -2,7 +2,4 @@ sudo: required
 language: python
 services:
     - docker
-script:
-  - pytest
-  - python setup.py build
-  - docker build -t mozilla/data-integations .
+script: pytest
