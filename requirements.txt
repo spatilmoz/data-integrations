@@ -1,2 +1,10 @@
 geopy==1.20.0
 requests==2.22.0
+bonobo==0.6.4
+pandas
+geopy==1.20.0
+python-gnupg
+pysftp
+google-cloud-storage
+google-cloud-bigquery
+gcsfs

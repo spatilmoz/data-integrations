@@ -1,26 +1,50 @@
+import logging
 from abc import ABC, abstractmethod
+import bonobo
+
 
 class AbstractOrchestrator(ABC):
-    @property
+    def __init__(self):
+        logging.basicConfig(level=logging.DEBUG)
+
     @abstractmethod
-    def internal_ordered_tasks(self):
-        return []
+    def list_of_ordered_orchestrated_tasks(self):
+        """
+        For default orchestration this list of ordered tasks will be used in the order provided through bonobo.
+        :return:
+        """
+        raise NotImplementedError
 
-    @property
-    def ordered_tasks(self):
-        if not self.internal_ordered_tasks:
-            raise NotImplementedError
-        return self.internal_ordered_tasks
+    @abstractmethod
+    def dict_of_services(self):
+        """
+        For default orchestration this dictionary of services will be used to provide services to bonobo.
+        :return:
+        """
+        raise NotImplementedError
 
-    def orchestrate(self):
-        # After OrchestratedTasks are added to the internal_ordered_tasks
-        # calling the orchestrate method will cycle between the constructed tasks.
-        # Connectors, Transformers, etc can inherit from OrchestratedTask and then
-        # be called through here after implementing the execute method.
-        # The data will be passed through the tasks.
-        task_data = None
-        for task in self.ordered_tasks:
-            print("\nCurrent running task: \t%s" % type(task))
-            task_data = task.execute(task_data)
+    def get_graph(self):
+        '''
+        Defaulting to a generic graph provided by bonobo, using the list_of_ordered_orchestrated_tasks
+        :return:
+        '''
+        graph = bonobo.Graph()
+        graph.add_chain(self.list_of_ordered_orchestrated_tasks)
+        return graph
 
-        return task_data
+    def get_services(self):
+        """
+        Helper method for bonobo to access child dictionary of services
+        :return: dictionary for bonobo for services
+        """
+        return self.dict_of_services()
+
+    def orchestrate(self, input_args=None):
+        """
+        This method is used to initiate the bonobo runs as expected.
+        :param input_args:
+        :return:
+        """
+        bonobo.run(
+            self.get_graph(),
+            services=self.get_services())

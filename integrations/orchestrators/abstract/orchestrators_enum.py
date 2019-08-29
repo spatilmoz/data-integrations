@@ -1,26 +1,19 @@
-from enum import Enum
-from collections import namedtuple
-
+from integrations.orchestrators.gcp_storage_to_salesforce_sftp_orchestrator import \
+    GcpStorageToSalesforceSftpOrchestrator
 from integrations.orchestrators.workday_to_anaplan_orchestrator import WorkdayToAnaplanOrchestrator
 
-Orchestrator = namedtuple('__Orchestrator', ['key_orchestrator', 'entity_orchestrator'])
 
-
-class Orchestrators(Enum):
-    @property
-    def entity_orchestrator(self):
-        return self.value.entity_orchestrator
-
-    @property
-    def key_orchestrator(self):
-        return self.value.key_orchestrator
-
+class Orchestrators():
     @staticmethod
     def orchestrator_map():
-        class_orchestrator_map = {}
-        for key_orchestrator, entity_orchestrator in Orchestrators.__members__.items():
-            class_orchestrator_map[key_orchestrator] = entity_orchestrator
+        """
+        This method will return a dictionary of key->orchestrator map. The key here should be the same as the key
+        provided to airflow via the Controller.py call.
+        :return:
+        """
+        class_orchestrator_map = dict()
+        class_orchestrator_map["WorkdayToAnaplan_FinancialSystemServices"] = WorkdayToAnaplanOrchestrator()
+        class_orchestrator_map["gcp_storage_to_salesforce_sftp"] = GcpStorageToSalesforceSftpOrchestrator()
         return class_orchestrator_map
 
-    WorkdayToAnaplan_FinancialSystemServices = Orchestrator("WorkdayToAnaplan_FinancialSystemServices",
-                                                            WorkdayToAnaplanOrchestrator())
+

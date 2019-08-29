@@ -1,40 +1,50 @@
-from integrations.orchestrators.orchestration_selector import Orchestration_Selector
 import unittest
-from unittest.mock import Mock, MagicMock, PropertyMock
-import logging
-from integrations.orchestrators.workday_to_anaplan_orchestrator import WorkdayToAnaplanOrchestrator
+from unittest.mock import Mock
+
+from integrations.orchestrators.orchestrationselector import OrchestrationSelector
+
 
 class MockOrchestrator():
     def orchestrate(self):
         raise Exception
 
+
+class MockArgParsed():
+    @property
+    def orchestrator_key(self):
+        raise Exception
+
+
 class Tester(unittest.TestCase):
+    input_args = Mock(return_value=MockArgParsed())
+    input_args.orchestrator_key = "gcp_storage_to_salesforce_sftp"
+
     def test_mocked_orchestrator(self):
-        input_args = ""
-        orchestrator = Orchestration_Selector()
-        orchestrator.arg_map["WorkdayToAnaplan-FinancialSystemServices"] = Mock(return_value=MockOrchestrator())
-        orchestrator.select_orchestrator(input_args)
+        orchestrator = OrchestrationSelector()
+        orchestrator.argument_to_orchestrator_map['gcp_storage_to_salesforce_sftp'] = Mock(return_value=MockOrchestrator())()
+        with self.assertRaises(Exception):
+            orchestrator.delegate_orchestration(self.input_args)
 
     def test_no_orchestrator_found(self):
-        input_args = ""
-        orchestrator = Orchestration_Selector()
-        orchestrator.arg_map = None
+        orchestrator = OrchestrationSelector()
+        orchestrator.argument_to_orchestrator_map = None
         with self.assertRaises(NotImplementedError):
-            orchestrator.select_orchestrator(input_args)
+            orchestrator.select_orchestrator(self.input_args)
 
     def test_no_orchestrator_selected(self):
-        input_args = ""
-        orchestrator = Orchestration_Selector()
-        orchestrator.arg_map = None
+        orchestrator = OrchestrationSelector()
+        orchestrator.argument_to_orchestrator_map = None
         with self.assertRaises(Exception):
-            orchestrator.delegate_orchestration(input_args)
-
+            orchestrator.delegate_orchestration(self.input_args)
 
     def test_no_orchestrator_selected_passed_input(self):
-        input_args = "WorkdayToAnaplan-FinancialSystemServices"
-        orchestrator = Orchestration_Selector()
-        orchestrator.delegate_orchestration(input_args)
+        orchestrator = OrchestrationSelector()
+        orchestrator.delegate_orchestration(self.input_args)
+
+    def test_orchestrator_selected_passed_input(self):
+        orchestrator = OrchestrationSelector(self.input_args)
+        orchestrator.delegate_orchestration()
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     unittest.main()
