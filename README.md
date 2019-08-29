@@ -39,6 +39,8 @@ in a terminal after meeting the project prerequisites:
 
 ### Best practices
 
+Test coverage should be at least 80% and before merging it should be approved by at least one team member.
+
 Before merging a PR, we can use pylint which provides good static analysis in addition of PEP-8 recommendations provided by PyCharm. Not all recommendations must be followed but it improves the code readability. It includes stuff like variables rename and spacing and documentation.
 
 Another recommendation would be to run coverage which provides a good summary about test coverage. Posting the output would let the team members know if your additions increased or decreased test coverage.
@@ -52,4 +54,4 @@ Unit tests best practices:\
   Unit Tests Should Be Isolated\
   Unit Tests Should Be Automated\
   Use a Good Mixture of Unit and Integration Tests\
-  Unit Tests Should Be Executed Within an Organized Test Practice\
+  Unit Tests Should Be Executed Within an Organized Test Practice
