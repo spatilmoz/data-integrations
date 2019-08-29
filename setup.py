@@ -14,5 +14,8 @@ setup(name='data-integrations',
         'requests',
         'geopy',
         'pytz',
+        'bonobo',
+        'pysftp',
+        'gnupg',
       ]
     )
