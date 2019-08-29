@@ -45,11 +45,11 @@ Another recommendation would be to run coverage which provides a good summary ab
 
 Also, when adding unit tests, it would be good to post output of a unit test run of all modules, this makes sure your PR does not break your or anybody else's unit tests before the actual commit and travis finds out that something broke on last commit.
 
-Unit tests best practices:
-  Unit Tests Should Be Trustworthy
-  Unit Tests Should Be Maintainable and Readable
-  Unit Tests Should Verify a Single-Use Case
-  Unit Tests Should Be Isolated
-  Unit Tests Should Be Automated
-  Use a Good Mixture of Unit and Integration Tests
-  Unit Tests Should Be Executed Within an Organized Test Practice
+Unit tests best practices:\
+  Unit Tests Should Be Trustworthy\
+  Unit Tests Should Be Maintainable and Readable\
+  Unit Tests Should Verify a Single-Use Case\
+  Unit Tests Should Be Isolated\
+  Unit Tests Should Be Automated\
+  Use a Good Mixture of Unit and Integration Tests\
+  Unit Tests Should Be Executed Within an Organized Test Practice\
