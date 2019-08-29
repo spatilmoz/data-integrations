@@ -1,5 +1,7 @@
 sudo: required
-language: python
+language: python3
 services:
     - docker
-script: pytest
+script: 
+- pip3 install .
+- pytest
