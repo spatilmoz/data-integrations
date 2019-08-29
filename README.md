@@ -43,4 +43,4 @@ Before merging a PR, we can use pylint which provides good static analysis in ad
 
 Another recommendation would be to run coverage which provides a good summary about test coverage. Posting the output would let the team members know if your additions increased or decreased test coverage.
 
-Also, when adding unit tests, it would be good to post output of a unit test run of all modules, this makes sure your PR does not break your or anybody else's unit tests.
+Also, when adding unit tests, it would be good to post output of a unit test run of all modules, this makes sure your PR does not break your or anybody else's unit tests before the actual commit and travis finds out that something broke on last commit.
