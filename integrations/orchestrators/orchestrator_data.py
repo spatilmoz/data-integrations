@@ -1,5 +1,5 @@
 class OrchestratorData:
-    def __init__(self, input=None, output=None, success=False):
+    def __init__(self, input=None, output=None, success=True):
         """
         Generate an OrchestratorData object from the provided parameters
         :param input: Input to the OrchestratedTask
