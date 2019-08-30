@@ -1,8 +1,5 @@
-from integrations.orchestrators.orchestrationselector import OrchestrationSelector
 import unittest
-from unittest.mock import Mock, MagicMock, PropertyMock
-import logging
-
+from unittest.mock import Mock
 from integrations.orchestrators.orchestrator_data import OrchestratorData
 from integrations.transformers.abstract.transformer_task import TransformerTask
 from integrations.transformers.workday_to_anaplan_fss_transformer import WorkdayToAnaplanFSSTransformer
@@ -25,7 +22,6 @@ class Tester(unittest.TestCase):
         transformer = WorkdayToAnaplanFSSTransformer()
         self.assertIsNone(test_orchestrator_data.input)
         self.assertIsNone(test_orchestrator_data.output)
-        self.assertFalse(test_orchestrator_data.success)
         transformer.transform(test_orchestrator_data)
 
         self.assertIsNotNone(test_orchestrator_data.output)
@@ -34,6 +30,7 @@ class Tester(unittest.TestCase):
         test_orchestrator_data = OrchestratorData()
         transformer = WorkdayToAnaplanFSSTransformer()
         transformer.transform(test_orchestrator_data)
+
 
 if __name__ =="__main__":
     unittest.main()

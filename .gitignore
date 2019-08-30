@@ -1,9 +1,10 @@
+dp2*json
+
 secrets_id_rsa.for_centerstone_data
 secret*sh
 *swp
 *pyc
 *bak
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

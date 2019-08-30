@@ -17,10 +17,9 @@ class EncryptorTransformer(TransformerTask):
         self.logger = logging.getLogger(__name__)
 
     def transform(self, orchestrator_data: OrchestratorData):
-        gpg_worker = GpgWorker(self.public_key_url, self.public_key_id, self.encrypted_dir, self.bucket)
-        gcp_worker = GcpWorker(self.bucket, self.dataset)
-        prefix = self.dataset
-        for blob in gcp_worker.list_blobs(prefix=prefix):
-            gpg_worker.encrypt(blob.name)
+        # gpg_worker = GpgWorker(self.public_key_url, self.public_key_id, self.encrypted_dir, self.bucket)
+        # gcp_worker = GcpWorker(self.bucket, self.dataset)
+        # prefix = self.dataset
+        # for blob in gcp_worker.list_blobs(prefix=prefix):
+        #     gpg_worker.encrypt(blob.name)
         return orchestrator_data
-

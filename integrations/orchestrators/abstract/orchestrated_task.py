@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-
-from bonobo.config import use_context
 import logging
 
 from integrations.orchestrators.orchestrator_data import OrchestratorData
@@ -23,7 +21,6 @@ class OrchestratedTask(ABC):
         """
         pass  #
 
-    @use_context
     def __call__(self, *args, **kwargs) -> OrchestratorData:
         """
         This is the entry point for bonobo to access the children of this abstract class. After the children classes
@@ -36,13 +33,13 @@ class OrchestratedTask(ABC):
         :return OrchestratorData: This contains the input to the next task for bonobo or termination of the sequence
         """
         prev_orchestrator_data = self.execute(*args)
-        if prev_orchestrator_data.success:
-            logging.debug("...Received success message from task.")
-            next_orchestrator_data = OrchestratorData(input=prev_orchestrator_data.output)
-            return next_orchestrator_data
-        else:
-            logging.error("Terminating: data was not successfully processed.")
-            self.terminate()
+        logging.debug("...Received success message from task.")
+
+        if not prev_orchestrator_data:
+            prev_orchestrator_data = OrchestratorData()
+
+        next_orchestrator_data = OrchestratorData(input=prev_orchestrator_data.output)
+        return next_orchestrator_data
 
     def terminate(self):
         """

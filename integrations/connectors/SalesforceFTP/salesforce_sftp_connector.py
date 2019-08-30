@@ -13,7 +13,7 @@ class SalesforceSftpConnector(ConnectorPushTask):
         self.source_dir = '/tmp/t/'
 
     def connect_push(self, orchestrator_data=None):
-        sftp_worker = SftpWorker('mozilla.files.com', 'mcovarrubias@mozilla.com', 'Csupomona09!', self.source_dir, self.destination_dir,
-                                 self.bucket, self.dataset)
-        sftp_worker.transfer()
+        # sftp_worker = SftpWorker('mozilla.files.com', 'mcovarrubias@mozilla.com', 'Csupomona09!', self.source_dir, self.destination_dir,
+        #                          self.bucket, self.dataset)
+        # sftp_worker.transfer()
         return orchestrator_data
