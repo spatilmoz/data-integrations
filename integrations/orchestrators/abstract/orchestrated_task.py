@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-
-from bonobo.config import use_context
 import logging
 
 from integrations.orchestrators.orchestrator_data import OrchestratorData
@@ -23,7 +21,6 @@ class OrchestratedTask(ABC):
         """
         pass  #
 
-    @use_context
     def __call__(self, *args, **kwargs) -> OrchestratorData:
         """
         This is the entry point for bonobo to access the children of this abstract class. After the children classes
