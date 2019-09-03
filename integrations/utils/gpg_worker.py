@@ -49,7 +49,8 @@ class GpgWorker(object):
         (a message string) provides more information as to the reason for failure
         (for example, 'invalid recipient' or 'key expired').
         """
-        df = pd.read_csv('gs://{}/{}'.format(self.bucket, blob_name))
+        #df = pd.read_csv('gs://{}/{}'.format(self.bucket, blob_name))
+        df = pd.read_csv('/tmp/{}'.format(blob_name))
         buf = io.StringIO()
         df.to_csv(buf, encoding='utf-8')
 
@@ -59,7 +60,8 @@ class GpgWorker(object):
                 self.keys.fingerprints[0],
                 armor=True,
                 always_trust=True,
-                output='{}/{}.gpg'.format(self.encrypted_dir, blob_name)
+                output='/tmp/{}.gpg'.format(blob_name)
+                #output='{}/{}.gpg'.format(self.encrypted_dir, blob_name)
             )
             self.logger.info("OK: {}".format(status.ok))
             self.logger.info("STDERR: {}".format(status.stderr))

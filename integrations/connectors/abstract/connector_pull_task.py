@@ -1,10 +1,10 @@
 from abc import abstractmethod
 
-from integrations.orchestrators.abstract.orchestrated_task import OrchestratedTask
+from integrations.orchestrators.abstract_orchestrator_task import AbstractOrchestratorTask
 from integrations.orchestrators.orchestrator_data import OrchestratorData
 
 
-class ConnectorPullTask(OrchestratedTask):
+class ConnectorPullTask(AbstractOrchestratorTask):
     @abstractmethod
     def connect_pull(self, orchestrator_data=None) -> OrchestratorData:
         """

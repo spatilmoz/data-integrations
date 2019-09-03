@@ -1,11 +1,10 @@
-from integrations.connectors.gcp.bigquery_to_storage_process import BigQueryToStorageProcess
-from integrations.orchestrators.bigquery_to_storage_orchestrator import BigQueryToStorageOrchestrator
-from integrations.orchestrators.gcp_storage_to_salesforce_sftp_orchestrator import GcpStorageToSalesforceSftpOrchestrator
-from integrations.orchestrators.workday_to_anaplan_orchestrator import WorkdayToAnaplanOrchestrator
+from integrations.orchestrators.impl.bigquery_to_storage_orchestrator import BigQueryToStorageOrchestrator
+from integrations.orchestrators.impl.gcp_storage_to_salesforce_sftp_orchestrator import GcpStorageToSalesforceSftpOrchestrator
+from integrations.orchestrators.impl.workday_to_anaplan_orchestrator import WorkdayToAnaplanOrchestrator
 from integrations.utils.input_args_worker import InputArgsWorker
 
 
-class OrchestrationSelector:
+class OrchestratorSelector:
     def __init__(self, input_args=None):
         self.worker = InputArgsWorker(input_args)
 

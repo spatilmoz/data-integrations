@@ -4,14 +4,14 @@ import logging
 from integrations.orchestrators.orchestrator_data import OrchestratorData
 
 
-class OrchestratedTask(ABC):
+class AbstractOrchestratorTask(ABC):
     def __init__(self):
         logging.basicConfig(level=logging.DEBUG)
 
     @abstractmethod
     def execute(self, orchestrator_data=None) -> OrchestratorData:
         """
-        This method will be overridden by the children of this class. Please view OrchestratedTask.__call__ method
+        This method will be overridden by the children of this class. Please view AbstractOrchestratorTask.__call__ method
         for more background.
         :param orchestrator_data: If provided the OrchestratorData might contain input to use in
         this task step.

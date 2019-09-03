@@ -6,3 +6,4 @@ class InputArgsWorker:
 
     def get_value(self, key):
         return self.data[key]
+        #return self.data.get(key)

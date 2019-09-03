@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
-from integrations.orchestrators.orchestrationselector import OrchestrationSelector
+from integrations.orchestrators.orchestrator_selector import OrchestratorSelector
 
 
 class MockOrchestrator():
@@ -21,28 +21,28 @@ class Tester(unittest.TestCase):
 
     # def test_mocked_orchestrator(self):
     #     self.input_args
-    #     orchestrator = OrchestrationSelector(self.input_args)
+    #     orchestrator = OrchestratorSelector(self.input_args)
     #     orchestrator.argument_to_orchestrator_map['gcp_storage_to_salesforce_sftp'] = Mock(return_value=MockOrchestrator())()
     #     with self.assertRaises(Exception):
     #         orchestrator.delegate_orchestration()
     #
     # def test_no_orchestrator_found(self):
-    #     orchestrator = OrchestrationSelector()
+    #     orchestrator = OrchestratorSelector()
     #     with self.assertRaises(NotImplementedError):
     #         orchestrator.select_orchestrator(self.input_args)
     #
     # def test_no_orchestrator_selected(self):
-    #     orchestrator = OrchestrationSelector()
+    #     orchestrator = OrchestratorSelector()
     #     orchestrator.argument_to_orchestrator_map = None
     #     with self.assertRaises(Exception):
     #         orchestrator.delegate_orchestration(self.input_args)
     #
     # def test_no_orchestrator_selected_passed_input(self):
-    #     orchestrator = OrchestrationSelector()
+    #     orchestrator = OrchestratorSelector()
     #     orchestrator.delegate_orchestration(self.input_args)
 
     # def test_orchestrator_selected_passed_input(self):
-    #     orchestrator = OrchestrationSelector(self.input_args)
+    #     orchestrator = OrchestratorSelector(self.input_args)
     #     orchestrator.delegate_orchestration()
 
 

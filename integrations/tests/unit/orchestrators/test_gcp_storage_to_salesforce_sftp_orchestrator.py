@@ -1,7 +1,6 @@
 import unittest
-from unittest.mock import Mock
 
-from integrations.orchestrators.gcp_storage_to_salesforce_sftp_orchestrator import \
+from integrations.orchestrators.impl.gcp_storage_to_salesforce_sftp_orchestrator import \
     GcpStorageToSalesforceSftpOrchestrator
 
 
