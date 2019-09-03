@@ -1,13 +1,13 @@
 from abc import abstractmethod
 
-from integrations.orchestrators.abstract.orchestrated_task import OrchestratedTask
+from integrations.orchestrators.abstract_orchestrator_task import AbstractOrchestratorTask
 from integrations.orchestrators.orchestrator_data import OrchestratorData
 
 
-class TransformerTask(OrchestratedTask):
+class TransformerTask(AbstractOrchestratorTask):
     def execute(self, orchestrator_data=None) -> OrchestratorData:
         """
-        Please view OrchestratedTask.execute(). For children of TransformerTask, the transform method should be implemented
+        Please view AbstractOrchestratorTask.execute(). For children of TransformerTask, the transform method should be implemented
         :param orchestrator_data: If provided the OrchestratorData might contain input to use in
         this task step to convert to another format.
         :return OrchestratorData: Transformed, formatted, processed data.

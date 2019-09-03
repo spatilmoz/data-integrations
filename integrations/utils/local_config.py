@@ -1,4 +1,4 @@
-import integrations.config.data as p
+import integrations.config.app_configuration as p
 
 class LocalConfig(object):
 

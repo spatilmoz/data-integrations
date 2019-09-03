@@ -1,8 +1,7 @@
 from integrations.connectors.abstract.connector_pull_task import ConnectorPullTask
-from integrations.orchestrators.orchestrator_data import OrchestratorData
+from integrations.utils.bigquery_client import BigQueryClient
 from integrations.utils.gcp_worker import GcpWorker
 import logging
-from google.cloud import bigquery
 
 
 class GcpStorageConnector(ConnectorPullTask):
@@ -10,24 +9,16 @@ class GcpStorageConnector(ConnectorPullTask):
         self.bucket = bucket
         self.dataset = dataset
         self.logger = logging.getLogger(__name__)
+        self.bq_client = BigQueryClient()
+        self.storage_client = GcpWorker(self.bucket, self.dataset)
 
     def connect_pull(self, orchestrator_data=None):
         logging.basicConfig(level=logging.INFO)
-        # try:
-        #     gcp_worker = GcpWorker(self.bucket, self.dataset)
-        #
-        #     self.logger.info('Starting Compose stage')
-        #     bq_client = bigquery.Client()
-        #     tables = bq_client.list_tables(dataset=self.dataset)
-        #
-        #     for table in tables:
-        #         self.logger.info('Fetching files for {}'.format(table.table_id))
-        #         blobs = gcp_worker.list_blobs(prefix=table.table_id)
-        #         gcp_worker.compose([blob.name for blob in blobs], table.table_id)
-        # except:
-        #     self.logger.error('GcpStorageConnector ERROR')
-
-        self.logger.info("GcpStorageConnector")
+        self.logger.info("GcpStorageConnector. Top of connect_pull.")
+        tables = self.bq_client.list_tables(self.dataset)
+        for table in tables:
+            blobs = self.storage_client.list_blobs(prefix=table.table_id)
+            self.storage_client.compose(blobs, table.table_id)
 
         return orchestrator_data
 

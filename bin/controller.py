@@ -2,7 +2,7 @@
 from __future__ import division
 import argparse
 
-from integrations.orchestrators.orchestrationselector import OrchestrationSelector
+from integrations.orchestrators.orchestrator_selector import OrchestratorSelector
 
 
 class Controller:
@@ -13,9 +13,13 @@ class Controller:
     """
     def __init__(self):
         parser = argparse.ArgumentParser(description="Main Controller to determine pipeline and orchestration")
-        parser.add_argument('--orchestrator-key', dest='orchestrator_key', help='the key mapping to the orchestrator')
+        parser.add_argument('--pipeline', dest='pipeline', help='the key mapping to the orchestrator')
+        parser.add_argument('--bucket', dest='bucket', help='storage for temporary storage')
+        parser.add_argument('--dataset', dest='dataset', help='dataset name to be exported')
+        parser.add_argument('--file_extension', dest='file_extension', help='file extension of extracted data')
+        parser.add_argument('--location', dest='location', help='location of dataset')
         self.args = parser.parse_args()
-        self.orchestrator = OrchestrationSelector(self.args)
+        self.orchestrator = OrchestratorSelector(self.args)
 
     def initialize(self):
         self.orchestrator.delegate_orchestration()

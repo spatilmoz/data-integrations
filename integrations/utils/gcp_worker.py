@@ -3,9 +3,8 @@ import logging
 import sys
 from google.cloud import storage, bigquery
 
+
 class GcpWorker:
-    bucket = None
-    dataset = None
 
     def __init__(self, bucket : str, dataset : str):
         self.bucket = bucket
@@ -58,26 +57,17 @@ class GcpWorker:
         """
 
         try:
-            combined_csv = pd.concat([pd.read_csv('gs://{}/{}'.format(self.bucket, f), header=0) for f in sources])
-            combined_csv.to_csv("gs://{}/{}_composed_{}.csv".format(
-                self.bucket,
-                self.dataset,
-                table),
-                index=False,
-                encoding='utf-8-sig')
+            for f in sources:
+                df = pd.read_csv('gs://{}/{}'.format(self.bucket, f.name), low_memory=False)
+                if f.name.endswith('0.csv'):
+                    df.to_csv("/tmp/{}.csv".format(table), mode='a', index=False)
+                else:
+                    df.to_csv("/tmp/{}.csv".format(table), mode='a', index=False, header=False)
+
         except Exception as e:
             self.logger.info('Exception occurred {}'.format(e))
             self.logger.critical(sys.exc_info()[0])
             raise
-
-    def compose_all(self, p_dataset : str):
-        logging.info('Starting Compose stage')
-        bq_client = bigquery.Client()
-        tables = bq_client.list_tables(dataset=p_dataset)
-        for table in tables:
-            logging.info('Fetching files for {}'.format(table.table_id))
-            blobs = self.list_blobs(prefix=table.table_id)
-            self.compose([blob.name for blob in blobs], table.table_id)
 
     def delete_blob(self, blob_name):
         """
