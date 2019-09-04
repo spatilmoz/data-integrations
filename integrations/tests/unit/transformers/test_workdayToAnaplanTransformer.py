@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import Mock
-from integrations.orchestrators.orchestrator_data import OrchestratorData
-from integrations.transformers.abstract.transformer_task import TransformerTask
-from integrations.transformers.workday_to_anaplan_fss_transformer import WorkdayToAnaplanFSSTransformer
+from integrations.api.orchestrators.orchestrator_data import OrchestratorData
+from integrations.api.transformers.abstract.transformer_task import TransformerTask
+from integrations.api.transformers.workday_to_anaplan_fss_transformer import WorkdayToAnaplanFSSTransformer
 
 
 class MockTransformer(TransformerTask):

@@ -1,5 +1,5 @@
 import unittest
-from integrations.connectors.gcp.bigquery_to_storage_process import BigQueryToStorageProcess
+from integrations.api.connectors.gcp.bigquery_to_storage_process import BigQueryToStorageProcess
 from unittest.mock import Mock
 from unittest import mock
 
@@ -19,13 +19,13 @@ class ClientMock():
 
 
 class TestBigQueryToStorageProcess(unittest.TestCase):
-    @mock.patch('integrations.utils.bigquery_client')
+    @mock.patch('integrations.api.utils.bigquery_client')
     def test_orchestration_without_tables(self,mocked_instance):
         mocked_instance.BigQueryClient.return_value = Mock(return_value=ClientMock())()
         _test = BigQueryToStorageProcess('bucket1', 'dataset_id1', 'project_id1' , 'csv', 'US')
         _test.execute()
 
-    @mock.patch('integrations.utils.bigquery_client')
+    @mock.patch('integrations.api.utils.bigquery_client')
     def test_orchestration_with_tables(self, mocked_instance):
         tables = [Mock()]
         mocked_instance.BigQueryClient.return_value = Mock(return_value=ClientMock(tables))()

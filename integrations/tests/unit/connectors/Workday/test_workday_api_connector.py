@@ -2,7 +2,7 @@ import json
 import unittest
 from unittest import mock
 import integrations.tests.resources as test_resources
-from integrations.connectors.Workday.workday_api_connector import WorkdayAPIConnector
+from integrations.api.connectors.Workday.workday_api_connector import WorkdayAPIConnector
 
 try:
     import importlib.resources as pkg_resources

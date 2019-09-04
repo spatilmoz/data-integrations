@@ -1,8 +1,6 @@
 import unittest
 from unittest.mock import Mock
 
-from integrations.orchestrators.orchestrator_selector import OrchestratorSelector
-
 
 class MockOrchestrator():
     def orchestrate(self):

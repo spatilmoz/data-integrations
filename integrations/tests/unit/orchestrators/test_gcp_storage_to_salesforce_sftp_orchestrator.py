@@ -1,8 +1,5 @@
 import unittest
 
-from integrations.orchestrators.impl.gcp_storage_to_salesforce_sftp_orchestrator import \
-    GcpStorageToSalesforceSftpOrchestrator
-
 
 class GcpStorageToSalesforceSftpOrchestratorTest(unittest.TestCase):
 
