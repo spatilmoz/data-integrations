@@ -1,12 +1,12 @@
 import pandas as pd
 import logging
 import sys
-from google.cloud import storage, bigquery
+from google.cloud import storage
 
 
 class GcpWorker:
 
-    def __init__(self, bucket : str, dataset : str):
+    def __init__(self, bucket: str, dataset: str):
         self.bucket = bucket
         self.dataset = dataset
         self.storage = storage.Client()
@@ -22,32 +22,6 @@ class GcpWorker:
         blobs = self.storage.list_blobs(self.bucket, prefix=prefix, delimiter=delimiter)
         return blobs
 
-    def download_blob(self, blob_name):
-        """
-        Download the contents of this blob into a file-like object.
-        :param blob_name - A file name to which to write the blob's data.
-        :return: Local path to where the blob has been written to.
-        """
-        bucket = self.storage.get_bucket(self.bucket)
-        blob = bucket.get_blob(blob_name)
-        with open('/tmp/{}'.format(blob_name), 'wb') as file_obj:
-            blob.download_to_file(file_obj)
-        return '/tmp/{}'.format(blob_name)
-
-    def upload_blob(self, source_file_name, destination_blob_name):
-        """
-        Upload this blob’s contents from the content of a named file.
-        :param source_file_name: (str) – The path to the file.
-        :param destination_blob_name: Location in the bucket where to upload.
-        :return: None
-        """
-        bucket = self.storage.get_bucket(self.bucket)
-        blob = bucket.blob(destination_blob_name)
-        blob.upload_from_filename(source_file_name)
-        self.logger.info('File {} uploaded to {}.'.format(
-            source_file_name,
-            destination_blob_name))
-
     def compose(self, sources, table):
         """
         Concatenate source blobs into this one.
@@ -57,12 +31,13 @@ class GcpWorker:
         """
 
         try:
-            for f in sources:
-                df = pd.read_csv('gs://{}/{}'.format(self.bucket, f.name), low_memory=False)
-                if f.name.endswith('0.csv'):
-                    df.to_csv("/tmp/{}.csv".format(table), mode='a', index=False)
-                else:
-                    df.to_csv("/tmp/{}.csv".format(table), mode='a', index=False, header=False)
+            header = True
+            for blob in sources:
+                self.logger.info('Reading {} from gs'.format(blob.name))
+                df = pd.read_csv('gs://{}/{}'.format(self.bucket, blob.name), low_memory=False, header=0)
+                self.logger.info('Appending {} to /tmp/{}'.format(blob.name, table))
+                df.to_csv("/tmp/{}.csv".format(table), mode='a', index=False, header=header)
+                header = False
 
         except Exception as e:
             self.logger.info('Exception occurred {}'.format(e))
@@ -81,9 +56,3 @@ class GcpWorker:
         blob = bucket.blob(blob_name)
         blob.delete()
         self.logger.info('Blob {} deleted.'.format(blob_name))
-
-    def delete_all_blobs(self):
-        logging.info('Starting cleanup stage')
-        blobs = self.list_blobs()
-        for blob in blobs:
-            self.delete_blob(blob.name)

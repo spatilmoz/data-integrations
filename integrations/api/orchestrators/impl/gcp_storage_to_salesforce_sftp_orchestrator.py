@@ -7,10 +7,12 @@ from integrations.api.transformers.encryptor_transformer import EncryptorTransfo
 
 class GcpStorageToSalesforceSftpOrchestrator(AbstractOrchestrator):
 
-    def __init__(self, bucket: str, dataset: str):
+    def __init__(self, bucket: str, dataset: str, source_dir: str, destination_dir: str):
         self.bucket = bucket
         self.dataset = dataset
+        self.source_dir = source_dir
+        self.destination_dir = destination_dir
 
     def orchestrate(self):
-        nodes = [GcpStorageConnector(self.bucket, self.dataset), EncryptorTransformer(self.bucket, self.dataset), SalesforceSftpConnector(self.bucket, self.dataset)]
+        nodes = [GcpStorageConnector(self.bucket, self.dataset), EncryptorTransformer(self.source_dir), SalesforceSftpConnector(self.source_dir, self.destination_dir)]
         OrchestratorExecutor.execute(nodes)
