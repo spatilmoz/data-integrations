@@ -1,3 +1,4 @@
+importlib_resources
 geopy==1.20.0
 requests==2.22.0
 bonobo==0.6.4
@@ -14,3 +15,4 @@ pytest-cov==2.7.1
 pytest-mock==1.10.4
 mock==3.0.5
 patch==1.16
+pyopenssl
