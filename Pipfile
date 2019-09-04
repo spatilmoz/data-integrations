@@ -3,11 +3,23 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[dev-packages]
-
 [packages]
 geopy = "==1.20.0"
 requests = "==2.22.0"
+bonobo = "==0.6.4"
+pandas = "*"
+python-gnupg = "*"
+pysftp = "*"
+google-cloud-storage = "*"
+google-cloud-bigquery = "*"
+gcsfs = "*"
+mockito = "==1.1.1"
+pytest = "==5.0.1"
+pytest-cov = "==2.7.1"
+pytest-mock = "==1.10.4"
+mock = "==3.0.5"
+patch = "==1.16"
+pyopenssl= "*"
 
 [requires]
 python_version = "3.7"
