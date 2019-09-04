@@ -20,7 +20,7 @@ class ClientMock():
 
 class TestBigQueryToStorageProcess(unittest.TestCase):
     @mock.patch('integrations.api.utils.bigquery_client')
-    def test_orchestration_without_tables(self,mocked_instance):
+    def test_orchestration_without_tables(self, mocked_instance):
         mocked_instance.BigQueryClient.return_value = Mock(return_value=ClientMock())()
         _test = BigQueryToStorageProcess('bucket1', 'dataset_id1', 'project_id1' , 'csv', 'US')
         _test.execute()

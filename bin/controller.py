@@ -2,7 +2,7 @@
 from __future__ import division
 import argparse
 
-from integrations.api.orchestrators import OrchestratorSelector
+from integrations.api.orchestrators.orchestrator_selector import OrchestratorSelector
 
 
 class Controller:
@@ -14,10 +14,12 @@ class Controller:
     def __init__(self):
         parser = argparse.ArgumentParser(description="Main Controller to determine pipeline and orchestration")
         parser.add_argument('--pipeline', dest='pipeline', help='the key mapping to the orchestrator')
-        parser.add_argument('--bucket', dest='bucket', help='storage for temporary storage')
-        parser.add_argument('--dataset', dest='dataset', help='dataset name to be exported')
-        parser.add_argument('--file_extension', dest='file_extension', help='file extension of extracted data')
+        parser.add_argument('--bucket', dest='bucket', help='bucket for temporary storage')
+        parser.add_argument('--dataset', dest='dataset', help='dataset to be exported')
+        parser.add_argument('--file_extension', dest='file_extension', help='exported data file extension')
         parser.add_argument('--location', dest='location', help='location of dataset')
+        parser.add_argument('--source_dir', dest='source_dir', help='source temp dir')
+        parser.add_argument('--destination_dir', dest='destination_dir', help='destination dir in sftp')
         self.args = parser.parse_args()
         self.orchestrator = OrchestratorSelector(self.args)
 
