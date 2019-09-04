@@ -12,6 +12,7 @@ except ImportError:
 
 import integrations.tests.resources as test_resources
 
+
 class MockResponse:
     def __init__(self, file_path):
         self.file_path = file_path
@@ -21,8 +22,6 @@ class MockResponse:
     def content(self):
         data = json.loads(self.response_file)
         return json.dumps(data)
-
-     # relative-import the *package* containing the templates
 
 
 class TestWorkdayAPIConnector(unittest.TestCase):

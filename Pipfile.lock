@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cddfcee9a494162f2032bc85d751717be0c7d2246c85a8627284af42c8310eb9"
+            "sha256": "458438c815ce8488f98725f0ca5f3b1618eb2953e539b90e788978fd6ef79007"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -257,11 +257,11 @@
         },
         "google-cloud-bigquery": {
             "hashes": [
-                "sha256:561ce97339639550fdd4b4cdd58d6ac4cf61e3943027b14fe45a264c29ff0d63",
-                "sha256:7db1ed26436ae7e659a74d972f0da1914114004aab66f8af813ce47ff833f35c"
+                "sha256:63bcab8e657c5a9b15215eeb7e933df732ebdbca8ca1fc61aa123ab877c4b854",
+                "sha256:f017cc0b7f00f0051da5caccf46519d4f9a52907f43462356dfa19713c3bdf4e"
             ],
             "index": "pypi",
-            "version": "==1.18.0"
+            "version": "==1.19.0"
         },
         "google-cloud-core": {
             "hashes": [
@@ -311,6 +311,14 @@
                 "sha256:b7143592e374e50584564794fcb8aaf00a23025f9db866627f89a21491847a8d"
             ],
             "version": "==0.20"
+        },
+        "importlib-resources": {
+            "hashes": [
+                "sha256:6e2783b2538bd5a14678284a3962b0660c715e5a0f10243fd5e00a4b5974f50b",
+                "sha256:d3279fd0f6f847cced9f7acc19bd3e5df54d34f93a2e7bb5f238f81545787078"
+            ],
+            "index": "pypi",
+            "version": "==1.0.2"
         },
         "jinja2": {
             "hashes": [

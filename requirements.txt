@@ -1,3 +1,4 @@
+importlib_resources
 geopy==1.20.0
 requests==2.22.0
 bonobo==0.6.4
