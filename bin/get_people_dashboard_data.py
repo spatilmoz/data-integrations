@@ -5,7 +5,8 @@ import datetime
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-from integrations.connectors import Workday, Util
+from integrations.api.connectors import Workday
+from integrations.api.connectors import Util
 
 if __name__ == "__main__":
  

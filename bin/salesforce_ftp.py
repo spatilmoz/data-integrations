@@ -5,7 +5,8 @@ import sys,os, argparse
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-from integrations.connectors import SalesforceFTP, Util
+from integrations.api.connectors import SalesforceFTP
+from integrations.api.connectors import Util
 
 
 def create_dest_dir(dest_dir, dirname):

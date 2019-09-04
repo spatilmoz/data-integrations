@@ -1,7 +1,6 @@
 import unittest
-from unittest import mock
 
-from integrations.connectors.Anaplan.anaplan_api_connector import AnaplanApiConnector
+from integrations.api.connectors.Anaplan.anaplan_api_connector import AnaplanApiConnector
 
 class MockedAnaplanApiConnector(AnaplanApiConnector):
     def anaplan_cert_connect(self):

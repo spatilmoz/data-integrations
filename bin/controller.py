@@ -2,7 +2,7 @@
 from __future__ import division
 import argparse
 
-from integrations.orchestrators.orchestrator_selector import OrchestratorSelector
+from integrations.api.orchestrators import OrchestratorSelector
 
 
 class Controller:

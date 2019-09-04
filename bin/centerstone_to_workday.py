@@ -5,7 +5,8 @@ import sys,os, argparse
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-from integrations.connectors import Centerstone, Workday, Util
+from integrations.api.connectors import Centerstone, Workday
+from integrations.api.connectors import Util
 
 
 def compare_seats(wd_seats,cs_seats):

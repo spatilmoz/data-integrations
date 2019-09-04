@@ -6,7 +6,8 @@ import sys,os, re,argparse
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-from integrations.connectors import XMatters, Workday, Util
+from integrations.api.connectors import XMatters, Workday
+from integrations.api.connectors import Util
 
 
 def user_data_matches(wd_user,xm_user):

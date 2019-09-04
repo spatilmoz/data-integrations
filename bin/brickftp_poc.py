@@ -6,7 +6,8 @@ from subprocess import call
 import logging
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/..')
-from integrations.connectors import BrickFTP, Util
+from integrations.api.connectors import BrickFTP
+from integrations.api.connectors import Util
 
 
 def get_date_from_sfmc_filename(filename):
