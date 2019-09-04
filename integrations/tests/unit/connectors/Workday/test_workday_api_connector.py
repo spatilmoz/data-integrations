@@ -1,15 +1,9 @@
 import json
-import unittest.mock
+import importlib.resources as pkg_resources
+import unittest
 from unittest import mock
 
 from integrations.connectors.Workday.workday_api_connector import WorkdayAPIConnector
-
-try:
-    import importlib.resources as pkg_resources
-except ImportError:
-    # Try backported to PY<37 `importlib_resources`.
-    import importlib_resources as pkg_resources
-
 import integrations.tests.resources as test_resources
 
 
