@@ -1,8 +1,6 @@
 import gnupg
 import logging
 import sys
-import pandas as pd
-import io
 import os
 
 
@@ -39,17 +37,15 @@ class GpgWorker:
         (a message string) provides more information as to the reason for failure
         (for example, 'invalid recipient' or 'key expired').
         """
-        df = pd.read_csv(os.path.join(self.encrypted_dir, blob_name))
-        buf = io.StringIO()
-        df.to_csv(buf, encoding='utf-8')
+        stream = open(os.path.join(self.encrypted_dir, blob_name), 'rb')
 
         try:
             status = self.gpg.encrypt_file(
-                buf,
+                stream,
                 self.keys.fingerprints[0],
                 armor=True,
                 always_trust=True,
-                output='/tmp/{}.gpg'.format(blob_name)
+                output='/tmp/{}.enc'.format(blob_name)
             )
             self.logger.info("OK: {}".format(status.ok))
             self.logger.info("STDERR: {}".format(status.stderr))

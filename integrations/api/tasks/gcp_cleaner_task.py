@@ -1,8 +1,8 @@
 from integrations.api.orchestrators.abstract_orchestrator_task import AbstractOrchestratorTask
 from integrations.api.orchestrators.orchestrator_data import OrchestratorData
 import logging
-import integrations.utils.bigquery_client
-import integrations.utils.gcp_worker
+import integrations.api.utils.bigquery_client
+import integrations.api.utils.gcp_worker
 
 
 class GcpCleanerTask(AbstractOrchestratorTask):
