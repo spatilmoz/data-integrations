@@ -1,4 +1,4 @@
-import pandas as pd
+import subprocess
 import logging
 import sys
 from google.cloud import storage
@@ -22,22 +22,23 @@ class GcpWorker:
         blobs = self.storage.list_blobs(self.bucket, prefix=prefix, delimiter=delimiter)
         return blobs
 
-    def compose(self, sources, table):
+    def compose(self, bucket, table):
         """
         Concatenate source blobs into this one.
-        :param sources (list of filenames) – filenames whose contents will be composed into this blob.
+        :param bucket: Name of the bucket from which to compose files.
         :param table: The name of the table from which the files came from when exporting.
         :return: None, composed files written to the configured bucket on gs.
+        :raises: Exception in case subprocess exists
         """
 
         try:
-            header = True
-            for blob in sources:
-                self.logger.info('Reading {} from gs'.format(blob.name))
-                df = pd.read_csv('gs://{}/{}'.format(self.bucket, blob.name), low_memory=False, header=0)
-                self.logger.info('Appending {} to /tmp/{}'.format(blob.name, table))
-                df.to_csv("/tmp/{}.csv".format(table), mode='a', index=False, header=header)
-                header = False
+            subprocess.call(["time gsutil -m ls gs://{}/{}*.csv |"
+                              "while read f; "
+                              "do echo $f >/dev/stderr; "
+                              "gsutil cat $f |"
+                              "awk '(NR == 1) || (FNR > 1)' $1 ; done |"
+                              "gzip -9c > /tmp/{}.csv.gz".format(bucket, table, table)],
+                            shell=True)
 
         except Exception as e:
             self.logger.info('Exception occurred {}'.format(e))

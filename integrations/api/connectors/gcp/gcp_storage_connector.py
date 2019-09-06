@@ -14,11 +14,10 @@ class GcpStorageConnector(ConnectorPullTask):
 
     def connect_pull(self, orchestrator_data=None):
         logging.basicConfig(level=logging.INFO)
-        self.logger.info("GcpStorageConnector. Top of connect_pull.")
+
         tables = self.bq_client.list_tables(self.dataset)
         for table in tables:
-            blobs = self.storage_client.list_blobs(prefix=table.table_id)
-            self.storage_client.compose(blobs, table.table_id)
+            self.storage_client.compose(self.bucket, table.table_id)
 
         return orchestrator_data
 

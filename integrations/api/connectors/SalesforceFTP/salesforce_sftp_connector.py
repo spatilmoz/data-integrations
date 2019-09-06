@@ -28,7 +28,7 @@ class SalesforceSftpConnector(ConnectorPushTask):
         sftp.mkdir(destination_dir)
         for (dir_path, _, filename) in os.walk(self.source_dir):
             for name in filename:
-                if name.endswith('.gpg'):
+                if name.endswith('.enc'):
                     self.logger.info('Uploading {} to sftp server'.format(name))
                     sftp.upload_file(destination_dir=destination_dir,
                                      local_path=os.path.join(dir_path, name),

@@ -17,7 +17,6 @@ class EncryptorTransformer(TransformerTask):
     def transform(self, orchestrator_data: OrchestratorData):
         for (root, dirs, files) in os.walk(self.encrypted_dir):
             for filename in files:
-                if filename.endswith('.csv'):
-                    print(filename)
+                if filename.endswith('.gz'):
                     self.gpg_worker.encrypt(filename)
         return orchestrator_data
