@@ -25,7 +25,7 @@ class SftpWorker:
             local_path, remote_path))
 
         cnopts = pysftp.CnOpts()
-        cnopts.hostkeys = None
+        cnopts.get_hostkey(self.host)
 
         try:
 
