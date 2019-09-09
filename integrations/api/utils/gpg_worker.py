@@ -3,6 +3,8 @@ import logging
 import sys
 import os
 
+import requests
+
 
 class GpgWorker:
     """
@@ -19,14 +21,12 @@ class GpgWorker:
 
     def import_keys(self):
         """
-        Import keys from a keyserver. List the keys currently in the keyring.
-        Fetch keyids (str) - Each keyids argument should be a string containing a keyid to request
-        Fetch keyserver (str) - The keyserver to request the keyids from.
-        :return: None
+        Import keys from a public url and return the fingerprints associated with it.
+        :return: fingerprint associated with the key.
         """
-        self.logger.info('Importing keys')
-        self.gpg.recv_keys(self.public_key_url)
-        self.keys = self.gpg.list_keys()
+        key_data = requests.get(self.public_key_url).text
+        import_result = self.gpg.import_keys(key_data)
+        self.gpg.trust_keys(import_result.results[0]['fingerprint'], 'TRUST_ULTIMATE')
 
     def encrypt(self, blob_name):
         """
@@ -42,9 +42,7 @@ class GpgWorker:
         try:
             status = self.gpg.encrypt_file(
                 stream,
-                self.keys[0]['fingerprint'],
-                armor=True,
-                always_trust=True,
+                ['info@exacttarget.com'],
                 output='/tmp/{}.enc'.format(blob_name)
             )
             self.logger.info("OK: {}".format(status.ok))
