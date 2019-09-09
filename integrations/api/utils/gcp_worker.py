@@ -32,12 +32,12 @@ class GcpWorker:
         """
 
         try:
-            subprocess.call(["time gsutil -m ls gs://{}/{}*.csv |"
-                              "while read f; "
-                              "do echo $f >/dev/stderr; "
-                              "gsutil cat $f |"
-                              "awk '(NR == 1) || (FNR > 1)' $1 ; done |"
-                              "gzip -9c > /tmp/{}.csv.gz".format(bucket, table, table)],
+            subprocess.call(["gsutil -m ls gs://{}/{}*.csv |"
+                             "while read f; "
+                             "do echo $f >/dev/stderr; "
+                             "gsutil cat $f |"
+                             "awk '(NR == 1) || (FNR > 1)' $1 ; done |"
+                             "gzip -9c > /tmp/{}.csv.gz".format(bucket, table, table)],
                             shell=True)
 
         except Exception as e:
