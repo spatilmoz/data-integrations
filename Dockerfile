@@ -4,11 +4,9 @@ COPY . /workspace/
 
 WORKDIR /workspace
 
-RUN apt-get update && apt-get install python3                             \
-    && apt-get install python3-pip -y                                     \
-    && apt-get install unzip -y                                           \
-    && apt-get install lftp -y                                            \
-    && pip3 install --upgrade --no-cache-dir .  \
-    && pip3 install git+https://github.com/mozilla-it/salesforce-fetcher
+RUN echo deb http://deb.debian.org/debian stable main >> /etc/apt/sources.list && \
+    apt-get update && apt-get -y install python3 python3-pip unzip lftp && \
+    pip3 install --upgrade --no-cache-dir .  && \
+    pip3 install git+https://github.com/mozilla-it/salesforce-fetcher
 
-#
+
