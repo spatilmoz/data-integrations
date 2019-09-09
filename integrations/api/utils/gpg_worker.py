@@ -42,7 +42,7 @@ class GpgWorker:
         try:
             status = self.gpg.encrypt_file(
                 stream,
-                self.keys.fingerprints[0],
+                self.keys[0]['fingerprint'],
                 armor=True,
                 always_trust=True,
                 output='/tmp/{}.enc'.format(blob_name)
