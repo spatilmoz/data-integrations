@@ -35,8 +35,10 @@ class AnaplanApiConnector(ConnectorPushTask):
     def anaplan_cert_connect(self):
         # return authentication_txt
         username, cert = self.cert_connect_string()
-        cert_str = 'AnaplanCertificate %s' % str(base64.b64encode(f'{username}:{cert}'.encode('utf-8')).decode('utf-8'))
-        headers = {'Authorization': cert_str}
+        encoded_auth = '{}:{}'.format(username, cert).encode('utf-8')
+        cert_str = str(base64.b64encode(encoded_auth).decode('utf-8'))
+        anaplan_cert_header = 'AnaplanCertificate %s' % cert_str
+        headers = {'Authorization': anaplan_cert_header}
         url = "https://api.anaplan.com/1/3/workspaces/"
         r = requests.get(url, headers=headers)
         return r.text
