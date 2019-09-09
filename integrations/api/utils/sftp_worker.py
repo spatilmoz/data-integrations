@@ -24,15 +24,11 @@ class SftpWorker:
         logging.info('Uploading local file {} to {} on stfp server'.format(
             local_path, remote_path))
 
-        cnopts = pysftp.CnOpts()
-        cnopts.get_hostkey(self.host)
-
         try:
 
             with pysftp.Connection(host=self.host,
                                    username=self.username,
-                                   password=self.password,
-                                   cnopts=cnopts) as sftp:
+                                   password=self.password) as sftp:
                 with sftp.cd(destination_dir):
                     sftp.put(localpath=local_path, remotepath=remote_path)
             sftp.close()
