@@ -1,17 +1,17 @@
 from integrations.api.connectors.abstract.connector_push_task import ConnectorPushTask
 from integrations.api.utils.sftp_worker import SftpWorker
-from integrations.api.config.app_configuration import config
 import datetime
 import os
+import json
 import logging
 
 
 class SalesforceSftpConnector(ConnectorPushTask):
 
     def __init__(self, source_dir: str, destination_dir: str):
-        self.host = config['sftp'].get('sftp_host')
-        self.username = config['sftp'].get('sftp_username')
-        self.password = config['sftp'].get('sftp_password')
+        self.host = json.load(open(os.environ.get('CONFIG'))).get('sftp_host')
+        self.username = json.load(open(os.environ.get('CONFIG'))).get('sftp_username')
+        self.password = json.load(open(os.environ.get('CONFIG'))).get('sftp_password')
         self.source_dir = source_dir
         self.destination_dir = destination_dir
         self.logger = logging.getLogger(__name__)
