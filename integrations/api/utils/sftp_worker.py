@@ -24,11 +24,15 @@ class SftpWorker:
         logging.info('Uploading local file {} to {} on stfp server'.format(
             local_path, remote_path))
 
+        cnopts = pysftp.CnOpts()
+        cnopts.hostkeys = None
+
         try:
 
             with pysftp.Connection(host=self.host,
                                    username=self.username,
-                                   password=self.password) as sftp:
+                                   password=self.password,
+                                   cnopts=cnopts) as sftp:
                 with sftp.cd(destination_dir):
                     sftp.put(localpath=local_path, remotepath=remote_path)
             sftp.close()
@@ -45,10 +49,15 @@ class SftpWorker:
         :return: None
         """
         logging.info('Creating {} directory in sftp server'.format(remote_dir))
+
+        cnopts = pysftp.CnOpts()
+        cnopts.hostkeys = None
+
         try:
             with pysftp.Connection(host=self.host,
                                    username=self.username,
-                                   password=self.password) as sftp:
+                                   password=self.password,
+                                   cnopts=cnopts) as sftp:
                 sftp.mkdir(remote_dir)
 
         except Exception as e:

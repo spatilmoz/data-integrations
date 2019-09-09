@@ -5,7 +5,7 @@ bonobo==0.6.4
 pandas
 geopy==1.20.0
 python-gnupg
-pysftp==0.2.8
+pysftp
 google-cloud-storage
 google-cloud-bigquery
 gcsfs
