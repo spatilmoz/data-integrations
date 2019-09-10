@@ -1,8 +1,8 @@
+import logging
 from integrations.api.orchestrators.abstract_orchestrator_task import AbstractOrchestratorTask
 from integrations.api.orchestrators.orchestrator_data import OrchestratorData
-import logging
-import integrations.api.utils.bigquery_client
-import integrations.api.utils.gcp_worker
+from integrations.api.utils import bigquery_client
+from integrations.api.utils import gcp_worker
 
 
 class GcpCleanerTask(AbstractOrchestratorTask):
@@ -11,8 +11,8 @@ class GcpCleanerTask(AbstractOrchestratorTask):
         self.bucket_name = bucket_name
         self.dataset_id = dataset_id
         self.logger = logging.getLogger(__name__)
-        self.bq_client = integrations.utils.bigquery_client.BigQueryClient()
-        self.storage_client = integrations.utils.gcp_worker.GcpWorker(self.bucket_name, self.dataset_id)
+        self.bq_client = bigquery_client.BigQueryClient()
+        self.storage_client = gcp_worker.GcpWorker(self.bucket_name, self.dataset_id)
 
     def execute(self, orchestrator_data=None) -> OrchestratorData:
         blobs = self.storage_client.list_blobs()
