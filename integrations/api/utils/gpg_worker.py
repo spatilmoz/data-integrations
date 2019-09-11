@@ -40,6 +40,7 @@ class GpgWorker:
         stream = open(os.path.join(self.encrypted_dir, blob_name), 'rb')
 
         try:
+            self.logger.info('Starting encryption of file {}'.format(blob_name))
             status = self.gpg.encrypt_file(
                 stream,
                 ['info@exacttarget.com'],

@@ -22,7 +22,19 @@ class GcpWorker:
         blobs = self.storage.list_blobs(self.bucket, prefix=prefix, delimiter=delimiter)
         return blobs
 
-    def compose(self, bucket, table):
+    def execute(self, command):
+        try:
+            p = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+            (output, err) = p.communicate()
+            p_status = p.wait()
+            self.logger.info('Command status: {}'.format(p_status))
+
+        except Exception as e:
+            self.logger.info('Exception occurred {}'.format(e))
+            self.logger.critical(sys.exc_info()[0])
+            raise
+
+    def download(self, bucket, table):
         """
         Concatenate source blobs into this one.
         :param bucket: Name of the bucket from which to compose files.
@@ -32,13 +44,16 @@ class GcpWorker:
         """
 
         try:
-            subprocess.call(["gsutil -m ls gs://{}/{}*.csv |"
-                             "while read f; "
-                             "do echo $f >/dev/stderr; "
-                             "gsutil cat $f |"
-                             "awk '(NR == 1) || (FNR > 1)' $1 ; done |"
-                             "gzip -9c > /tmp/{}.csv.gz".format(bucket, table, table)],
-                            shell=True)
+
+            download = "gsutil -m cp -r gs://{}/{}*.csv /tmp".format(bucket, table)
+            # Finish downloading all files for table
+            self.execute(download)
+            self.logger.info('Done downloading files for table {}'.format(table))
+            compose = "awk '(NR == 1) || (FNR > 1)' /tmp/{}*.csv | "\
+                      "gzip -9c > /tmp/{}.csv.gz".format(table, table)
+            # Compose all local files for table
+            self.execute(compose)
+            self.logger.info('Done composing files for table {}'.format(table))
 
         except Exception as e:
             self.logger.info('Exception occurred {}'.format(e))

@@ -17,7 +17,10 @@ class GcpStorageConnector(ConnectorPullTask):
 
         tables = self.bq_client.list_tables(self.dataset)
         for table in tables:
-            self.storage_client.compose(self.bucket, table.table_id)
+            self.storage_client.download(self.bucket, table.table_id)
+            #self.storage_client.compose(self.bucket, table.table_id)
+
+
 
         return orchestrator_data
 

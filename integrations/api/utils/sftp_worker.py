@@ -28,7 +28,6 @@ class SftpWorker:
         cnopts.hostkeys = None
 
         try:
-
             with pysftp.Connection(host=self.host,
                                    username=self.username,
                                    password=self.password,
@@ -54,6 +53,7 @@ class SftpWorker:
         cnopts.hostkeys = None
 
         try:
+            logging.info('Creating directory {}'.format(remote_dir))
             with pysftp.Connection(host=self.host,
                                    username=self.username,
                                    password=self.password,
