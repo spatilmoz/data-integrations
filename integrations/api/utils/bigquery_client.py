@@ -30,6 +30,10 @@ class BigQueryClient:
     def get_dataset(self, dataset_id: str):
         return self.client.get_dataset(dataset_id)
 
-    def delete_table(self, table_id):
-        self.delete_table(table_id, not_found_ok=True)
+    def delete_table(self, dataset, table_id):
+        dataset_ref = self.get_dataset(dataset)
+        self.client.delete_table('.'.join([dataset_ref.project,
+                                           dataset_ref.dataset_id,
+                                           table_id]),
+                                 not_found_ok=True)
         self.logger.info('Deleted table {}'.format(table_id))

@@ -26,4 +26,4 @@ class GcpCleanerTask(AbstractOrchestratorTask):
         tables = self.bq_client.list_tables(self.dataset_id)
         for table in tables:
             self.logger.info('Deleting {} table from BigQuery'.format(table.table_id))
-            self.bq_client.delete_table(table.table_id)
+            self.bq_client.delete_table(self.dataset_id, table.table_id)
