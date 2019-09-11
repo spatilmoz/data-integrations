@@ -27,4 +27,4 @@ class OrchestratorSelector:
 
         elif 'marketing_cleanup' == self.worker.get_value('pipeline'):
             GcpCleanupOrchestrator(self.worker.get_value('bucket'),
-                                         self.worker.get_value('dataset')).orchestrate()
+                                   self.worker.get_value('dataset')).orchestrate()
