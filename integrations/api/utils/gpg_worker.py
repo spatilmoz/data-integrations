@@ -44,7 +44,7 @@ class GpgWorker:
             status = self.gpg.encrypt_file(
                 stream,
                 ['info@exacttarget.com'],
-                output='/tmp/{}.enc'.format(blob_name)
+                output='/tmp/{}.pgp'.format(blob_name)
             )
             self.logger.info("OK: {}".format(status.ok))
             self.logger.info("STDERR: {}".format(status.stderr))

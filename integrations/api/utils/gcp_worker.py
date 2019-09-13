@@ -1,3 +1,4 @@
+import datetime
 import subprocess
 import logging
 import sys
@@ -32,12 +33,13 @@ class GcpWorker:
         """
 
         try:
+            current_ts = datetime.datetime.utcnow().strftime("%Y-%m-%d-T%H-%M-%SZ")
             subprocess.call(["gsutil -m ls gs://{}/{}*.csv |"
                              "while read f; "
                              "do echo $f >/dev/stderr; "
                              "gsutil cat $f |"
                              "awk '(NR == 1) || (FNR > 1)' $1 ; done |"
-                             "gzip -9c > /tmp/{}.csv.gz".format(bucket, table, table)],
+                             "gzip -9c > /tmp/{}-{}.gz".format(bucket, table, table, current_ts)],
                             shell=True)
             self.logger.info('Done composing files for table {}'.format(table))
 
