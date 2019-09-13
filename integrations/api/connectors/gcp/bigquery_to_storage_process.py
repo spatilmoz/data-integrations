@@ -31,4 +31,3 @@ class BigQueryToStorageProcess(AbstractOrchestratorTask):
         else:
             self.logger.error("This dataset does not contain any tables.")  # fix the error message
             self.logger.critical(sys.exc_info()[0])
-            raise

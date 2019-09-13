@@ -23,6 +23,5 @@ class GcpStorageConnector(ConnectorPullTask):
         else:
             self.logger.error("This bucket does not contain any blobs.")  # fix the error message
             self.logger.critical(sys.exc_info()[0])
-            raise
 
         return orchestrator_data
