@@ -2,6 +2,7 @@ from integrations.api.connectors.abstract.connector_pull_task import ConnectorPu
 from integrations.api.utils.bigquery_client import BigQueryClient
 from integrations.api.utils.gcp_worker import GcpWorker
 import logging
+import sys
 
 
 class GcpStorageConnector(ConnectorPullTask):
@@ -16,7 +17,12 @@ class GcpStorageConnector(ConnectorPullTask):
         logging.basicConfig(level=logging.INFO)
 
         tables = self.bq_client.list_tables(self.dataset)
-        for table in tables:
-            self.storage_client.compose(self.bucket, table.table_id)
+        if tables:
+            for table in tables:
+                self.storage_client.compose(self.bucket, table.table_id)
+        else:
+            self.logger.error("This bucket does not contain any blobs.")  # fix the error message
+            self.logger.critical(sys.exc_info()[0])
+            raise
 
         return orchestrator_data

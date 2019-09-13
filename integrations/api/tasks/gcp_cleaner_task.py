@@ -1,4 +1,5 @@
 import logging
+import sys
 from integrations.api.orchestrators.abstract_orchestrator_task import AbstractOrchestratorTask
 from integrations.api.orchestrators.orchestrator_data import OrchestratorData
 from integrations.api.utils import bigquery_client
@@ -17,13 +18,11 @@ class GcpCleanerTask(AbstractOrchestratorTask):
     def execute(self, orchestrator_data=None) -> OrchestratorData:
         blobs = self.storage_client.list_blobs()
         self.logger.info('Starting to delete all blobs from bucket {}'.format(self.bucket_name))
-        for blob in blobs:
-            print(blob.name)
-            self.logger.info('Deleting {} from gcs'.format(blob.name))
-            self.storage_client.delete_blob(blob.name)
-
-        self.logger.info('Starting to delete all tables from dataset {}'.format(self.dataset_id))
-        tables = self.bq_client.list_tables(self.dataset_id)
-        for table in tables:
-            self.logger.info('Deleting {} table from BigQuery'.format(table.table_id))
-            self.bq_client.delete_table(self.dataset_id, table.table_id)
+        if blobs:
+            for blob in blobs:
+                self.logger.info('Deleting {} from gcs'.format(blob.name))
+                self.storage_client.delete_blob(blob.name)
+        else:
+            self.logger.error("This bucket does not contain any blobs.")  # fix the error message
+            self.logger.critical(sys.exc_info()[0])
+            raise

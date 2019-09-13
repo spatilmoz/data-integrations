@@ -37,7 +37,7 @@ class SftpWorker:
             sftp.close()
 
         except Exception as e:
-            logging.info('Exception occurred {}'.format(e))
+            logging.error('Exception occurred {}'.format(e))
             logging.critical(sys.exc_info()[0])
             raise
 
@@ -61,6 +61,6 @@ class SftpWorker:
                 sftp.mkdir(remote_dir)
 
         except Exception as e:
-            logging.info('Exception occurred {}'.format(e))
+            logging.error('Exception occurred {}'.format(e))
             logging.critical(sys.exc_info()[0])
             raise
