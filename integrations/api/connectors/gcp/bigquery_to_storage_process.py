@@ -2,6 +2,7 @@ from integrations.api.orchestrators.abstract_orchestrator_task import AbstractOr
 from integrations.api.orchestrators.orchestrator_data import OrchestratorData
 import logging
 import integrations.api.utils.bigquery_client
+import sys
 
 
 class BigQueryToStorageProcess(AbstractOrchestratorTask):
@@ -28,4 +29,5 @@ class BigQueryToStorageProcess(AbstractOrchestratorTask):
                                              file_extension=self.file_extension,
                                              location=self.location)
         else:
-            self.logger.info("This dataset does not contain any tables.")  # fix the error message
+            self.logger.error("This dataset does not contain any tables.")  # fix the error message
+            self.logger.critical(sys.exc_info()[0])

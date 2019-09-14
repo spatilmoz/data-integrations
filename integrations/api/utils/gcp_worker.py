@@ -1,3 +1,4 @@
+import datetime
 import subprocess
 import logging
 import sys
@@ -19,7 +20,14 @@ class GcpWorker:
         :param delimiter (str) – (Optional) Delimiter, used with prefix to emulate hierarchy.
         :return: Iterator of all Blob in this bucket matching the arguments.
         """
-        blobs = self.storage.list_blobs(self.bucket, prefix=prefix, delimiter=delimiter)
+        try:
+            blobs = self.storage.list_blobs(self.bucket, prefix=prefix, delimiter=delimiter)
+
+        except Exception as e:
+            self.logger.error('Exception occurred {}'.format(e))
+            self.logger.critical(sys.exc_info()[0])
+            raise
+
         return blobs
 
     def compose(self, bucket, table):
@@ -32,17 +40,18 @@ class GcpWorker:
         """
 
         try:
+            current_ts = datetime.datetime.utcnow().strftime("%Y-%m-%d-T%H-%M-%SZ")
             subprocess.call(["gsutil -m ls gs://{}/{}*.csv |"
                              "while read f; "
                              "do echo $f >/dev/stderr; "
                              "gsutil cat $f |"
                              "awk '(NR == 1) || (FNR > 1)' $1 ; done |"
-                             "gzip -9c > /tmp/{}.csv.gz".format(bucket, table, table)],
+                             "gzip -9c > /tmp/{}-{}.gz".format(bucket, table, table, current_ts)],
                             shell=True)
             self.logger.info('Done composing files for table {}'.format(table))
 
         except Exception as e:
-            self.logger.info('Exception occurred {}'.format(e))
+            self.logger.error('Exception occurred {}'.format(e))
             self.logger.critical(sys.exc_info()[0])
             raise
 
@@ -54,7 +63,12 @@ class GcpWorker:
         :raises: google.cloud.exceptions.NotFound (to suppress the exception, call delete_blobs,
         passing a no-op on_error callback, e.g.:
         """
-        bucket = self.storage.get_bucket(self.bucket)
-        blob = bucket.blob(blob_name)
-        blob.delete()
-        self.logger.info('Blob {} deleted.'.format(blob_name))
+        try:
+            bucket = self.storage.get_bucket(self.bucket)
+            blob = bucket.blob(blob_name)
+            blob.delete()
+            self.logger.info('Blob {} deleted.'.format(blob_name))
+        except Exception as e:
+            self.logger.error('Exception occurred {}'.format(e))
+            self.logger.critical(sys.exc_info()[0])
+            raise

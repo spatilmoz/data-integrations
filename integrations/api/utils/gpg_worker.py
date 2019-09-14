@@ -44,11 +44,12 @@ class GpgWorker:
             status = self.gpg.encrypt_file(
                 stream,
                 ['info@exacttarget.com'],
-                output='/tmp/{}.enc'.format(blob_name)
+                output='/tmp/{}.pgp'.format(blob_name)
             )
             self.logger.info("OK: {}".format(status.ok))
             self.logger.info("STDERR: {}".format(status.stderr))
+
         except Exception as e:
-            self.logger.info('Exception occurred {}'.format(e))
+            self.logger.error('Exception occurred {}'.format(e))
             self.logger.critical(sys.exc_info()[0])
             raise
