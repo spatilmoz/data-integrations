@@ -15,3 +15,10 @@ config = {
     'sftp_password': os.environ.get('SFTP_PASSWORD', '')
   }
 }
+
+
+
+bing_revenue_username=os.environ.get('bing_revenue_username')
+bing_revenue_password=os.environ.get('bing_revenue_password')
+bing_revenue_developer_token=os.environ.get('bing_revenue_developer_token')
+bing_revenue_content_type='application/json'
