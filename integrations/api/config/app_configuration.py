@@ -18,8 +18,8 @@ config = {
     'revenue': {
         'bing': {
             'creds': {  # actual local path to /opt/bing/creds
-                'username': os.environ.get('REVENUE_BING_USERNAME', 'amitrana'),
-                'password': os.environ.get('REVENUE_BING_PASSWORD', 'mozilla'),
+                'username': os.environ.get('REVENUE_BING_USERNAME', ''),
+                'password': os.environ.get('REVENUE_BING_PASSWORD', ''),
                 'developer_token': os.environ.get('REVENUE_BING_DEVELOPER_TOKEN', '1181798D08516197'),
                 'content_type': 'application/json'
             },
