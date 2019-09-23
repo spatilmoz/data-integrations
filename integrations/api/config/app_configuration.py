@@ -20,7 +20,7 @@ config = {
             'creds': {  # actual local path to /opt/bing/creds
                 'username': os.environ.get('REVENUE_BING_USERNAME', ''),
                 'password': os.environ.get('REVENUE_BING_PASSWORD', ''),
-                'developer_token': os.environ.get('REVENUE_BING_DEVELOPER_TOKEN', '1181798D08516197'),
+                'developer_token': os.environ.get('REVENUE_BING_DEVELOPER_TOKEN', ''),
                 'content_type': 'application/json'
             },
             'config': {
