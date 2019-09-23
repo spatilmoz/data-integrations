@@ -7,8 +7,6 @@ response = None
 class BingRevenuePullConnectorStep(unittest.TestCase):
 
     def __init__(self):
-        self.job_id_url = None
-        self.report_id_url = None
         self.start_date = None
         self.end_date = None
         self.report_name = None
@@ -16,15 +14,7 @@ class BingRevenuePullConnectorStep(unittest.TestCase):
         self.granularity = None
         self.columns = None
 
-    @given("job id url {url}")
-    def step_impl(self, url: str):
-        self.job_id_url = url
-
-    @step("report id url {report_id_url}")
-    def step_impl(self, report_id_url):
-        self.report_id_url = report_id_url
-
-    @step("the report name is {report_name}")
+    @given("the report name is {report_name}")
     def step_impl(self, report_name: str):
         self.report_name = report_name
 
@@ -49,7 +39,7 @@ class BingRevenuePullConnectorStep(unittest.TestCase):
     @when("we hit the endpoint")
     def step_impl(self):
         global response
-        response = BingRevenuePullConnector(self.job_id_url, self.report_id_url, self.start_date, self.end_date, self.report_name, self.report_type,
+        response = BingRevenuePullConnector(self.start_date, self.end_date, self.report_name, self.report_type,
                                             self.granularity, self.columns).connect_pull()
 
     @then("we get a response")

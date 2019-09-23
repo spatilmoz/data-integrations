@@ -1,4 +1,5 @@
 from integrations.api.orchestrators.impl.bigquery_to_storage_orchestrator import BigQueryToStorageOrchestrator
+from integrations.api.orchestrators.impl.bing_revenue_to_bigquery_orchestrator import BingRevenueToBigQueryOrchestrator
 from integrations.api.orchestrators.impl.gcp_storage_to_salesforce_sftp_orchestrator import GcpStorageToSalesforceSftpOrchestrator
 from integrations.api.orchestrators.impl.workday_to_anaplan_orchestrator import WorkdayToAnaplanOrchestrator
 from integrations.api.orchestrators.impl.gcp_cleanup_orchestrator import GcpCleanupOrchestrator
@@ -28,3 +29,6 @@ class OrchestratorSelector:
         elif 'marketing_cleanup' == self.worker.get_value('pipeline'):
             GcpCleanupOrchestrator(self.worker.get_value('bucket'),
                                    self.worker.get_value('dataset')).orchestrate()
+
+        elif BingRevenueToBigQueryOrchestrator.is_pipeline_key(self.worker.get_value('pipeline')):
+            BingRevenueToBigQueryOrchestrator(self.worker).orchestrate()

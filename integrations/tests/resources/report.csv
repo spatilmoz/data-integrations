@@ -1,0 +1,15 @@
+"Report: Distribution performance report"
+"Report View: 8/1/2019"
+"Rows: 12753"
+
+"Date","DistributionPartnerCode","FormCode","Clicks","BiddedSRPVs","RawSRPVs","EstimatedRevenue","Market","Language","DeviceType","Currency","Impressions","AdImpressions","AdImpressionYield","RPM","CPC","ClickYield","AdCTR","Coverage","AdDensity","CTR","BiddedCTR","UserCountry","WebsiteCountry","WebsiteLanguage"
+"2019-08-01","MOZ2","awre","0","1","1",".00","Mexico","Spanish","PC","USD","1","1","1.0000","0.00",".00","0.0000","0.0000","1.0000","1.0000","0.000000","0.000000","Mexico","MX","Spanish"
+"2019-08-01","MOZ2","awre","1","14","37",".89","United States","English","PC","USD","14","64","1.7297","24.05",".89","0.0270","0.0156","0.3784","4.5714","0.071429","0.071429","United States","US","English"
+"2019-08-01","MOZ2","awre1","0","1","1",".00","Indonesia","Indonesian","PC","USD","1","2","2.0000","0.00",".00","0.0000","0.0000","1.0000","2.0000","0.000000","0.000000","Indonesia","ID","Indonesian"
+"2019-08-01","MOZ2","b00032","0","0","2",".00","United States","English","PC","USD","0","0","0.0000","0.00",".00","0.0000","0.0000","0.0000","0.0000","0.000000","0.000000","United States","US","English"
+"2019-08-01","MOZ2","bspn01","0","0","8",".00","United States","English","PC","USD","0","0","0.0000","0.00",".00","0.0000","0.0000","0.0000","0.0000","0.000000","0.000000","United States","US","English"
+"2019-08-01","MOZ2","entlnk","0","1","1",".00","United States","English","PC","USD","1","8","8.0000","0.00",".00","0.0000","0.0000","1.0000","8.0000","0.000000","0.000000","United States","US","English"
+"2019-08-01","MOZ2","hdrsc1","0","1","1",".00","Indonesia","Indonesian","PC","USD","1","2","2.0000","0.00",".00","0.0000","0.0000","1.0000","2.0000","0.000000","0.000000","Indonesia","ID","Indonesian"
+"2019-08-01","MOZ2","hdrsc1","2","16","27",".61","United States","English","PC","USD","16","57","2.1111","22.59",".31","0.0741","0.0351","0.5926","3.5625","0.125000","0.125000","United States","US","English"
+
+"©2019 Microsoft Corporation. All rights reserved. "
